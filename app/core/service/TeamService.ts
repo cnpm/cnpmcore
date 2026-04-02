@@ -23,7 +23,7 @@ export class TeamService extends AbstractService {
   private readonly teamRepository: TeamRepository;
 
 
-  async createTeam(orgId: string, name: string, description?: string): Promise<Team> {
+  async createTeam(orgId: string, name: string, description?: string, creatorUserId?: string): Promise<Team> {
     const existing = await this.teamRepository.findTeam(orgId, name);
     if (existing) {
       throw new ForbiddenError(`Team "${name}" already exists`);
@@ -35,7 +35,14 @@ export class TeamService extends AbstractService {
       description,
     });
     await this.teamRepository.saveTeam(team);
-    this.logger.info('[TeamService:createTeam] teamId: %s, orgId: %s, name: %s', team.teamId, orgId, name);
+
+    // Auto-add creator as team owner
+    if (creatorUserId) {
+      const member = TeamMember.create({ teamId: team.teamId, userId: creatorUserId, role: 'owner' });
+      await this.teamRepository.addMember(member);
+    }
+
+    this.logger.info('[TeamService:createTeam] teamId: %s, orgId: %s, name: %s, creator: %s', team.teamId, orgId, name, creatorUserId);
     return team;
   }
 
@@ -52,7 +59,7 @@ export class TeamService extends AbstractService {
     this.logger.info('[TeamService:removeTeam] teamId: %s', teamId);
   }
 
-  async addMember(teamId: string, userId: string): Promise<TeamMember> {
+  async addMember(teamId: string, userId: string, role: 'owner' | 'member' = 'member'): Promise<TeamMember> {
     const team = await this.teamRepository.findTeamByTeamId(teamId);
     if (!team) {
       throw new NotFoundError('Team not found');
@@ -70,12 +77,17 @@ export class TeamService extends AbstractService {
 
     const existing = await this.teamRepository.findMember(teamId, userId);
     if (existing) {
+      // Update role if changed
+      if (existing.role !== role) {
+        existing.role = role;
+        await this.teamRepository.addMember(existing);
+      }
       return existing;
     }
 
-    const member = TeamMember.create({ teamId, userId });
+    const member = TeamMember.create({ teamId, userId, role });
     await this.teamRepository.addMember(member);
-    this.logger.info('[TeamService:addMember] teamId: %s, userId: %s', teamId, userId);
+    this.logger.info('[TeamService:addMember] teamId: %s, userId: %s, role: %s', teamId, userId, role);
     return member;
   }
 

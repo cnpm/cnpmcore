@@ -9,7 +9,19 @@ cnpmcore supports an Organization -> Team -> Package permission model for managi
 | **Org** | Organization, corresponds to a scope (e.g., org `mycompany` -> `@mycompany`) |
 | **OrgMember** | Org member with role `owner` (can manage) or `member` |
 | **Team** | Permission unit. Each Org auto-creates a `developers` default team |
+| **TeamMember** | Team member with role `owner` (can manage team) or `member` |
 | **TeamPackage** | Team's read access grant to a package |
+
+## Protocol Compatibility
+
+cnpmcore implements both **npm CLI compatible** endpoints and **private (extended)** endpoints.
+
+| Label | Meaning |
+|-------|---------|
+| **npm compatible** | Follows the npm registry API contract. Request/response format is compatible with `npm` CLI. |
+| **Private** | cnpmcore extension. Not part of the npm registry API. Uses custom routes or adds extra fields (e.g., `role`). |
+
+> **Rule**: npm compatible endpoints never change their response format. Extended fields (like `role`) are only available via private endpoints.
 
 ## Org Management (Admin only)
 
@@ -88,7 +100,7 @@ Removing a member **auto-removes from all teams** in the org.
 ```bash
 curl http://localhost:7001/-/org/mycompany/member/alice/team \
   -H "Authorization: Bearer <token>"
-# Returns: [{"name": "developers", "description": "..."}, ...]
+# Returns: [{"name": "developers", "description": "...", "role": "owner"}, ...]
 ```
 
 ## Team Management
@@ -105,6 +117,8 @@ curl -X PUT http://localhost:7001/-/org/mycompany/team \
   -H "Content-Type: application/json" \
   -d '{"name": "frontend", "description": "Frontend team"}'
 ```
+
+The creator is **auto-added as team `owner`**.
 
 ### List Teams (npm CLI compatible)
 
@@ -132,19 +146,54 @@ curl -X DELETE http://localhost:7001/-/org/mycompany/team/frontend \
 
 ### Team Members
 
+#### List Members — npm compatible (GET /-/team/:orgName/:teamName/user)
+
+Returns a **string array** `["alice", "bob"]`, compatible with `npm team ls`.
+
 ```bash
-# List members (npm CLI compatible)
+# npm CLI
 npm team ls @mycompany:frontend --registry=http://localhost:7001
 
-# Add member (must be an org member first)
-curl -X PUT http://localhost:7001/-/org/mycompany/team/frontend/member \
-  -H "Authorization: Bearer <admin-token>" \
+# HTTP
+curl http://localhost:7001/-/team/mycompany/frontend/user \
+  -H "Authorization: Bearer <token>"
+```
+
+#### List Members with Role — Private (GET /-/team/:orgName/:teamName/member)
+
+Returns **objects with role info**: `[{"user": "alice", "role": "owner"}, {"user": "bob", "role": "member"}]`.
+
+```bash
+curl http://localhost:7001/-/team/mycompany/frontend/member \
+  -H "Authorization: Bearer <token>"
+```
+
+#### Add Member (PUT /-/team/:orgName/:teamName/user)
+
+npm compatible. The `role` field is a **private extension** — npm CLI does not send it, defaults to `member`.
+
+```bash
+# npm CLI (adds as member)
+npm team add @mycompany:frontend alice --registry=http://localhost:7001
+
+# HTTP with role (private extension)
+curl -X PUT http://localhost:7001/-/team/mycompany/frontend/user \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"user": "alice", "role": "owner"}'
+```
+
+#### Remove Member (DELETE /-/team/:orgName/:teamName/user)
+
+```bash
+# npm CLI
+npm team rm @mycompany:frontend alice --registry=http://localhost:7001
+
+# HTTP
+curl -X DELETE http://localhost:7001/-/team/mycompany/frontend/user \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"user": "alice"}'
-
-# Remove member
-curl -X DELETE http://localhost:7001/-/org/mycompany/team/frontend/member/alice \
-  -H "Authorization: Bearer <admin-token>"
 ```
 
 ### Team Package Access
@@ -162,6 +211,16 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
   --registry=http://localhost:7001
 ```
 
+### List User's Teams — Private (GET /-/user/:username/team?org=orgName)
+
+Returns teams with role info. Only self or admin can access.
+
+```bash
+curl http://localhost:7001/-/user/alice/team?org=mycompany \
+  -H "Authorization: Bearer <token>"
+# Returns: [{"name": "mycompany:frontend", "description": "...", "role": "owner"}, ...]
+```
+
 ## Permission Summary
 
 | Operation | Required Permission |
@@ -170,11 +229,14 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
 | View Org info | Logged-in user |
 | Add / Remove Org member | Admin or Org Owner |
 | View Org members | Logged-in user |
-| Create / Delete Team | Admin or Org Owner |
+| Create Team | Admin or Org Owner (allowScopes: any logged-in user) |
+| Delete Team | Admin, Org Owner, or **Team Owner** |
 | View Teams / Team info / Team members | Logged-in user |
-| Add / Remove Team member | Admin or Org Owner |
-| Grant / Revoke package access | Admin or Org Owner |
+| Add / Remove Team member | Admin, Org Owner, or **Team Owner** |
+| Grant / Revoke package access | Admin, Org Owner, or **Team Owner** |
 | View Team packages | Logged-in user |
+
+> **Team Owner** is a new role. When a team is created, the creator is automatically added as the team owner. Team owners can manage their own team without needing org-level owner permissions.
 
 ## 私有包读取鉴权
 
@@ -248,12 +310,12 @@ npm access grant read-only @mycompany:developers @mycompany/secret-lib \
 创建额外的 Team 可以实现更精细的权限控制：
 
 ```bash
-# 创建团队
+# 创建团队（创建者自动成为 team owner）
 npm team create @mycompany:frontend --registry=http://localhost:7001
 
-# 将用户加入团队
-curl -X PUT http://localhost:7001/-/org/mycompany/team/frontend/member \
-  -H "Authorization: Bearer <admin-token>" \
+# 将用户加入团队（team owner 即可操作）
+curl -X PUT http://localhost:7001/-/team/mycompany/frontend/user \
+  -H "Authorization: Bearer <team-owner-token>" \
   -H "Content-Type: application/json" \
   -d '{"user": "bob"}'
 
@@ -269,6 +331,8 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 
 ## API Endpoints
 
+### npm CLI Compatible
+
 | Method | Path | Description |
 |--------|------|-------------|
 | PUT | `/-/org` | Create org |
@@ -277,14 +341,22 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 | GET | `/-/org/:orgName/member` | List org members |
 | PUT | `/-/org/:orgName/member` | Add org member |
 | DELETE | `/-/org/:orgName/member/:username` | Remove org member |
-| GET | `/-/org/:orgName/member/:username/team` | List user's teams in org |
 | PUT | `/-/org/:orgName/team` | Create team |
 | GET | `/-/org/:orgName/team` | List teams |
-| GET | `/-/org/:orgName/team/:teamName` | View team |
-| DELETE | `/-/org/:orgName/team/:teamName` | Delete team |
-| GET | `/-/org/:orgName/team/:teamName/member` | List team members |
-| PUT | `/-/org/:orgName/team/:teamName/member` | Add team member |
-| DELETE | `/-/org/:orgName/team/:teamName/member/:username` | Remove team member |
-| GET | `/-/org/:orgName/team/:teamName/package` | List team packages |
-| PUT | `/-/org/:orgName/team/:teamName/package` | Grant package access |
-| DELETE | `/-/org/:orgName/team/:teamName/package/@:scope/:name` | Revoke package access |
+| GET | `/-/team/:orgName/:teamName` | View team |
+| DELETE | `/-/team/:orgName/:teamName` | Delete team |
+| GET | `/-/team/:orgName/:teamName/user` | List team members (string array) |
+| PUT | `/-/team/:orgName/:teamName/user` | Add team member |
+| DELETE | `/-/team/:orgName/:teamName/user` | Remove team member |
+| GET | `/-/team/:orgName/:teamName/package` | List team packages |
+| PUT | `/-/team/:orgName/:teamName/package` | Grant package access |
+| DELETE | `/-/team/:orgName/:teamName/package` | Revoke package access |
+
+### Private (cnpmcore extensions)
+
+| Method | Path | Description | Notes |
+|--------|------|-------------|-------|
+| GET | `/-/team/:orgName/:teamName/member` | List team members with role | Returns `[{user, role}]` |
+| GET | `/-/user/:username/team?org=orgName` | List user's teams with role | Returns `[{name, description, role}]` |
+| GET | `/-/org/:orgName/member/:username/team` | List user's teams in org | Returns `[{name, description, role}]` |
+| PUT | `/-/team/:orgName/:teamName/user` body `{user, role}` | Add member with role | `role` field is a private extension (npm CLI ignores it) |

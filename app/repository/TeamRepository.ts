@@ -67,16 +67,19 @@ export class TeamRepository extends AbstractRepository {
     return models.map(model => ModelConvertor.convertModelToEntity(model, Team));
   }
 
-  async listTeamsByUserIdAndOrgId(userId: string, orgId: string): Promise<Team[]> {
+  async listTeamsByUserIdAndOrgId(userId: string, orgId: string): Promise<{ team: Team; role: string }[]> {
     const orgTeams = await this.Team.find({ orgId });
     if (orgTeams.length === 0) return [];
     const orgTeamIds = orgTeams.map(t => t.teamId);
     const memberModels = await this.TeamMember.find({ userId, teamId: { $in: orgTeamIds } });
     if (memberModels.length === 0) return [];
-    const memberTeamIds = new Set(memberModels.map(m => m.teamId));
+    const memberRoleMap = new Map(memberModels.map(m => [ m.teamId, m.role || 'member' ]));
     return orgTeams
-      .filter(t => memberTeamIds.has(t.teamId))
-      .map(model => ModelConvertor.convertModelToEntity(model, Team));
+      .filter(t => memberRoleMap.has(t.teamId))
+      .map(model => ({
+        team: ModelConvertor.convertModelToEntity(model, Team),
+        role: memberRoleMap.get(model.teamId) || 'member',
+      }));
   }
 
   // --- TeamMember ---
@@ -89,6 +92,10 @@ export class TeamRepository extends AbstractRepository {
 
   async addMember(member: TeamMember): Promise<void> {
     if (member.id) {
+      const model = await this.TeamMember.findOne({ id: member.id });
+      if (model) {
+        await ModelConvertor.saveEntityToModel(member, model);
+      }
       return;
     }
     await ModelConvertor.convertEntityToModel(member, this.TeamMember);

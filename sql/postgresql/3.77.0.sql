@@ -44,7 +44,8 @@ CREATE TABLE team_members (
   gmt_modified timestamp(3) NOT NULL,
   team_member_id varchar(24) NOT NULL,
   team_id varchar(24) NOT NULL,
-  user_id varchar(24) NOT NULL
+  user_id varchar(24) NOT NULL,
+  role varchar(20) NOT NULL DEFAULT 'member'
 );
 
 CREATE UNIQUE INDEX team_members_uk_team_member_id ON team_members (team_member_id);

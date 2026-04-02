@@ -6,12 +6,14 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
+  HTTPQuery,
   Inject,
 } from '@eggjs/tegg';
-import { NotFoundError, UnprocessableEntityError } from 'egg-errors';
+import { NotFoundError, ForbiddenError, UnprocessableEntityError } from 'egg-errors';
 import { AbstractController } from './AbstractController';
 import { OrgService } from '../../core/service/OrgService';
 import { TeamService } from '../../core/service/TeamService';
+import { OrgRepository } from '../../repository/OrgRepository';
 import { TeamRepository } from '../../repository/TeamRepository';
 import { getScopeAndName } from '../../common/PackageUtil';
 
@@ -22,6 +24,9 @@ export class TeamController extends AbstractController {
 
   @Inject()
   private readonly teamService: TeamService;
+
+  @Inject()
+  private readonly orgRepository: OrgRepository;
 
   @Inject()
   private readonly teamRepository: TeamRepository;
@@ -58,12 +63,44 @@ export class TeamController extends AbstractController {
   }
 
   private async requireTeamWriteAccess(ctx: EggContext, orgName: string, teamName: string) {
-    const { org, authorizedUser } = await this.requireOrgWriteAccess(ctx, orgName);
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+
+    let org;
+    if (this.isAllowScopeOrg(orgName)) {
+      org = await this.orgService.ensureOrgForScope(`@${orgName}`);
+    } else {
+      org = await this.orgService.findOrgByName(orgName);
+      if (!org) {
+        throw new NotFoundError(`Org "${orgName}" not found`);
+      }
+    }
+
     const team = await this.teamRepository.findTeam(org.orgId, teamName);
     if (!team) {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
-    return { org, team, authorizedUser };
+
+    // Admin always has access
+    if (isAdmin) {
+      return { org, team, authorizedUser };
+    }
+
+    // Org owner has access
+    if (!this.isAllowScopeOrg(orgName)) {
+      const orgMember = await this.orgRepository.findMember(org.orgId, authorizedUser.userId);
+      if (orgMember && orgMember.role === 'owner') {
+        return { org, team, authorizedUser };
+      }
+    }
+
+    // Team owner has access
+    const teamMember = await this.teamRepository.findMember(team.teamId, authorizedUser.userId);
+    if (teamMember && teamMember.role === 'owner') {
+      return { org, team, authorizedUser };
+    }
+
+    throw new ForbiddenError('Only team owner or admin can perform this action');
   }
 
   // --- Team CRUD ---
@@ -75,12 +112,12 @@ export class TeamController extends AbstractController {
   })
   async createTeam(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPBody() body: { name: string; description?: string }) {
-    const { org } = await this.requireOrgWriteAccess(ctx, orgName);
+    const { org, authorizedUser } = await this.requireOrgWriteAccess(ctx, orgName);
 
     if (!body.name) {
       throw new UnprocessableEntityError('name is required');
     }
-    await this.teamService.createTeam(org.orgId, body.name, body.description);
+    await this.teamService.createTeam(org.orgId, body.name, body.description, authorizedUser.userId);
     return { ok: true };
   }
 
@@ -138,6 +175,7 @@ export class TeamController extends AbstractController {
   // --- Team Members (npm uses "user") ---
 
   // npm team ls @scope:team → GET /-/team/:orgName/:teamName/user
+  // npm compatible: returns string array ["user1", "user2"]
   @HTTPMethod({
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.GET,
@@ -158,22 +196,49 @@ export class TeamController extends AbstractController {
     return users.map(u => u.displayName);
   }
 
+  // Private API: GET /-/team/:orgName/:teamName/member
+  // Returns [{user, role}] with team member role info
+  @HTTPMethod({
+    path: '/-/team/:orgName/:teamName/member',
+    method: HTTPMethodEnum.GET,
+  })
+  async listTeamMembersWithRole(@Context() ctx: EggContext, @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string) {
+    await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const org = await this.findOrg(orgName);
+    if (!org) {
+      throw new NotFoundError(`Org "${orgName}" not found`);
+    }
+    const team = await this.teamRepository.findTeam(org.orgId, teamName);
+    if (!team) {
+      throw new NotFoundError(`Team "${teamName}" not found`);
+    }
+    const members = await this.teamService.listMembers(team.teamId);
+    const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
+    const userMap = new Map(users.map(u => [ u.userId, u ]));
+    return members.map(m => ({
+      user: userMap.get(m.userId)?.displayName ?? '',
+      role: m.role,
+    }));
+  }
+
   // npm team add <user> @scope:team → PUT /-/team/:orgName/:teamName/user
   @HTTPMethod({
     path: '/-/team/:orgName/:teamName/user',
     method: HTTPMethodEnum.PUT,
   })
   async addTeamMember(@Context() ctx: EggContext, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPBody() body: { user: string }) {
+    @HTTPParam() teamName: string, @HTTPBody() body: { user: string; role?: string }) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.user) {
       throw new UnprocessableEntityError('user is required');
     }
+    const role = body.role === 'owner' ? 'owner' : 'member';
     const targetUser = await this.userRepository.findUserByName(body.user);
     if (!targetUser) {
       throw new NotFoundError(`User "${body.user}" not found`);
     }
-    await this.teamService.addMember(team.teamId, targetUser.userId);
+    await this.teamService.addMember(team.teamId, targetUser.userId, role);
     return { ok: true };
   }
 
@@ -261,5 +326,40 @@ export class TeamController extends AbstractController {
     }
     await this.teamService.revokePackageAccess(team.teamId, pkg.packageId);
     return { ok: true };
+  }
+
+  // --- User Teams (private API) ---
+
+  // GET /-/user/:username/team?org=orgName — list teams the user belongs to in the specified org
+  @HTTPMethod({
+    path: '/-/user/:username/team',
+    method: HTTPMethodEnum.GET,
+  })
+  async listUserTeams(@Context() ctx: EggContext, @HTTPParam() username: string,
+    @HTTPQuery() org: string) {
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+
+    // Only self or admin
+    const isAdmin = await this.userRoleManager.isAdmin(ctx);
+    if (authorizedUser.displayName !== username && !isAdmin) {
+      throw new ForbiddenError('Not allowed to view other user\'s teams');
+    }
+
+    if (!org) {
+      throw new UnprocessableEntityError('org query parameter is required');
+    }
+
+    const orgEntity = await this.findOrg(org);
+    if (!orgEntity) {
+      throw new NotFoundError(`Org "${org}" not found`);
+    }
+
+    const targetUser = await this.userRepository.findUserByName(username);
+    if (!targetUser) {
+      throw new NotFoundError(`User "${username}" not found`);
+    }
+
+    const teamResults = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, orgEntity.orgId);
+    return teamResults.map(t => ({ name: `${org}:${t.team.name}`, description: t.team.description, role: t.role }));
   }
 }
