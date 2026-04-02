@@ -5,6 +5,7 @@ interface TeamMemberData extends EntityData {
   teamMemberId: string;
   teamId: string;
   userId: string;
+  role: string;
 }
 
 export type CreateTeamMemberData = Omit<EasyData<TeamMemberData, 'teamMemberId'>, 'id'>;
@@ -13,12 +14,14 @@ export class TeamMember extends Entity {
   teamMemberId: string;
   teamId: string;
   userId: string;
+  role: string;
 
   constructor(data: TeamMemberData) {
     super(data);
     this.teamMemberId = data.teamMemberId;
     this.teamId = data.teamId;
     this.userId = data.userId;
+    this.role = data.role || 'member';
   }
 
   static create(data: CreateTeamMemberData): TeamMember {
