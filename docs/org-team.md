@@ -1,29 +1,29 @@
-# Org & Team Management
+# Org 与 Team 管理
 
-cnpmcore supports an Organization -> Team -> Package permission model for managing private package access.
+cnpmcore 支持 Organization -> Team -> Package 权限模型，用于管理私有包的访问控制。
 
-## Concepts
+## 概念
 
-| Concept | Description |
-|---------|-------------|
-| **Org** | Organization, corresponds to a scope (e.g., org `mycompany` -> `@mycompany`) |
-| **OrgMember** | Org member with role `owner` (can manage) or `member` |
-| **Team** | Permission unit. Each Org auto-creates a `developers` default team |
-| **TeamMember** | Team member with role `owner` (can manage team) or `member` |
-| **TeamPackage** | Team's read access grant to a package |
+| 概念 | 说明 |
+|------|------|
+| **Org** | 组织，对应一个 scope（例如 org `mycompany` -> `@mycompany`） |
+| **OrgMember** | 组织成员，角色为 `owner`（可管理）或 `member` |
+| **Team** | 权限单元。每个 Org 自动创建 `developers` 默认团队 |
+| **TeamMember** | 团队成员，角色为 `owner`（可管理团队）或 `member` |
+| **TeamPackage** | 团队对包的读取授权 |
 
-## Protocol Compatibility
+## 协议兼容性
 
-cnpmcore implements both **npm CLI compatible** endpoints and **private (extended)** endpoints.
+cnpmcore 同时实现了 **npm CLI 兼容**接口和**私有（扩展）**接口。
 
-| Label | Meaning |
-|-------|---------|
-| **npm compatible** | Follows the npm registry API contract. Request/response format is compatible with `npm` CLI. |
-| **Private** | cnpmcore extension. Not part of the npm registry API. Uses custom routes or adds extra fields (e.g., `role`). |
+| 标签 | 含义 |
+|------|------|
+| **npm 兼容** | 遵循 npm registry API 协议，请求/响应格式兼容 `npm` CLI |
+| **私有** | cnpmcore 扩展，不属于 npm registry API，使用自定义路由或额外字段（如 `role`） |
 
-> **Rule**: npm compatible endpoints never change their response format. Extended fields (like `role`) are only available via private endpoints.
+> **规则**：npm 兼容接口的响应格式不会改变，扩展字段（如 `role`）仅通过私有接口提供。
 
-## Team Role Extension (cnpmcore 扩展)
+## Team 角色扩展
 
 ### npm 原始模型的问题
 
@@ -65,13 +65,12 @@ npm team ls @mycompany:frontend --registry=http://localhost:7001
 
 - **查看成员角色** — `GET /-/team/:org/:team/member`
 - **修改成员角色** — `PATCH /-/team/:org/:team/member/:username`
-- **添加成员时指定角色** — `PUT /-/team/:org/:team/user` body 中传 `role` 字段
 
 ```bash
 # 查看成员（含角色信息）
 curl http://localhost:7001/-/team/mycompany/frontend/member \
   -H "Authorization: Bearer <token>"
-# Returns: [{"user": "alice", "role": "owner"}, {"user": "bob", "role": "member"}]
+# 返回: [{"user": "alice", "role": "owner"}, {"user": "bob", "role": "member"}]
 
 # 将成员提升为 team owner
 curl -X PATCH http://localhost:7001/-/team/mycompany/frontend/member/alice \
@@ -86,9 +85,9 @@ curl -X PATCH http://localhost:7001/-/team/mycompany/frontend/member/alice \
   -d '{"role": "member"}'
 ```
 
-## Org Management (Admin only)
+## Org 管理（仅限 Admin）
 
-### Create Org
+### 创建 Org
 
 ```bash
 curl -X PUT http://localhost:7001/-/org \
@@ -97,32 +96,32 @@ curl -X PUT http://localhost:7001/-/org \
   -d '{"name": "mycompany", "description": "My Company"}'
 ```
 
-### Delete Org
+### 删除 Org
 
 ```bash
-# Cascade deletes all teams, members, and package grants
+# 级联删除所有团队、成员和包授权
 curl -X DELETE http://localhost:7001/-/org/mycompany \
   -H "Authorization: Bearer <admin-token>"
 ```
 
-### View Org Info
+### 查看 Org 信息
 
 ```bash
 curl http://localhost:7001/-/org/mycompany \
   -H "Authorization: Bearer <token>"
 ```
 
-## Member Management
+## 成员管理
 
-Admin or Org Owner can manage members.
+Admin 或 Org Owner 可以管理成员。
 
-### Add Member (npm CLI compatible)
+### 添加成员（npm CLI 兼容）
 
 ```bash
 # npm CLI
 npm org set mycompany alice --registry=http://localhost:7001
 
-# Set as owner
+# 设为 owner
 npm org set mycompany alice owner --registry=http://localhost:7001
 
 # HTTP
@@ -132,20 +131,20 @@ curl -X PUT http://localhost:7001/-/org/mycompany/member \
   -d '{"user": "alice", "role": "member"}'
 ```
 
-New members are **auto-added to the `developers` team**.
+新成员会**自动加入 `developers` 团队**。
 
-### List Members (npm CLI compatible)
+### 查看成员（npm CLI 兼容）
 
 ```bash
 # npm CLI
 npm org ls mycompany --registry=http://localhost:7001
 
-# HTTP — returns { "alice": "owner", "bob": "member" }
+# HTTP — 返回 { "alice": "owner", "bob": "member" }
 curl http://localhost:7001/-/org/mycompany/member \
   -H "Authorization: Bearer <token>"
 ```
 
-### Remove Member (npm CLI compatible)
+### 移除成员（npm CLI 兼容）
 
 ```bash
 # npm CLI
@@ -156,19 +155,19 @@ curl -X DELETE http://localhost:7001/-/org/mycompany/member/alice \
   -H "Authorization: Bearer <admin-token>"
 ```
 
-Removing a member **auto-removes from all teams** in the org.
+移除成员会**自动从该 Org 的所有团队中移除**。
 
-### List User's Teams
+### 查看用户所属团队
 
 ```bash
 curl http://localhost:7001/-/org/mycompany/member/alice/team \
   -H "Authorization: Bearer <token>"
-# Returns: [{"name": "developers", "description": "...", "role": "owner"}, ...]
+# 返回: [{"name": "developers", "description": "...", "role": "owner"}, ...]
 ```
 
-## Team Management
+## Team 管理
 
-### Create Team (npm CLI compatible)
+### 创建 Team（npm CLI 兼容）
 
 ```bash
 # npm CLI
@@ -181,9 +180,9 @@ curl -X PUT http://localhost:7001/-/org/mycompany/team \
   -d '{"name": "frontend", "description": "Frontend team"}'
 ```
 
-The creator is **auto-added as team `owner`**.
+创建者会**自动成为 Team `owner`**。
 
-### List Teams (npm CLI compatible)
+### 查看 Team 列表（npm CLI 兼容）
 
 ```bash
 # npm CLI
@@ -194,7 +193,7 @@ curl http://localhost:7001/-/org/mycompany/team \
   -H "Authorization: Bearer <token>"
 ```
 
-### Delete Team (npm CLI compatible)
+### 删除 Team（npm CLI 兼容）
 
 ```bash
 # npm CLI
@@ -205,13 +204,13 @@ curl -X DELETE http://localhost:7001/-/org/mycompany/team/frontend \
   -H "Authorization: Bearer <admin-token>"
 ```
 
-> The `developers` default team **cannot be deleted**.
+> `developers` 默认团队**不可删除**。
 
-### Team Members
+### Team 成员
 
-#### List Members — npm compatible (GET /-/team/:orgName/:teamName/user)
+#### 查看成员 — npm 兼容（GET /-/team/:orgName/:teamName/user）
 
-Returns a **string array** `["alice", "bob"]`, compatible with `npm team ls`.
+返回**字符串数组** `["alice", "bob"]`，兼容 `npm team ls`。
 
 ```bash
 # npm CLI
@@ -222,18 +221,27 @@ curl http://localhost:7001/-/team/mycompany/frontend/user \
   -H "Authorization: Bearer <token>"
 ```
 
-#### List Members with Role — Private (GET /-/team/:orgName/:teamName/member)
+#### 查看成员（含角色）— 私有（GET /-/team/:orgName/:teamName/member）
 
-Returns **objects with role info**: `[{"user": "alice", "role": "owner"}, {"user": "bob", "role": "member"}]`.
+返回**带角色信息的对象**: `[{"user": "alice", "role": "owner"}, {"user": "bob", "role": "member"}]`。
 
 ```bash
 curl http://localhost:7001/-/team/mycompany/frontend/member \
   -H "Authorization: Bearer <token>"
 ```
 
-#### Add Member (PUT /-/team/:orgName/:teamName/user)
+#### 修改成员角色 — 私有（PATCH /-/team/:orgName/:teamName/member/:username）
 
-npm compatible. Members are always added with `member` role. Use the PATCH endpoint to change roles.
+```bash
+curl -X PATCH http://localhost:7001/-/team/mycompany/frontend/member/alice \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "owner"}'
+```
+
+#### 添加成员（PUT /-/team/:orgName/:teamName/user）
+
+npm 兼容。添加的成员默认为 `member` 角色，修改角色请使用 PATCH 接口。
 
 ```bash
 # npm CLI
@@ -246,7 +254,7 @@ curl -X PUT http://localhost:7001/-/team/mycompany/frontend/user \
   -d '{"user": "alice"}'
 ```
 
-#### Remove Member (DELETE /-/team/:orgName/:teamName/user)
+#### 移除成员（DELETE /-/team/:orgName/:teamName/user）
 
 ```bash
 # npm CLI
@@ -259,37 +267,37 @@ curl -X DELETE http://localhost:7001/-/team/mycompany/frontend/user \
   -d '{"user": "alice"}'
 ```
 
-### Team Package Access
+### Team 包授权
 
 ```bash
-# Grant access (npm CLI compatible)
+# 授权（npm CLI 兼容）
 npm access grant read-only @mycompany:frontend @mycompany/ui-lib \
   --registry=http://localhost:7001
 
-# List packages (npm CLI compatible)
+# 查看包列表（npm CLI 兼容）
 npm access ls-packages @mycompany:frontend --registry=http://localhost:7001
 
-# Revoke access (npm CLI compatible)
+# 撤销授权（npm CLI 兼容）
 npm access revoke @mycompany:frontend @mycompany/ui-lib \
   --registry=http://localhost:7001
 ```
 
-## Permission Summary
+## 权限总结
 
-| Operation | Required Permission |
-|-----------|-------------------|
-| Create / Delete Org | Admin |
-| View Org info | Logged-in user |
-| Add / Remove Org member | Admin or Org Owner |
-| View Org members | Logged-in user |
-| Create Team | Admin or Org Owner (allowScopes: any logged-in user) |
-| Delete Team | Admin, Org Owner, or **Team Owner** |
-| View Teams / Team info / Team members | Logged-in user |
-| Add / Remove Team member | Admin, Org Owner, or **Team Owner** |
-| Grant / Revoke package access | Admin, Org Owner, or **Team Owner** |
-| View Team packages | Logged-in user |
+| 操作 | 所需权限 |
+|------|---------|
+| 创建 / 删除 Org | Admin |
+| 查看 Org 信息 | 登录用户 |
+| 添加 / 移除 Org 成员 | Admin 或 Org Owner |
+| 查看 Org 成员 | 登录用户 |
+| 创建 Team | Admin 或 Org Owner（allowScopes: 任意登录用户） |
+| 删除 Team | Admin、Org Owner 或 **Team Owner** |
+| 查看 Team / Team 信息 / Team 成员 | 登录用户 |
+| 添加 / 移除 Team 成员 | Admin、Org Owner 或 **Team Owner** |
+| 授权 / 撤销包访问 | Admin、Org Owner 或 **Team Owner** |
+| 查看 Team 包列表 | 登录用户 |
 
-> **Team Owner** is a new role. When a team is created, the creator is automatically added as the team owner. Team owners can manage their own team without needing org-level owner permissions.
+> **Team Owner** 是 cnpmcore 的扩展角色。创建 Team 时，创建者自动成为 Team Owner。Team Owner 可以管理自己的团队，无需 Org 级别的 Owner 权限。
 
 ## 私有包读取鉴权
 
@@ -382,33 +390,33 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 - self scope 包的响应头设为 `Cache-Control: private, no-store`，不会被 CDN 缓存
 - 非 self scope 包保持原有 CDN 缓存策略不变
 
-## API Endpoints
+## API 接口列表
 
-### npm CLI Compatible
+### npm CLI 兼容
 
-| Method | Path | Description |
-|--------|------|-------------|
-| PUT | `/-/org` | Create org |
-| GET | `/-/org/:orgName` | View org |
-| DELETE | `/-/org/:orgName` | Delete org |
-| GET | `/-/org/:orgName/member` | List org members |
-| PUT | `/-/org/:orgName/member` | Add org member |
-| DELETE | `/-/org/:orgName/member/:username` | Remove org member |
-| PUT | `/-/org/:orgName/team` | Create team |
-| GET | `/-/org/:orgName/team` | List teams |
-| GET | `/-/team/:orgName/:teamName` | View team |
-| DELETE | `/-/team/:orgName/:teamName` | Delete team |
-| GET | `/-/team/:orgName/:teamName/user` | List team members (string array) |
-| PUT | `/-/team/:orgName/:teamName/user` | Add team member |
-| DELETE | `/-/team/:orgName/:teamName/user` | Remove team member |
-| GET | `/-/team/:orgName/:teamName/package` | List team packages |
-| PUT | `/-/team/:orgName/:teamName/package` | Grant package access |
-| DELETE | `/-/team/:orgName/:teamName/package` | Revoke package access |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| PUT | `/-/org` | 创建 Org |
+| GET | `/-/org/:orgName` | 查看 Org |
+| DELETE | `/-/org/:orgName` | 删除 Org |
+| GET | `/-/org/:orgName/member` | 查看 Org 成员 |
+| PUT | `/-/org/:orgName/member` | 添加 Org 成员 |
+| DELETE | `/-/org/:orgName/member/:username` | 移除 Org 成员 |
+| PUT | `/-/org/:orgName/team` | 创建 Team |
+| GET | `/-/org/:orgName/team` | 查看 Team 列表 |
+| GET | `/-/team/:orgName/:teamName` | 查看 Team 信息 |
+| DELETE | `/-/team/:orgName/:teamName` | 删除 Team |
+| GET | `/-/team/:orgName/:teamName/user` | 查看 Team 成员（字符串数组） |
+| PUT | `/-/team/:orgName/:teamName/user` | 添加 Team 成员 |
+| DELETE | `/-/team/:orgName/:teamName/user` | 移除 Team 成员 |
+| GET | `/-/team/:orgName/:teamName/package` | 查看 Team 包列表 |
+| PUT | `/-/team/:orgName/:teamName/package` | 授权包访问 |
+| DELETE | `/-/team/:orgName/:teamName/package` | 撤销包访问 |
 
-### Private (cnpmcore extensions)
+### 私有接口（cnpmcore 扩展）
 
-| Method | Path | Description | Notes |
-|--------|------|-------------|-------|
-| GET | `/-/team/:orgName/:teamName/member` | List team members with role | Returns `[{user, role}]` |
-| PATCH | `/-/team/:orgName/:teamName/member/:username` | Update team member role | Body `{role: "owner"\|"member"}` |
-| GET | `/-/org/:orgName/member/:username/team` | List user's teams in org | Returns `[{name, description, role}]` |
+| 方法 | 路径 | 说明 | 备注 |
+|------|------|------|------|
+| GET | `/-/team/:orgName/:teamName/member` | 查看 Team 成员（含角色） | 返回 `[{user, role}]` |
+| PATCH | `/-/team/:orgName/:teamName/member/:username` | 修改 Team 成员角色 | Body `{role: "owner"\|"member"}` |
+| GET | `/-/org/:orgName/member/:username/team` | 查看用户在 Org 中所属的 Team | 返回 `[{name, description, role}]` |
