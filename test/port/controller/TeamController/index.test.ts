@@ -588,6 +588,14 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .send({ user: normalUser.name })
         .expect(404);
     });
+
+    it('should 404 when org not found for write operation', async () => {
+      await app.httpRequest()
+        .put('/-/team/nonexistent-org/some-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(404);
+    });
   });
 
   // ==================== removeTeamMember ====================
