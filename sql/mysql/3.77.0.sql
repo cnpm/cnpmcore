@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `team_members` (
   `team_member_id` varchar(24) NOT NULL COMMENT 'team member id',
   `team_id` varchar(24) NOT NULL COMMENT 'team id',
   `user_id` varchar(24) NOT NULL COMMENT 'user id',
-  `role` varchar(20) NOT NULL DEFAULT 'member' COMMENT 'member role: owner or member',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_team_member_id` (`team_member_id`),
   UNIQUE KEY `uk_team_id_user_id` (`team_id`, `user_id`),
