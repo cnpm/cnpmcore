@@ -19,6 +19,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
       .expect(200);
   });
 
+  // ==================== createTeam ====================
   describe('[PUT /-/org/:orgName/team] createTeam()', () => {
     it('should 200 when admin creates team', async () => {
       const res = await app.httpRequest()
@@ -36,7 +37,6 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .send({ name: 'owned-team' })
         .expect(200);
 
-      // Verify via private API
       const res = await app.httpRequest()
         .get('/-/team/teamorg/owned-team/member')
         .set('authorization', adminUser.authorization)
@@ -45,8 +45,14 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
       assert(res.body.some((m: any) => m.user === adminUser.displayName && m.role === 'owner'));
     });
 
-    it('should 403 when non-owner creates team', async () => {
-      // Add normalUser as member (not owner)
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .send({ name: 'no-auth-team' })
+        .expect(401);
+    });
+
+    it('should 403 when non-owner creates team in non-allowScopes org', async () => {
       await app.httpRequest()
         .put('/-/org/teamorg/member')
         .set('authorization', adminUser.authorization)
@@ -58,6 +64,22 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .send({ name: 'backend' })
         .expect(403);
+    });
+
+    it('should allow org owner to create team', async () => {
+      const ownerUser = await TestUtil.createUser({ name: 'org-owner-user' });
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: ownerUser.name, role: 'owner' })
+        .expect(200);
+
+      const res = await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', ownerUser.authorization)
+        .send({ name: 'owner-created-team' })
+        .expect(200);
+      assert(res.body.ok);
     });
 
     it('should 422 when name is missing', async () => {
@@ -80,8 +102,17 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .send({ name: 'dup-team' })
         .expect(403);
     });
+
+    it('should 404 when non-allowScopes org not found', async () => {
+      await app.httpRequest()
+        .put('/-/org/nonexistent-org/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'some-team' })
+        .expect(404);
+    });
   });
 
+  // ==================== listTeams ====================
   describe('[GET /-/org/:orgName/team] listTeams()', () => {
     it('should list teams including developers', async () => {
       const res = await app.httpRequest()
@@ -91,16 +122,64 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
       assert(Array.isArray(res.body));
       assert(res.body.includes('teamorg:developers'));
     });
-  });
 
-  // npm compatible routes: /-/team/:scope/:team
-  describe('[GET /-/team/:orgName/:teamName] showTeam()', () => {
-    it('should 200', async () => {
+    it('should list multiple teams', async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'frontend' })
+        .expect(200);
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'backend' })
+        .expect(200);
+
       const res = await app.httpRequest()
-        .get('/-/team/teamorg/developers')
+        .get('/-/org/teamorg/team')
         .set('authorization', normalUser.authorization)
         .expect(200);
-      assert.equal(res.body.name, 'developers');
+      assert(res.body.includes('teamorg:developers'));
+      assert(res.body.includes('teamorg:frontend'));
+      assert(res.body.includes('teamorg:backend'));
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .get('/-/org/teamorg/team')
+        .expect(401);
+    });
+
+    it('should 404 when non-allowScopes org not found', async () => {
+      await app.httpRequest()
+        .get('/-/org/nonexistent-org/team')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
+  });
+
+  // ==================== showTeam ====================
+  describe('[GET /-/team/:orgName/:teamName] showTeam()', () => {
+    it('should 200 and return team info', async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'show-team', description: 'A test team' })
+        .expect(200);
+
+      const res = await app.httpRequest()
+        .get('/-/team/teamorg/show-team')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert.equal(res.body.name, 'show-team');
+      assert.equal(res.body.description, 'A test team');
+      assert(res.body.created);
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/developers')
+        .expect(401);
     });
 
     it('should 404 when team not found', async () => {
@@ -109,10 +188,18 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .expect(404);
     });
+
+    it('should 404 when org not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/nonexistent-org/some-team')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
   });
 
+  // ==================== removeTeam ====================
   describe('[DELETE /-/team/:orgName/:teamName] removeTeam()', () => {
-    it('should 200 for custom team', async () => {
+    it('should 200 for custom team by admin', async () => {
       await app.httpRequest()
         .put('/-/org/teamorg/team')
         .set('authorization', adminUser.authorization)
@@ -124,6 +211,27 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', adminUser.authorization)
         .expect(200);
       assert(res.body.ok);
+
+      // Verify team is gone
+      await app.httpRequest()
+        .get('/-/team/teamorg/to-delete')
+        .set('authorization', adminUser.authorization)
+        .expect(404);
+    });
+
+    it('should allow team owner to delete own team', async () => {
+      // Create team in allowScopes org — normalUser becomes owner
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'owner-delete-team' })
+        .expect(200);
+
+      const res = await app.httpRequest()
+        .delete('/-/team/cnpm/owner-delete-team')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(res.body.ok);
     });
 
     it('should 403 when deleting developers team', async () => {
@@ -132,18 +240,253 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', adminUser.authorization)
         .expect(403);
     });
+
+    it('should 403 when non-owner tries to delete', async () => {
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'protected-team' })
+        .expect(200);
+
+      const anotherUser = await TestUtil.createUser({ name: 'delete-attacker' });
+      await app.httpRequest()
+        .delete('/-/team/cnpm/protected-team')
+        .set('authorization', anotherUser.authorization)
+        .expect(403);
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/developers')
+        .expect(401);
+    });
+
+    it('should 404 when team not found', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/nonexistent')
+        .set('authorization', adminUser.authorization)
+        .expect(404);
+    });
   });
 
-  describe('team member management (/-/team/:scope/:team/user)', () => {
+  // ==================== listTeamMembers (npm compatible) ====================
+  describe('[GET /-/team/:orgName/:teamName/user] listTeamMembers()', () => {
+    it('should return string array (npm compatible)', async () => {
+      const res = await app.httpRequest()
+        .get('/-/team/teamorg/developers/user')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(Array.isArray(res.body));
+      // admin is auto-added to developers on org creation
+      assert(res.body.includes(adminUser.displayName));
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/developers/user')
+        .expect(401);
+    });
+
+    it('should 404 when team not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/nonexistent/user')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
+
+    it('should 404 when org not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/nonexistent-org/some-team/user')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
+  });
+
+  // ==================== listTeamMembersWithRole (private) ====================
+  describe('[GET /-/team/:orgName/:teamName/member] listTeamMembersWithRole()', () => {
+    it('should return [{user, role}]', async () => {
+      const res = await app.httpRequest()
+        .get('/-/team/teamorg/developers/member')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(Array.isArray(res.body));
+      assert(res.body.some((m: any) => m.user === adminUser.displayName && m.role === 'owner'));
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/developers/member')
+        .expect(401);
+    });
+
+    it('should 404 when team not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/nonexistent/member')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
+
+    it('should 404 when org not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/nonexistent-org/some-team/member')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
+  });
+
+  // ==================== updateTeamMemberRole (PATCH) ====================
+  describe('[PATCH /-/team/:orgName/:teamName/member/:username] updateTeamMemberRole()', () => {
     beforeEach(async () => {
-      // Create a custom team (admin is auto-added as owner)
       await app.httpRequest()
         .put('/-/org/teamorg/team')
         .set('authorization', adminUser.authorization)
-        .send({ name: 'coreteam' })
+        .send({ name: 'role-team' })
         .expect(200);
 
-      // Add normalUser to org first
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name, role: 'member' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/teamorg/role-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+    });
+
+    it('should promote member to owner', async () => {
+      const res = await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+      assert(res.body.ok);
+
+      const members = await app.httpRequest()
+        .get('/-/team/teamorg/role-team/member')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(members.body.some((m: any) => m.user === normalUser.displayName && m.role === 'owner'));
+    });
+
+    it('should demote owner to member', async () => {
+      // Promote first
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+
+      // Demote
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'member' })
+        .expect(200);
+
+      const members = await app.httpRequest()
+        .get('/-/team/teamorg/role-team/member')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(members.body.some((m: any) => m.user === normalUser.displayName && m.role === 'member'));
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .send({ role: 'owner' })
+        .expect(401);
+    });
+
+    it('should 403 when non-owner tries to update role', async () => {
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', normalUser.authorization)
+        .send({ role: 'owner' })
+        .expect(403);
+    });
+
+    it('should 422 when role is missing', async () => {
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({})
+        .expect(422);
+    });
+
+    it('should 422 when role is invalid', async () => {
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'admin' })
+        .expect(422);
+    });
+
+    it('should 404 when user not found', async () => {
+      await app.httpRequest()
+        .patch('/-/team/teamorg/role-team/member/ghost-user')
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(404);
+    });
+
+    it('should 404 when user is not a team member', async () => {
+      const outsider = await TestUtil.createUser({ name: 'outsider-user' });
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${outsider.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(404);
+    });
+
+    it('should 404 when team not found', async () => {
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/nonexistent/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(404);
+    });
+
+    it('should allow team owner to update role', async () => {
+      // Promote normalUser to owner
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+
+      // normalUser (now team owner) can update others
+      const anotherUser = await TestUtil.createUser({ name: 'role-target' });
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: anotherUser.name, role: 'member' })
+        .expect(200);
+      await app.httpRequest()
+        .put('/-/team/teamorg/role-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/role-team/member/${anotherUser.name}`)
+        .set('authorization', normalUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+    });
+  });
+
+  // ==================== addTeamMember ====================
+  describe('[PUT /-/team/:orgName/:teamName/user] addTeamMember()', () => {
+    beforeEach(async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'add-team' })
+        .expect(200);
+
       await app.httpRequest()
         .put('/-/org/teamorg/member')
         .set('authorization', adminUser.authorization)
@@ -151,133 +494,64 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(200);
     });
 
-    it('should add and list team members (npm compatible, string array)', async () => {
-      // Add to team via npm compatible route
+    it('should add member and verify in list', async () => {
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
+        .put('/-/team/teamorg/add-team/user')
         .set('authorization', adminUser.authorization)
         .send({ user: normalUser.name })
         .expect(200);
 
-      // npm compatible: returns string array
       const res = await app.httpRequest()
-        .get('/-/team/teamorg/coreteam/user')
+        .get('/-/team/teamorg/add-team/user')
         .set('authorization', normalUser.authorization)
         .expect(200);
-      assert(Array.isArray(res.body));
-      assert(res.body.includes(adminUser.displayName));
       assert(res.body.includes(normalUser.displayName));
     });
 
-    it('should list team members with role via private API', async () => {
+    it('should add member as member role by default', async () => {
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
+        .put('/-/team/teamorg/add-team/user')
         .set('authorization', adminUser.authorization)
         .send({ user: normalUser.name })
         .expect(200);
 
-      // Private API: returns [{user, role}]
       const res = await app.httpRequest()
-        .get('/-/team/teamorg/coreteam/member')
+        .get('/-/team/teamorg/add-team/member')
         .set('authorization', normalUser.authorization)
         .expect(200);
-      assert(Array.isArray(res.body));
-      assert(res.body.some((m: any) => m.user === adminUser.displayName && m.role === 'owner'));
       assert(res.body.some((m: any) => m.user === normalUser.displayName && m.role === 'member'));
     });
 
-    it('should update team member role via private API', async () => {
-      // Add normalUser as member
+    it('should be idempotent when adding same user twice', async () => {
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
+        .put('/-/team/teamorg/add-team/user')
         .set('authorization', adminUser.authorization)
         .send({ user: normalUser.name })
         .expect(200);
 
-      // Promote to owner
+      await app.httpRequest()
+        .put('/-/team/teamorg/add-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+
       const res = await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', adminUser.authorization)
-        .send({ role: 'owner' })
-        .expect(200);
-      assert(res.body.ok);
-
-      // Verify role changed
-      const members = await app.httpRequest()
-        .get('/-/team/teamorg/coreteam/member')
+        .get('/-/team/teamorg/add-team/user')
         .set('authorization', normalUser.authorization)
         .expect(200);
-      assert(members.body.some((m: any) => m.user === normalUser.displayName && m.role === 'owner'));
+      // Should appear only once
+      assert.equal(res.body.filter((u: string) => u === normalUser.displayName).length, 1);
     });
 
-    it('should demote team member from owner to member', async () => {
-      // Add as member first
+    it('should 401 without authorization', async () => {
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
-        .set('authorization', adminUser.authorization)
+        .put('/-/team/teamorg/add-team/user')
         .send({ user: normalUser.name })
-        .expect(200);
-
-      // Promote to owner
-      await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', adminUser.authorization)
-        .send({ role: 'owner' })
-        .expect(200);
-
-      // Demote back to member
-      await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', adminUser.authorization)
-        .send({ role: 'member' })
-        .expect(200);
-
-      const members = await app.httpRequest()
-        .get('/-/team/teamorg/coreteam/member')
-        .set('authorization', normalUser.authorization)
-        .expect(200);
-      assert(members.body.some((m: any) => m.user === normalUser.displayName && m.role === 'member'));
-    });
-
-    it('should 422 when role is invalid for update', async () => {
-      await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
-        .set('authorization', adminUser.authorization)
-        .send({ user: normalUser.name })
-        .expect(200);
-
-      await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', adminUser.authorization)
-        .send({ role: 'admin' })
-        .expect(422);
-    });
-
-    it('should 404 when updating role of non-member', async () => {
-      await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', adminUser.authorization)
-        .send({ role: 'owner' })
-        .expect(404);
-    });
-
-    it('should 403 when non-owner tries to update role', async () => {
-      await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
-        .set('authorization', adminUser.authorization)
-        .send({ user: normalUser.name })
-        .expect(200);
-
-      await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', normalUser.authorization)
-        .send({ role: 'owner' })
-        .expect(403);
+        .expect(401);
     });
 
     it('should 403 when non-owner tries to add member', async () => {
-      // normalUser is org member but not team owner
-      const anotherUser = await TestUtil.createUser({ name: 'another-user' });
+      const anotherUser = await TestUtil.createUser({ name: 'add-attacker' });
       await app.httpRequest()
         .put('/-/org/teamorg/member')
         .set('authorization', adminUser.authorization)
@@ -285,64 +559,15 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(200);
 
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
+        .put('/-/team/teamorg/add-team/user')
         .set('authorization', normalUser.authorization)
         .send({ user: anotherUser.name })
         .expect(403);
-    });
-
-    it('should allow team owner to manage members', async () => {
-      // Add normalUser then promote to team owner via PATCH
-      await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
-        .set('authorization', adminUser.authorization)
-        .send({ user: normalUser.name })
-        .expect(200);
-      await app.httpRequest()
-        .patch(`/-/team/teamorg/coreteam/member/${normalUser.name}`)
-        .set('authorization', adminUser.authorization)
-        .send({ role: 'owner' })
-        .expect(200);
-
-      // Now normalUser (team owner) can add another member
-      const anotherUser = await TestUtil.createUser({ name: 'managed-user' });
-      await app.httpRequest()
-        .put('/-/org/teamorg/member')
-        .set('authorization', adminUser.authorization)
-        .send({ user: anotherUser.name, role: 'member' })
-        .expect(200);
-
-      await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
-        .set('authorization', normalUser.authorization)
-        .send({ user: anotherUser.name })
-        .expect(200);
-    });
-
-    it('should remove team member via body', async () => {
-      await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
-        .set('authorization', adminUser.authorization)
-        .send({ user: normalUser.name })
-        .expect(200);
-
-      // npm rm sends DELETE with body {user}
-      await app.httpRequest()
-        .delete('/-/team/teamorg/coreteam/user')
-        .set('authorization', adminUser.authorization)
-        .send({ user: normalUser.name })
-        .expect(200);
-
-      const res = await app.httpRequest()
-        .get('/-/team/teamorg/coreteam/user')
-        .set('authorization', normalUser.authorization)
-        .expect(200);
-      assert(!res.body.includes(normalUser.displayName));
     });
 
     it('should 422 when user is missing', async () => {
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
+        .put('/-/team/teamorg/add-team/user')
         .set('authorization', adminUser.authorization)
         .send({})
         .expect(422);
@@ -350,13 +575,98 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
     it('should 404 when target user not found', async () => {
       await app.httpRequest()
-        .put('/-/team/teamorg/coreteam/user')
+        .put('/-/team/teamorg/add-team/user')
         .set('authorization', adminUser.authorization)
         .send({ user: 'ghost-user' })
         .expect(404);
     });
+
+    it('should 404 when team not found', async () => {
+      await app.httpRequest()
+        .put('/-/team/teamorg/nonexistent/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(404);
+    });
   });
 
+  // ==================== removeTeamMember ====================
+  describe('[DELETE /-/team/:orgName/:teamName/user] removeTeamMember()', () => {
+    beforeEach(async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'rm-team' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name, role: 'member' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/teamorg/rm-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+    });
+
+    it('should remove team member', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/rm-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+
+      const res = await app.httpRequest()
+        .get('/-/team/teamorg/rm-team/user')
+        .set('authorization', adminUser.authorization)
+        .expect(200);
+      assert(!res.body.includes(normalUser.displayName));
+    });
+
+    it('should 401 without authorization', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/rm-team/user')
+        .send({ user: normalUser.name })
+        .expect(401);
+    });
+
+    it('should 403 when non-owner tries to remove member', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/rm-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(403);
+    });
+
+    it('should 422 when user is missing', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/rm-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({})
+        .expect(422);
+    });
+
+    it('should 404 when target user not found', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/rm-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: 'ghost-user' })
+        .expect(404);
+    });
+
+    it('should 404 when team not found', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/nonexistent/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(404);
+    });
+  });
+
+  // ==================== team package management ====================
   describe('team package management (/-/team/:scope/:team/package)', () => {
     it('should list empty packages initially', async () => {
       const res = await app.httpRequest()
@@ -364,6 +674,26 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .expect(200);
       assert.deepEqual(res.body, {});
+    });
+
+    it('should 401 list packages without authorization', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/developers/package')
+        .expect(401);
+    });
+
+    it('should 404 list packages when team not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/teamorg/nonexistent/package')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
+    });
+
+    it('should 404 list packages when org not found', async () => {
+      await app.httpRequest()
+        .get('/-/team/nonexistent-org/some-team/package')
+        .set('authorization', normalUser.authorization)
+        .expect(404);
     });
 
     it('should 422 when package name is missing for grant', async () => {
@@ -382,6 +712,14 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(404);
     });
 
+    it('should 422 when package name is missing for revoke', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/developers/package')
+        .set('authorization', adminUser.authorization)
+        .send({})
+        .expect(422);
+    });
+
     it('should 404 when package not found for revoke', async () => {
       await app.httpRequest()
         .delete('/-/team/teamorg/developers/package')
@@ -389,10 +727,121 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .send({ package: '@cnpm/nonexistent-pkg' })
         .expect(404);
     });
+
+    it('should 403 when non-owner tries to grant', async () => {
+      await app.httpRequest()
+        .put('/-/team/teamorg/developers/package')
+        .set('authorization', normalUser.authorization)
+        .send({ package: '@cnpm/foo' })
+        .expect(403);
+    });
+
+    it('should 403 when non-owner tries to revoke', async () => {
+      await app.httpRequest()
+        .delete('/-/team/teamorg/developers/package')
+        .set('authorization', normalUser.authorization)
+        .send({ package: '@cnpm/foo' })
+        .expect(403);
+    });
   });
 
-  // @cnpm is in allowScopes — any authenticated user can manage teams
-  describe('allowScopes org: authenticated user can manage teams', () => {
+  // ==================== requireTeamWriteAccess permission paths ====================
+  describe('requireTeamWriteAccess permission paths', () => {
+    beforeEach(async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'perm-team' })
+        .expect(200);
+    });
+
+    it('should allow admin to write', async () => {
+      const anotherUser = await TestUtil.createUser({ name: 'perm-user-1' });
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: anotherUser.name, role: 'member' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/teamorg/perm-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+    });
+
+    it('should allow org owner (non-admin) to write', async () => {
+      const orgOwner = await TestUtil.createUser({ name: 'perm-org-owner' });
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: orgOwner.name, role: 'owner' })
+        .expect(200);
+
+      const targetUser = await TestUtil.createUser({ name: 'perm-target-1' });
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: targetUser.name, role: 'member' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/teamorg/perm-team/user')
+        .set('authorization', orgOwner.authorization)
+        .send({ user: targetUser.name })
+        .expect(200);
+    });
+
+    it('should allow team owner to write', async () => {
+      // Add normalUser to org and team, promote to team owner
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name, role: 'member' })
+        .expect(200);
+      await app.httpRequest()
+        .put('/-/team/teamorg/perm-team/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(200);
+      await app.httpRequest()
+        .patch(`/-/team/teamorg/perm-team/member/${normalUser.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+
+      const targetUser = await TestUtil.createUser({ name: 'perm-target-2' });
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: targetUser.name, role: 'member' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/teamorg/perm-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: targetUser.name })
+        .expect(200);
+    });
+
+    it('should reject org member (non-owner, non-team-owner)', async () => {
+      await app.httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: normalUser.name, role: 'member' })
+        .expect(200);
+
+      const targetUser = await TestUtil.createUser({ name: 'perm-target-3' });
+      await app.httpRequest()
+        .put('/-/team/teamorg/perm-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: targetUser.name })
+        .expect(403);
+    });
+  });
+
+  // ==================== allowScopes org ====================
+  describe('allowScopes org: team management', () => {
     it('should auto-create org and let normal user create team', async () => {
       const res = await app.httpRequest()
         .put('/-/org/cnpm/team')
@@ -401,23 +850,20 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(200);
       assert(res.body.ok);
 
-      // Verify org was auto-created
       const orgRepository = await app.getEggObject(OrgRepository);
       const org = await orgRepository.findOrgByName('cnpm');
       assert(org);
     });
 
-    it('should let team owner add member for allowScopes org', async () => {
+    it('should let team owner add member', async () => {
       const anotherUser = await TestUtil.createUser({ name: 'team-member-user' });
 
-      // Create team (normalUser becomes owner)
       await app.httpRequest()
         .put('/-/org/cnpm/team')
         .set('authorization', normalUser.authorization)
         .send({ name: 'dev-team' })
         .expect(200);
 
-      // Owner can add member
       const res = await app.httpRequest()
         .put('/-/team/cnpm/dev-team/user')
         .set('authorization', normalUser.authorization)
@@ -426,17 +872,15 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
       assert(res.body.ok);
     });
 
-    it('should 403 when non-owner tries to modify team in allowScopes org', async () => {
+    it('should 403 when non-owner tries to modify team', async () => {
       const anotherUser = await TestUtil.createUser({ name: 'non-owner-user' });
 
-      // normalUser creates team (becomes owner)
       await app.httpRequest()
         .put('/-/org/cnpm/team')
         .set('authorization', normalUser.authorization)
         .send({ name: 'restricted-team' })
         .expect(200);
 
-      // anotherUser is not team owner, should be forbidden
       await app.httpRequest()
         .put('/-/team/cnpm/restricted-team/user')
         .set('authorization', anotherUser.authorization)
@@ -444,7 +888,7 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(403);
     });
 
-    it('should let normal user list teams for allowScopes org', async () => {
+    it('should let normal user list teams', async () => {
       await app.httpRequest()
         .put('/-/org/cnpm/team')
         .set('authorization', normalUser.authorization)
@@ -458,6 +902,83 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
       assert(Array.isArray(res.body));
       assert(res.body.includes('cnpm:list-test-team'));
     });
-  });
 
+    it('should let team owner update member role in allowScopes org', async () => {
+      const anotherUser = await TestUtil.createUser({ name: 'allow-role-user' });
+
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'allow-role-team' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/cnpm/allow-role-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+
+      await app.httpRequest()
+        .patch(`/-/team/cnpm/allow-role-team/member/${anotherUser.name}`)
+        .set('authorization', normalUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+
+      const members = await app.httpRequest()
+        .get('/-/team/cnpm/allow-role-team/member')
+        .set('authorization', anotherUser.authorization)
+        .expect(200);
+      assert(members.body.some((m: any) => m.user === anotherUser.displayName && m.role === 'owner'));
+    });
+
+    it('should let team owner remove member in allowScopes org', async () => {
+      const anotherUser = await TestUtil.createUser({ name: 'allow-rm-user' });
+
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'allow-rm-team' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/cnpm/allow-rm-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+
+      await app.httpRequest()
+        .delete('/-/team/cnpm/allow-rm-team/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+
+      const res = await app.httpRequest()
+        .get('/-/team/cnpm/allow-rm-team/user')
+        .set('authorization', normalUser.authorization)
+        .expect(200);
+      assert(!res.body.includes(anotherUser.displayName));
+    });
+
+    it('should 403 non-owner remove member in allowScopes org', async () => {
+      const anotherUser = await TestUtil.createUser({ name: 'allow-rm-attacker' });
+
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'allow-rm-prot' })
+        .expect(200);
+
+      await app.httpRequest()
+        .put('/-/team/cnpm/allow-rm-prot/user')
+        .set('authorization', normalUser.authorization)
+        .send({ user: anotherUser.name })
+        .expect(200);
+
+      await app.httpRequest()
+        .delete('/-/team/cnpm/allow-rm-prot/user')
+        .set('authorization', anotherUser.authorization)
+        .send({ user: normalUser.name })
+        .expect(403);
+    });
+  });
 });
