@@ -4,22 +4,22 @@ cnpmcore supports an Organization -> Team -> Package permission model for managi
 
 ## Concepts
 
-| Concept | Description |
-|---------|-------------|
-| **Org** | Organization, corresponds to a scope (e.g., org `mycompany` -> `@mycompany`) |
-| **OrgMember** | Org member with role `owner` (can manage) or `member` |
-| **Team** | Permission unit. Each Org auto-creates a `developers` default team |
-| **TeamMember** | Team member with role `owner` (can manage team) or `member` |
-| **TeamPackage** | Team's read access grant to a package |
+| Concept         | Description                                                                  |
+| --------------- | ---------------------------------------------------------------------------- |
+| **Org**         | Organization, corresponds to a scope (e.g., org `mycompany` -> `@mycompany`) |
+| **OrgMember**   | Org member with role `owner` (can manage) or `member`                        |
+| **Team**        | Permission unit. Each Org auto-creates a `developers` default team           |
+| **TeamMember**  | Team member with role `owner` (can manage team) or `member`                  |
+| **TeamPackage** | Team's read access grant to a package                                        |
 
 ## Protocol Compatibility
 
 cnpmcore implements both **npm CLI compatible** endpoints and **private (extended)** endpoints.
 
-| Label | Meaning |
-|-------|---------|
-| **npm compatible** | Follows the npm registry API contract. Request/response format is compatible with `npm` CLI. |
-| **Private** | cnpmcore extension. Not part of the npm registry API. Uses custom routes or adds extra fields (e.g., `role`). |
+| Label              | Meaning                                                                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| **npm compatible** | Follows the npm registry API contract. Request/response format is compatible with `npm` CLI.                  |
+| **Private**        | cnpmcore extension. Not part of the npm registry API. Uses custom routes or adds extra fields (e.g., `role`). |
 
 > **Rule**: npm compatible endpoints never change their response format. Extended fields (like `role`) are only available via private endpoints.
 
@@ -284,18 +284,18 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
 
 ## Permission Summary
 
-| Operation | Required Permission |
-|-----------|-------------------|
-| Create / Delete Org | Admin |
-| View Org info | Logged-in user |
-| Add / Remove Org member | Admin or Org Owner |
-| View Org members | Logged-in user |
-| Create Team | Admin or Org Owner (allowScopes: any logged-in user) |
-| Delete Team | Admin, Org Owner, or **Team Owner** |
-| View Teams / Team info / Team members | Logged-in user |
-| Add / Remove Team member | Admin, Org Owner, or **Team Owner** |
-| Grant / Revoke package access | Admin, Org Owner, or **Team Owner** |
-| View Team packages | Logged-in user |
+| Operation                             | Required Permission                                  |
+| ------------------------------------- | ---------------------------------------------------- |
+| Create / Delete Org                   | Admin                                                |
+| View Org info                         | Logged-in user                                       |
+| Add / Remove Org member               | Admin or Org Owner                                   |
+| View Org members                      | Logged-in user                                       |
+| Create Team                           | Admin or Org Owner (allowScopes: any logged-in user) |
+| Delete Team                           | Admin, Org Owner, or **Team Owner**                  |
+| View Teams / Team info / Team members | Logged-in user                                       |
+| Add / Remove Team member              | Admin, Org Owner, or **Team Owner**                  |
+| Grant / Revoke package access         | Admin, Org Owner, or **Team Owner**                  |
+| View Team packages                    | Logged-in user                                       |
 
 > **Team Owner** is a cnpmcore extension role. When a team is created, the creator is automatically added as the team owner. Team owners can manage their own team without needing org-level owner permissions.
 
@@ -394,29 +394,29 @@ npm access grant read-only @mycompany:frontend @mycompany/secret-lib \
 
 ### npm CLI Compatible
 
-| Method | Path | Description |
-|--------|------|-------------|
-| PUT | `/-/org` | Create org |
-| GET | `/-/org/:orgName` | View org |
-| DELETE | `/-/org/:orgName` | Delete org |
-| GET | `/-/org/:orgName/member` | List org members |
-| PUT | `/-/org/:orgName/member` | Add org member |
-| DELETE | `/-/org/:orgName/member/:username` | Remove org member |
-| PUT | `/-/org/:orgName/team` | Create team |
-| GET | `/-/org/:orgName/team` | List teams |
-| GET | `/-/team/:orgName/:teamName` | View team |
-| DELETE | `/-/team/:orgName/:teamName` | Delete team |
-| GET | `/-/team/:orgName/:teamName/user` | List team members (string array) |
-| PUT | `/-/team/:orgName/:teamName/user` | Add team member |
-| DELETE | `/-/team/:orgName/:teamName/user` | Remove team member |
-| GET | `/-/team/:orgName/:teamName/package` | List team packages |
-| PUT | `/-/team/:orgName/:teamName/package` | Grant package access |
-| DELETE | `/-/team/:orgName/:teamName/package` | Revoke package access |
+| Method | Path                                 | Description                      |
+| ------ | ------------------------------------ | -------------------------------- |
+| PUT    | `/-/org`                             | Create org                       |
+| GET    | `/-/org/:orgName`                    | View org                         |
+| DELETE | `/-/org/:orgName`                    | Delete org                       |
+| GET    | `/-/org/:orgName/member`             | List org members                 |
+| PUT    | `/-/org/:orgName/member`             | Add org member                   |
+| DELETE | `/-/org/:orgName/member/:username`   | Remove org member                |
+| PUT    | `/-/org/:orgName/team`               | Create team                      |
+| GET    | `/-/org/:orgName/team`               | List teams                       |
+| GET    | `/-/team/:orgName/:teamName`         | View team                        |
+| DELETE | `/-/team/:orgName/:teamName`         | Delete team                      |
+| GET    | `/-/team/:orgName/:teamName/user`    | List team members (string array) |
+| PUT    | `/-/team/:orgName/:teamName/user`    | Add team member                  |
+| DELETE | `/-/team/:orgName/:teamName/user`    | Remove team member               |
+| GET    | `/-/team/:orgName/:teamName/package` | List team packages               |
+| PUT    | `/-/team/:orgName/:teamName/package` | Grant package access             |
+| DELETE | `/-/team/:orgName/:teamName/package` | Revoke package access            |
 
 ### Private (cnpmcore extensions)
 
-| Method | Path | Description | Notes |
-|--------|------|-------------|-------|
-| GET | `/-/team/:orgName/:teamName/member` | List team members with role | Returns `[{user, role}]` |
-| PATCH | `/-/team/:orgName/:teamName/member/:username` | Update team member role | Body `{role: "owner"\|"member"}` |
-| GET | `/-/org/:orgName/member/:username/team` | List user's teams in org | Returns `[{name, description, role}]` |
+| Method | Path                                          | Description                 | Notes                                 |
+| ------ | --------------------------------------------- | --------------------------- | ------------------------------------- |
+| GET    | `/-/team/:orgName/:teamName/member`           | List team members with role | Returns `[{user, role}]`              |
+| PATCH  | `/-/team/:orgName/:teamName/member/:username` | Update team member role     | Body `{role: "owner"\|"member"}`      |
+| GET    | `/-/org/:orgName/member/:username/team`       | List user's teams in org    | Returns `[{name, description, role}]` |

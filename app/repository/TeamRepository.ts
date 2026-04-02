@@ -74,7 +74,7 @@ export class TeamRepository extends AbstractRepository {
     const orgTeamIds = orgTeams.map((t) => t.teamId);
     const memberModels = await this.TeamMember.find({ userId, teamId: { $in: orgTeamIds } });
     if (memberModels.length === 0) return [];
-    const memberRoleMap = new Map(memberModels.map(m => [ m.teamId, m.role || 'member' ]));
+    const memberRoleMap = new Map(memberModels.map((m) => [m.teamId, m.role || 'member']));
     return orgTeams
       .filter((t) => memberRoleMap.has(t.teamId))
       .map((model) => ({

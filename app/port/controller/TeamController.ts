@@ -193,8 +193,11 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/member',
     method: HTTPMethodEnum.GET,
   })
-  async listTeamMembersWithRole(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string) {
+  async listTeamMembersWithRole(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string,
+  ) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
     if (!org) {
@@ -205,9 +208,9 @@ export class TeamController extends AbstractController {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
     const members = await this.teamService.listMembers(team.teamId);
-    const users = await this.userRepository.findUsersByUserIds(members.map(m => m.userId));
-    const userMap = new Map(users.map(u => [ u.userId, u ]));
-    return members.map(m => ({
+    const users = await this.userRepository.findUsersByUserIds(members.map((m) => m.userId));
+    const userMap = new Map(users.map((u) => [u.userId, u]));
+    return members.map((m) => ({
       user: userMap.get(m.userId)?.displayName ?? '',
       role: m.role,
     }));
@@ -219,9 +222,13 @@ export class TeamController extends AbstractController {
     path: '/-/team/:orgName/:teamName/member/:username',
     method: HTTPMethodEnum.PATCH,
   })
-  async updateTeamMemberRole(@HTTPContext() ctx: Context, @HTTPParam() orgName: string,
-    @HTTPParam() teamName: string, @HTTPParam() username: string,
-    @HTTPBody() body: { role: string }) {
+  async updateTeamMemberRole(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() orgName: string,
+    @HTTPParam() teamName: string,
+    @HTTPParam() username: string,
+    @HTTPBody() body: { role: string },
+  ) {
     const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.role || (body.role !== 'owner' && body.role !== 'member')) {
       throw new UnprocessableEntityError('role is required and must be "owner" or "member"');

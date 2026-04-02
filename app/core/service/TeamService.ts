@@ -38,7 +38,13 @@ export class TeamService extends AbstractService {
       await this.teamRepository.addMember(member);
     }
 
-    this.logger.info('[TeamService:createTeam] teamId: %s, orgId: %s, name: %s, creator: %s', team.teamId, orgId, name, creatorUserId);
+    this.logger.info(
+      '[TeamService:createTeam] teamId: %s, orgId: %s, name: %s, creator: %s',
+      team.teamId,
+      orgId,
+      name,
+      creatorUserId,
+    );
     return team;
   }
 
