@@ -146,10 +146,10 @@
     "husky": "^9.1.7",
     "ioredis-mock": "^8.13.1",
     "lint-staged": "^16.2.7",
-    "oxfmt": "^0.37.0",
+    "oxfmt": "^0.43.0",
     "oxlint": "^1.32.0",
-    "oxlint-tsgolint": "^0.16.0",
-    "typescript": "^5.9.3"
+    "oxlint-tsgolint": "^0.19.0",
+    "typescript": "^6.0.0"
   },
   "optionalDependencies": {
     "s3-cnpmcore": "^1.1.2"
