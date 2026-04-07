@@ -146,7 +146,7 @@
     "husky": "^9.1.7",
     "ioredis-mock": "^8.13.1",
     "lint-staged": "^16.2.7",
-    "oxfmt": "^0.43.0",
+    "oxfmt": "^0.44.0",
     "oxlint": "^1.32.0",
     "oxlint-tsgolint": "^0.19.0",
     "typescript": "^6.0.0"
