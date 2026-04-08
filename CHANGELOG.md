@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.32.0 (2026-04-08)
+
+* feat: add team member role for team-level permission control (#1023) ([d2fd3c5](https://github.com/cnpm/cnpmcore/commit/d2fd3c5)), closes [#1023](https://github.com/cnpm/cnpmcore/issues/1023) [#1021](https://github.com/cnpm/cnpmcore/issues/1021)
+* chore(deps): update dependency oxfmt to ^0.44.0 (#1025) ([2d5df34](https://github.com/cnpm/cnpmcore/commit/2d5df34)), closes [#1025](https://github.com/cnpm/cnpmcore/issues/1025)
+* chore(deps): update dependency oxlint-tsgolint to ^0.20.0 (#1024) ([407d659](https://github.com/cnpm/cnpmcore/commit/407d659)), closes [#1024](https://github.com/cnpm/cnpmcore/issues/1024)
+
 ## 4.31.0 (2026-04-02)
 
 * feat: skip oversized versions during sync instead of failing the entire task (#1022) ([b17983e](https://github.com/cnpm/cnpmcore/commit/b17983e)), closes [#1022](https://github.com/cnpm/cnpmcore/issues/1022)
