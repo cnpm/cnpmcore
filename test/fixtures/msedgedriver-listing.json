@@ -1,0 +1,35 @@
+{
+  "items": [
+    {
+      "isDirectory": false,
+      "name": "126.0.2578.0/edgedriver_arm64.zip",
+      "contentLength": 9085682,
+      "lastModified": "2024-05-10T17:03:37+00:00"
+    },
+    {
+      "isDirectory": false,
+      "name": "126.0.2578.0/edgedriver_mac64.zip",
+      "contentLength": 10907611,
+      "lastModified": "2024-05-10T16:37:33+00:00"
+    },
+    {
+      "isDirectory": false,
+      "name": "126.0.2578.0/edgedriver_mac64_m1.zip",
+      "contentLength": 10090619,
+      "lastModified": "2024-05-10T16:37:33+00:00"
+    },
+    {
+      "isDirectory": false,
+      "name": "126.0.2578.0/edgedriver_win32.zip",
+      "contentLength": 8759537,
+      "lastModified": "2024-05-10T17:04:29+00:00"
+    },
+    {
+      "isDirectory": false,
+      "name": "126.0.2578.0/edgedriver_win64.zip",
+      "contentLength": 9564395,
+      "lastModified": "2024-05-10T17:04:10+00:00"
+    }
+  ],
+  "generatedAt": "2026-04-08T13:18:30.7241345+00:00"
+}

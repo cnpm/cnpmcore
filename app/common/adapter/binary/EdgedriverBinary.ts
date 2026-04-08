@@ -1,9 +1,27 @@
-import path from 'node:path';
-
 import { SingletonProto } from 'egg';
 
 import { BinaryType } from '../../enum/Binary.ts';
 import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
+
+// Microsoft moved the Edge WebDriver download listing off the public
+// Azure Blob container (the old XML listing API returns
+// `PublicAccessNotPermitted` since ~2026-04-07). The new source of truth
+// is a single JSON dump at https://msedgedriver.microsoft.com/listing.json
+// which lists every version-prefixed driver file; individual files are
+// downloadable from https://msedgedriver.microsoft.com/<name>.
+const EDGEDRIVER_LISTING_URL = 'https://msedgedriver.microsoft.com/listing.json';
+const EDGEDRIVER_DOWNLOAD_BASE = 'https://msedgedriver.microsoft.com/';
+
+interface EdgedriverListingEntry {
+  isDirectory: boolean;
+  name: string;
+  contentLength: number;
+  lastModified: string;
+}
+interface EdgedriverListing {
+  items: EdgedriverListingEntry[];
+  generatedAt: string;
+}
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Edgedriver)
@@ -169,51 +187,47 @@ export class EdgedriverBinary extends AbstractBinary {
     }
 
     // fetch sub dir
-    // /foo/ => foo/
+    // /126.0.2578.0/ => 126.0.2578.0/
     const subDir = dir.slice(1);
-    // https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver?prefix=124.0.2478.97/&delimiter=/&maxresults=100&restype=container&comp=list
-    const url = `https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver?prefix=${encodeURIComponent(subDir)}&delimiter=/&maxresults=100&restype=container&comp=list`;
-    const xml = await this.requestXml(url);
-    return { items: this.#parseItems(xml), nextParams: null };
-  }
-
-  #parseItems(xml: string): BinaryItem[] {
+    const listing = await this.#fetchListing();
+    if (!listing) {
+      return { items: [], nextParams: null };
+    }
     const items: BinaryItem[] = [];
-    // <Blob><Name>124.0.2478.97/edgedriver_arm64.zip</Name><Url>https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/124.0.2478.97/edgedriver_arm64.zip</Url><Properties><Last-Modified>Fri, 10 May 2024 18:35:44 GMT</Last-Modified><Etag>0x8DC712000713C13</Etag><Content-Length>9191362</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding /><Content-Language /><Content-MD5>1tjPTf5JU6KKB06Qf1JOGw==</Content-MD5><Cache-Control /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus></Properties></Blob>
-    const fileRe =
-      /<Blob><Name>([^<]+?)<\/Name><Url>([^<]+?)<\/Url><Properties><Last-Modified>([^<]+?)<\/Last-Modified><Etag>(?:[^<]+?)<\/Etag><Content-Length>(\d+)<\/Content-Length>/g;
-    const matchItems = xml.matchAll(fileRe);
-    for (const m of matchItems) {
-      const fullname = m[1].trim();
-      // <Blob>
-      //   <Name>124.0.2478.97/edgedriver_arm64.zip</Name>
-      //   <Url>https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/124.0.2478.97/edgedriver_arm64.zip</Url>
-      //   <Properties>
-      //     <Last-Modified>Fri, 10 May 2024 18:35:44 GMT</Last-Modified>
-      //     <Etag>0x8DC712000713C13</Etag>
-      //     <Content-Length>9191362</Content-Length>
-      //     <Content-Type>application/octet-stream</Content-Type>
-      //     <Content-Encoding/>
-      //     <Content-Language/>
-      //     <Content-MD5>1tjPTf5JU6KKB06Qf1JOGw==</Content-MD5>
-      //     <Cache-Control/>
-      //     <BlobType>BlockBlob</BlobType>
-      //     <LeaseStatus>unlocked</LeaseStatus>
-      //   </Properties>
-      // </Blob>
-      // ignore size = 0 dir
-      const name = path.basename(fullname);
-      const url = m[2].trim();
-      const date = m[3].trim();
-      const size = Number.parseInt(m[4].trim());
+    for (const entry of listing.items) {
+      if (entry.isDirectory) continue;
+      if (!entry.name.startsWith(subDir)) continue;
+      // Only direct children of `subDir`, not nested paths.
+      const rest = entry.name.slice(subDir.length);
+      if (!rest || rest.includes('/')) continue;
       items.push({
-        name,
+        name: rest,
         isDir: false,
-        url,
-        size,
-        date,
+        url: `${EDGEDRIVER_DOWNLOAD_BASE}${entry.name}`,
+        size: entry.contentLength,
+        date: entry.lastModified,
       });
     }
-    return items;
+    return { items, nextParams: null };
+  }
+
+  async #fetchListing(): Promise<EdgedriverListing | undefined> {
+    const { data, status, headers } = await this.httpclient.request(EDGEDRIVER_LISTING_URL, {
+      dataType: 'json',
+      timeout: 30_000,
+      followRedirect: true,
+      gzip: true,
+    });
+    if (status !== 200) {
+      this.logger.warn(
+        '[EdgedriverBinary.fetchListing:non-200-status] url: %s, status: %s, headers: %j, data: %j',
+        EDGEDRIVER_LISTING_URL,
+        status,
+        headers,
+        data,
+      );
+      return;
+    }
+    return data as EdgedriverListing;
   }
 }

@@ -17,6 +17,10 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('edgeupdates.json'),
         persist: false,
       });
+      app.mockHttpclient('https://msedgedriver.microsoft.com/listing.json', 'GET', {
+        data: await TestUtil.readFixturesFile('msedgedriver-listing.json'),
+        persist: false,
+      });
       let result = await binary.fetch('/');
       assert.deepEqual(result, {
         items: [
@@ -63,13 +67,13 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         // {
         //   name: 'edgedriver_win64.zip',
         //   isDir: false,
-        //   url: 'https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/126.0.2578.0/edgedriver_win64.zip',
+        //   url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_win64.zip',
         //   size: 9564395,
-        //   date: 'Fri, 10 May 2024 17:04:10 GMT'
+        //   date: '2024-05-10T17:04:10+00:00'
         // }
         assert.equal(item.isDir, false);
-        assert.match(item.name, /^edgedriver_\w+.zip$/);
-        assert.match(item.url, /^https:\/\//);
+        assert.match(item.name, /^edgedriver_[\w]+\.zip$/);
+        assert.match(item.url, /^https:\/\/msedgedriver\.microsoft\.com\//);
         assert.ok(typeof item.size === 'number');
         assert.ok(item.size > 0);
         assert.ok(item.date);
