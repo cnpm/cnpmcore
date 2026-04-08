@@ -79,5 +79,21 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         assert.ok(item.date);
       }
     });
+
+    it('should return empty items when listing.json request fails', async () => {
+      app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
+        data: await TestUtil.readFixturesFile('edgeupdates.json'),
+        persist: false,
+      });
+      app.mockHttpclient('https://msedgedriver.microsoft.com/listing.json', 'GET', {
+        data: '',
+        status: 500,
+        persist: false,
+      });
+      const result = await binary.fetch('/126.0.2578.0/');
+      assert.ok(result);
+      assert.deepEqual(result.items, []);
+      assert.equal(result.nextParams, null);
+    });
   });
 });
