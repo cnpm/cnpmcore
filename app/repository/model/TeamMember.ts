@@ -24,4 +24,7 @@ export class TeamMember extends Bone {
 
   @Attribute(DataTypes.STRING(24))
   userId: string;
+
+  @Attribute(DataTypes.STRING(20))
+  role: string;
 }

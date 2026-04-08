@@ -167,7 +167,7 @@ export class OrgController extends AbstractController {
     if (!targetUser) {
       throw new NotFoundError(`User "${username}" not found`);
     }
-    const teams = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, org.orgId);
-    return teams.map((t) => ({ name: t.name, description: t.description }));
+    const teamResults = await this.teamRepository.listTeamsByUserIdAndOrgId(targetUser.userId, org.orgId);
+    return teamResults.map((t) => ({ name: t.team.name, description: t.team.description, role: t.role }));
   }
 }

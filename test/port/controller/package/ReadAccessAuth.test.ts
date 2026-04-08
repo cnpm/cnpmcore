@@ -108,6 +108,7 @@ describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
         TeamMember.create({
           teamId: team.teamId,
           userId: teamMemberEntity.userId,
+          role: 'member',
         }),
       );
     });

@@ -50,6 +50,7 @@ export class OrgService extends AbstractService {
     const teamMember = TeamMember.create({
       teamId: developersTeam.teamId,
       userId: cmd.creatorUserId,
+      role: 'owner',
     });
     await this.orgRepository.createOrgCascade(org, developersTeam, ownerMember, teamMember);
 
@@ -110,6 +111,7 @@ export class OrgService extends AbstractService {
         const teamMember = TeamMember.create({
           teamId: developersTeam.teamId,
           userId,
+          role: 'member',
         });
         await this.teamRepository.addMember(teamMember);
       }
