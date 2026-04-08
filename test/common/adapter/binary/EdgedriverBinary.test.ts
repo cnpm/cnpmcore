@@ -9,19 +9,19 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
   let binary: EdgedriverBinary;
   beforeEach(async () => {
     binary = await app.getEggObject(EdgedriverBinary);
+    // EdgedriverBinary is a @SingletonProto — reset its per-sync cache so
+    // each test sees a fresh state (the first `fetch('/')` call populates
+    // `dirItems` which would otherwise persist across tests).
+    await binary.initFetch();
   });
 
   describe('fetch()', () => {
-    it('should work', async () => {
+    it('should list recent stable versions from edgeupdates.microsoft.com', async () => {
       app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
         data: await TestUtil.readFixturesFile('edgeupdates.json'),
         persist: false,
       });
-      app.mockHttpclient('https://msedgedriver.microsoft.com/listing.json', 'GET', {
-        data: await TestUtil.readFixturesFile('msedgedriver-listing.json'),
-        persist: false,
-      });
-      let result = await binary.fetch('/');
+      const result = await binary.fetch('/');
       assert.deepEqual(result, {
         items: [
           {
@@ -55,65 +55,69 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         ],
         nextParams: null,
       });
-
-      const latestVersion = result.items[result.items.length - 1].name;
-      assert.ok(latestVersion);
-      assert.equal(latestVersion, '126.0.2578.0/');
-      result = await binary.fetch(`/${latestVersion}`);
-      assert.ok(result);
-      const items = result.items;
-      assert.ok(items.length >= 3);
-      for (const item of items) {
-        // {
-        //   name: 'edgedriver_win64.zip',
-        //   isDir: false,
-        //   url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_win64.zip',
-        //   size: 9564395,
-        //   date: '2024-05-10T17:04:10+00:00'
-        // }
-        assert.equal(item.isDir, false);
-        assert.match(item.name, /^edgedriver_[\w]+\.zip$/);
-        assert.match(item.url, /^https:\/\/msedgedriver\.microsoft\.com\//);
-        assert.ok(typeof item.size === 'number');
-        assert.ok(item.size > 0);
-        assert.ok(item.date);
-      }
     });
 
-    it('should return undefined when listing.json request fails', async () => {
+    it('should generate all known platform driver URLs for a version', async () => {
       app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
         data: await TestUtil.readFixturesFile('edgeupdates.json'),
-        persist: false,
-      });
-      app.mockHttpclient('https://msedgedriver.microsoft.com/listing.json', 'GET', {
-        data: '',
-        status: 500,
         persist: false,
       });
       const result = await binary.fetch('/126.0.2578.0/');
-      assert.equal(result, undefined);
-    });
-
-    it('should cache listing.json across multiple sub-dir fetches', async () => {
-      app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
-        data: await TestUtil.readFixturesFile('edgeupdates.json'),
-        persist: false,
-      });
-      let listingCalls = 0;
-      const listingBuffer = await TestUtil.readFixturesFile('msedgedriver-listing.json');
-      app.mockHttpclient('https://msedgedriver.microsoft.com/listing.json', 'GET', () => {
-        listingCalls++;
-        return { data: listingBuffer, status: 200 };
-      });
-      // First sub-dir fetch triggers the network request.
-      const r1 = await binary.fetch('/126.0.2578.0/');
-      assert.ok(r1);
-      assert.ok(r1.items.length >= 3);
-      // Second sub-dir fetch should hit the cached listing, no extra request.
-      const r2 = await binary.fetch('/126.0.2578.0/');
-      assert.ok(r2);
-      assert.deepEqual(r2.items, r1.items);
-      assert.equal(listingCalls, 1);
+      assert.ok(result);
+      assert.equal(result.nextParams, null);
+      // Expect all six known platform filenames, pointing at the new CDN,
+      // with `ignoreDownloadStatuses: [404]` so older versions that don't
+      // ship every platform get skipped cleanly instead of failing the sync.
+      assert.deepEqual(result.items, [
+        {
+          name: 'edgedriver_arm64.zip',
+          isDir: false,
+          url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_arm64.zip',
+          size: '-',
+          date: '-',
+          ignoreDownloadStatuses: [404],
+        },
+        {
+          name: 'edgedriver_linux64.zip',
+          isDir: false,
+          url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_linux64.zip',
+          size: '-',
+          date: '-',
+          ignoreDownloadStatuses: [404],
+        },
+        {
+          name: 'edgedriver_mac64.zip',
+          isDir: false,
+          url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_mac64.zip',
+          size: '-',
+          date: '-',
+          ignoreDownloadStatuses: [404],
+        },
+        {
+          name: 'edgedriver_mac64_m1.zip',
+          isDir: false,
+          url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_mac64_m1.zip',
+          size: '-',
+          date: '-',
+          ignoreDownloadStatuses: [404],
+        },
+        {
+          name: 'edgedriver_win32.zip',
+          isDir: false,
+          url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_win32.zip',
+          size: '-',
+          date: '-',
+          ignoreDownloadStatuses: [404],
+        },
+        {
+          name: 'edgedriver_win64.zip',
+          isDir: false,
+          url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_win64.zip',
+          size: '-',
+          date: '-',
+          ignoreDownloadStatuses: [404],
+        },
+      ]);
     });
   });
 });

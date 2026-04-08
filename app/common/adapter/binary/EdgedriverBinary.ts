@@ -3,25 +3,32 @@ import { SingletonProto } from 'egg';
 import { BinaryType } from '../../enum/Binary.ts';
 import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
-// Microsoft moved the Edge WebDriver download listing off the public
-// Azure Blob container (the old XML listing API returns
-// `PublicAccessNotPermitted` since ~2026-04-07). The new source of truth
-// is a single JSON dump at https://msedgedriver.microsoft.com/listing.json
-// which lists every version-prefixed driver file; individual files are
-// downloadable from https://msedgedriver.microsoft.com/<name>.
-const EDGEDRIVER_LISTING_URL = 'https://msedgedriver.microsoft.com/listing.json';
+// Microsoft moved Edge WebDriver binaries to https://msedgedriver.microsoft.com/
+// in July 2025 after `msedgedriver.azureedge.net` was retired, and around
+// 2026-04-07 also disabled public access on the legacy Azure Blob container
+// that used to host the XML file listing. There is still no paginated/filtered
+// listing API — the only "listing" endpoint on the new host is a ~1.2MB static
+// JSON dump (`/listing.json`, ~9000 entries covering every version since
+// 112.0.1722.39).
+//
+// To avoid hammering that 1.2MB dump for every version subdirectory during a
+// sync, we mirror the approach used by `FirefoxBinary` / `ChromeForTestingBinary`
+// and generate the per-version download URLs from a static list of known
+// platform filenames. cnpmcore's sync pipeline honors the per-item
+// `ignoreDownloadStatuses` field, so any version that doesn't ship a given
+// platform (e.g. older builds without `edgedriver_mac64_m1.zip`) gets a clean
+// 404 and is skipped rather than failing the sync.
 const EDGEDRIVER_DOWNLOAD_BASE = 'https://msedgedriver.microsoft.com/';
-
-interface EdgedriverListingEntry {
-  isDirectory: boolean;
-  name: string;
-  contentLength: number;
-  lastModified: string;
-}
-interface EdgedriverListing {
-  items: EdgedriverListingEntry[];
-  generatedAt: string;
-}
+// Platform filenames observed in Microsoft's current `listing.json` dump.
+// Every version since 112.0.1722.39 ships some subset of these six files.
+const EDGEDRIVER_PLATFORM_FILES = [
+  'edgedriver_arm64.zip',
+  'edgedriver_linux64.zip',
+  'edgedriver_mac64.zip',
+  'edgedriver_mac64_m1.zip',
+  'edgedriver_win32.zip',
+  'edgedriver_win64.zip',
+] as const;
 
 @SingletonProto()
 @BinaryAdapter(BinaryType.Edgedriver)
@@ -29,15 +36,9 @@ export class EdgedriverBinary extends AbstractBinary {
   private dirItems?: {
     [key: string]: BinaryItem[];
   };
-  // Promise-level cache for the full `listing.json` dump (~9000 entries).
-  // A single sync task calls `fetch('/<version>/')` for many versions;
-  // without this cache each call would re-download the listing.
-  // Reset in `initFetch` so each sync task gets fresh data.
-  #listingPromise?: Promise<EdgedriverListing | undefined>;
 
   async initFetch() {
     this.dirItems = undefined;
-    this.#listingPromise = undefined;
   }
 
   async #syncDirItems() {
@@ -192,61 +193,20 @@ export class EdgedriverBinary extends AbstractBinary {
       return { items: this.dirItems?.[dir] ?? [], nextParams: null };
     }
 
-    // fetch sub dir
+    // fetch sub dir: generate the known platform filenames for this version.
+    // We intentionally don't call any listing API — see the file-level
+    // comment for the rationale. Any platform that doesn't exist for a
+    // specific version is skipped cleanly via `ignoreDownloadStatuses`.
     // /126.0.2578.0/ => 126.0.2578.0/
     const subDir = dir.slice(1);
-    const listing = await this.#fetchListing();
-    // Return undefined (not an empty-items FetchResult) on listing
-    // failure so the caller can distinguish "listing unavailable" from
-    // "this version exists but has no files".
-    if (!listing?.items) {
-      return;
-    }
-    const items: BinaryItem[] = [];
-    for (const entry of listing.items) {
-      if (entry.isDirectory) continue;
-      if (!entry.name.startsWith(subDir)) continue;
-      // Only direct children of `subDir`, not nested paths.
-      const rest = entry.name.slice(subDir.length);
-      if (!rest || rest.includes('/')) continue;
-      items.push({
-        name: rest,
-        isDir: false,
-        url: `${EDGEDRIVER_DOWNLOAD_BASE}${entry.name}`,
-        size: entry.contentLength,
-        date: entry.lastModified,
-      });
-    }
+    const items: BinaryItem[] = EDGEDRIVER_PLATFORM_FILES.map(name => ({
+      name,
+      isDir: false,
+      url: `${EDGEDRIVER_DOWNLOAD_BASE}${subDir}${name}`,
+      size: '-',
+      date: '-',
+      ignoreDownloadStatuses: [404],
+    }));
     return { items, nextParams: null };
-  }
-
-  async #fetchListing(): Promise<EdgedriverListing | undefined> {
-    if (!this.#listingPromise) {
-      this.#listingPromise = this.#loadListing();
-    }
-    return this.#listingPromise;
-  }
-
-  async #loadListing(): Promise<EdgedriverListing | undefined> {
-    try {
-      // `AbstractBinary.requestJSON` already handles timeout / follow
-      // redirect / gzip / non-200 warn logging. It returns whatever
-      // `data` the server sent even on non-200, so we validate the
-      // shape before trusting it.
-      const listing = await this.requestJSON<EdgedriverListing>(EDGEDRIVER_LISTING_URL);
-      if (!listing?.items || !Array.isArray(listing.items)) {
-        return;
-      }
-      return listing;
-    } catch (err) {
-      this.logger.warn(
-        '[EdgedriverBinary.loadListing:request-failed] url: %s, error: %s',
-        EDGEDRIVER_LISTING_URL,
-        (err as Error).message,
-      );
-      // Clear the cached promise so the next sync task retries cleanly.
-      this.#listingPromise = undefined;
-      return;
-    }
   }
 }
