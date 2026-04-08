@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.32.1 (2026-04-08)</small>
+
+* fix(EdgedriverBinary): generate per-platform URLs, drop dead listing API (#1026) ([b85f1cd](https://github.com/cnpm/cnpmcore/commit/b85f1cd)), closes [#1026](https://github.com/cnpm/cnpmcore/issues/1026)
+
 ## 4.32.0 (2026-04-08)
 
 * feat: add team member role for team-level permission control (#1023) ([d2fd3c5](https://github.com/cnpm/cnpmcore/commit/d2fd3c5)), closes [#1023](https://github.com/cnpm/cnpmcore/issues/1023) [#1021](https://github.com/cnpm/cnpmcore/issues/1021)
