@@ -199,7 +199,7 @@ export class EdgedriverBinary extends AbstractBinary {
     // specific version is skipped cleanly via `ignoreDownloadStatuses`.
     // /126.0.2578.0/ => 126.0.2578.0/
     const subDir = dir.slice(1);
-    const items: BinaryItem[] = EDGEDRIVER_PLATFORM_FILES.map(name => ({
+    const items: BinaryItem[] = EDGEDRIVER_PLATFORM_FILES.map((name) => ({
       name,
       isDir: false,
       url: `${EDGEDRIVER_DOWNLOAD_BASE}${subDir}${name}`,
