@@ -29,9 +29,15 @@ export class EdgedriverBinary extends AbstractBinary {
   private dirItems?: {
     [key: string]: BinaryItem[];
   };
+  // Promise-level cache for the full `listing.json` dump (~9000 entries).
+  // A single sync task calls `fetch('/<version>/')` for many versions;
+  // without this cache each call would re-download the listing.
+  // Reset in `initFetch` so each sync task gets fresh data.
+  #listingPromise?: Promise<EdgedriverListing | undefined>;
 
   async initFetch() {
     this.dirItems = undefined;
+    this.#listingPromise = undefined;
   }
 
   async #syncDirItems() {
@@ -190,8 +196,11 @@ export class EdgedriverBinary extends AbstractBinary {
     // /126.0.2578.0/ => 126.0.2578.0/
     const subDir = dir.slice(1);
     const listing = await this.#fetchListing();
-    if (!listing) {
-      return { items: [], nextParams: null };
+    // Return undefined (not an empty-items FetchResult) on listing
+    // failure so the caller can distinguish "listing unavailable" from
+    // "this version exists but has no files".
+    if (!listing?.items) {
+      return;
     }
     const items: BinaryItem[] = [];
     for (const entry of listing.items) {
@@ -212,22 +221,32 @@ export class EdgedriverBinary extends AbstractBinary {
   }
 
   async #fetchListing(): Promise<EdgedriverListing | undefined> {
-    const { data, status, headers } = await this.httpclient.request(EDGEDRIVER_LISTING_URL, {
-      dataType: 'json',
-      timeout: 30_000,
-      followRedirect: true,
-      gzip: true,
-    });
-    if (status !== 200) {
+    if (!this.#listingPromise) {
+      this.#listingPromise = this.#loadListing();
+    }
+    return this.#listingPromise;
+  }
+
+  async #loadListing(): Promise<EdgedriverListing | undefined> {
+    try {
+      // `AbstractBinary.requestJSON` already handles timeout / follow
+      // redirect / gzip / non-200 warn logging. It returns whatever
+      // `data` the server sent even on non-200, so we validate the
+      // shape before trusting it.
+      const listing = await this.requestJSON<EdgedriverListing>(EDGEDRIVER_LISTING_URL);
+      if (!listing?.items || !Array.isArray(listing.items)) {
+        return;
+      }
+      return listing;
+    } catch (err) {
       this.logger.warn(
-        '[EdgedriverBinary.fetchListing:non-200-status] url: %s, status: %s, headers: %j, data: %j',
+        '[EdgedriverBinary.loadListing:request-failed] url: %s, error: %s',
         EDGEDRIVER_LISTING_URL,
-        status,
-        headers,
-        data,
+        (err as Error).message,
       );
+      // Clear the cached promise so the next sync task retries cleanly.
+      this.#listingPromise = undefined;
       return;
     }
-    return data as EdgedriverListing;
   }
 }

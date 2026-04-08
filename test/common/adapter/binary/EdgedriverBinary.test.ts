@@ -80,7 +80,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
       }
     });
 
-    it('should return empty items when listing.json request fails', async () => {
+    it('should return undefined when listing.json request fails', async () => {
       app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
         data: await TestUtil.readFixturesFile('edgeupdates.json'),
         persist: false,
@@ -91,9 +91,29 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
         persist: false,
       });
       const result = await binary.fetch('/126.0.2578.0/');
-      assert.ok(result);
-      assert.deepEqual(result.items, []);
-      assert.equal(result.nextParams, null);
+      assert.equal(result, undefined);
+    });
+
+    it('should cache listing.json across multiple sub-dir fetches', async () => {
+      app.mockHttpclient('https://edgeupdates.microsoft.com/api/products', 'GET', {
+        data: await TestUtil.readFixturesFile('edgeupdates.json'),
+        persist: false,
+      });
+      let listingCalls = 0;
+      const listingBuffer = await TestUtil.readFixturesFile('msedgedriver-listing.json');
+      app.mockHttpclient('https://msedgedriver.microsoft.com/listing.json', 'GET', () => {
+        listingCalls++;
+        return { data: listingBuffer, status: 200 };
+      });
+      // First sub-dir fetch triggers the network request.
+      const r1 = await binary.fetch('/126.0.2578.0/');
+      assert.ok(r1);
+      assert.ok(r1.items.length >= 3);
+      // Second sub-dir fetch should hit the cached listing, no extra request.
+      const r2 = await binary.fetch('/126.0.2578.0/');
+      assert.ok(r2);
+      assert.deepEqual(r2.items, r1.items);
+      assert.equal(listingCalls, 1);
     });
   });
 });
