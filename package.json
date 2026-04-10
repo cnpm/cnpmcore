@@ -1,6 +1,6 @@
 {
   "name": "cnpmcore",
-  "version": "3.81.0",
+  "version": "3.82.0",
   "description": "Private NPM Registry for Enterprise",
   "files": [
     "dist/**/*"

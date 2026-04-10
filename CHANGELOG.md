@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.82.0 (2026-04-10)
+
+* feat: require package maintainer permission when granting team package access (#1027) ([33784a7](https://github.com/cnpm/cnpmcore/commit/33784a7)), closes [#1027](https://github.com/cnpm/cnpmcore/issues/1027)
+
 ## 3.81.0 (2026-04-02)
 
 * feat: add team member role for team-level permission control (#1021) ([3445251](https://github.com/cnpm/cnpmcore/commit/3445251)), closes [#1021](https://github.com/cnpm/cnpmcore/issues/1021)
