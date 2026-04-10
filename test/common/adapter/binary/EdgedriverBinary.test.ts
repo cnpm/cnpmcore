@@ -73,7 +73,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
           url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_arm64.zip',
           size: '-',
           date: '-',
-          ignoreDownloadStatuses: [404],
+          ignoreDownloadStatuses: [ 404 ],
         },
         {
           name: 'edgedriver_linux64.zip',
@@ -81,7 +81,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
           url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_linux64.zip',
           size: '-',
           date: '-',
-          ignoreDownloadStatuses: [404],
+          ignoreDownloadStatuses: [ 404 ],
         },
         {
           name: 'edgedriver_mac64.zip',
@@ -89,7 +89,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
           url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_mac64.zip',
           size: '-',
           date: '-',
-          ignoreDownloadStatuses: [404],
+          ignoreDownloadStatuses: [ 404 ],
         },
         {
           name: 'edgedriver_mac64_m1.zip',
@@ -97,7 +97,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
           url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_mac64_m1.zip',
           size: '-',
           date: '-',
-          ignoreDownloadStatuses: [404],
+          ignoreDownloadStatuses: [ 404 ],
         },
         {
           name: 'edgedriver_win32.zip',
@@ -105,7 +105,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
           url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_win32.zip',
           size: '-',
           date: '-',
-          ignoreDownloadStatuses: [404],
+          ignoreDownloadStatuses: [ 404 ],
         },
         {
           name: 'edgedriver_win64.zip',
@@ -113,7 +113,7 @@ describe('test/common/adapter/binary/EdgedriverBinary.test.ts', () => {
           url: 'https://msedgedriver.microsoft.com/126.0.2578.0/edgedriver_win64.zip',
           size: '-',
           date: '-',
-          ignoreDownloadStatuses: [404],
+          ignoreDownloadStatuses: [ 404 ],
         },
       ]);
     });
