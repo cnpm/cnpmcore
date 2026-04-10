@@ -82,21 +82,21 @@ export class TeamController extends AbstractController {
 
     // Admin always has access
     if (isAdmin) {
-      return { org, team, authorizedUser };
+      return { org, team, authorizedUser, isAdmin };
     }
 
     // Org owner has access
     if (!this.isAllowScopeOrg(orgName)) {
       const orgMember = await this.orgRepository.findMember(org.orgId, authorizedUser.userId);
       if (orgMember && orgMember.role === 'owner') {
-        return { org, team, authorizedUser };
+        return { org, team, authorizedUser, isAdmin };
       }
     }
 
     // Team owner has access
     const teamMember = await this.teamRepository.findMember(team.teamId, authorizedUser.userId);
     if (teamMember && teamMember.role === 'owner') {
-      return { org, team, authorizedUser };
+      return { org, team, authorizedUser, isAdmin };
     }
 
     throw new ForbiddenError('Only team owner or admin can perform this action');
@@ -318,7 +318,7 @@ export class TeamController extends AbstractController {
   })
   async grantPackageAccess(@Context() ctx: EggContext, @HTTPParam() orgName: string,
     @HTTPParam() teamName: string, @HTTPBody() body: { package: string }) {
-    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
+    const { team, authorizedUser, isAdmin } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
       throw new UnprocessableEntityError('package is required');
     }
@@ -326,6 +326,10 @@ export class TeamController extends AbstractController {
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) {
       throw new NotFoundError(`Package "${body.package}" not found`);
+    }
+    // Non-admin users can only add packages they are a maintainer of
+    if (!isAdmin) {
+      await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
     }
     await this.teamService.grantPackageAccess(team.teamId, pkg.packageId);
     return { ok: true };

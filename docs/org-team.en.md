@@ -43,6 +43,7 @@ cnpmcore adds a `role` field to Team members while maintaining full npm CLI comp
 1. When a **Team is created**, the creator is automatically added as Team Owner
 2. **Team write operations** (add/remove members, manage packages, delete Team) require the operator to be a Team Owner, Org Owner, or Admin
 3. Regular Org members **cannot directly manage other people's Teams**
+4. When **granting package access**, non-Admin users can only add packages they are a maintainer of (Admins can add any package)
 
 #### npm CLI Compatibility
 
@@ -269,6 +270,8 @@ curl -X DELETE http://localhost:7001/-/team/mycompany/frontend/user \
 
 ### Team Package Access
 
+> **Note**: When granting package access, the operator must be a maintainer of the package (Admins are exempt from this check). This ensures Team Owners can only add packages they have permission over.
+
 ```bash
 # Grant access (npm CLI compatible)
 npm access grant read-only @mycompany:frontend @mycompany/ui-lib \
@@ -294,7 +297,8 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
 | Delete Team | Admin, Org Owner, or **Team Owner** |
 | View Teams / Team info / Team members | Logged-in user |
 | Add / Remove Team member | Admin, Org Owner, or **Team Owner** |
-| Grant / Revoke package access | Admin, Org Owner, or **Team Owner** |
+| Grant package access | Admin, Org Owner, or **Team Owner** (must be package maintainer, except Admin) |
+| Revoke package access | Admin, Org Owner, or **Team Owner** |
 | View Team packages | Logged-in user |
 
 > **Team Owner** is a cnpmcore extension role. When a team is created, the creator is automatically added as the team owner. Team owners can manage their own team without needing org-level owner permissions.

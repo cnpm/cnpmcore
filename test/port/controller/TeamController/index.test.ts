@@ -751,6 +751,72 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .send({ package: '@cnpm/foo' })
         .expect(403);
     });
+
+    it('should allow admin to grant any package', async () => {
+      // Create a package by another user
+      const { pkg } = await TestUtil.createPackage({
+        name: '@cnpm/admin-grant-pkg',
+        version: '1.0.0',
+      });
+
+      const res = await app.httpRequest()
+        .put('/-/team/teamorg/developers/package')
+        .set('authorization', adminUser.authorization)
+        .send({ package: pkg.name })
+        .expect(200);
+      assert(res.body.ok);
+    });
+
+    it('should allow team owner to grant package they maintain', async () => {
+      // Create team in allowScopes org — normalUser becomes team owner
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'pkg-owner-team' })
+        .expect(200);
+
+      // Publish package as normalUser (becomes maintainer)
+      const pkg = await TestUtil.getFullPackage({
+        name: '@cnpm/my-owned-pkg',
+        version: '1.0.0',
+      });
+      await app.httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', normalUser.authorization)
+        .set('user-agent', normalUser.ua)
+        .send(pkg)
+        .expect(201);
+
+      // Grant package — should succeed because normalUser is the maintainer
+      const res = await app.httpRequest()
+        .put('/-/team/cnpm/pkg-owner-team/package')
+        .set('authorization', normalUser.authorization)
+        .send({ package: pkg.name })
+        .expect(200);
+      assert(res.body.ok);
+    });
+
+    it('should 403 when team owner tries to grant package they do not maintain', async () => {
+      // Create team in allowScopes org — normalUser becomes team owner
+      await app.httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', normalUser.authorization)
+        .send({ name: 'pkg-no-maintain-team' })
+        .expect(200);
+
+      // Create a package by another user
+      const { pkg } = await TestUtil.createPackage({
+        name: '@cnpm/not-my-pkg',
+        version: '1.0.0',
+      });
+
+      // normalUser is team owner but NOT a maintainer of this package
+      await app.httpRequest()
+        .put('/-/team/cnpm/pkg-no-maintain-team/package')
+        .set('authorization', normalUser.authorization)
+        .send({ package: pkg.name })
+        .expect(403);
+    });
   });
 
   // ==================== requireTeamWriteAccess permission paths ====================

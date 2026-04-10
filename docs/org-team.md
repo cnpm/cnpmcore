@@ -43,6 +43,7 @@ cnpmcore 在保持 npm CLI 完全兼容的前提下，为 Team 成员增加了 `
 1. **创建 Team 时**，创建者自动成为 Team Owner
 2. **Team 的写操作**（增删成员、管理包、删除 Team）要求操作者是 Team Owner、Org Owner 或 Admin
 3. 普通 Org 成员**无法直接管理其他人的 Team**
+4. **授权包访问时**，非 Admin 用户只能添加自己是 maintainer 的包（Admin 可以添加任意包）
 
 #### npm CLI 兼容性
 
@@ -269,6 +270,8 @@ curl -X DELETE http://localhost:7001/-/team/mycompany/frontend/user \
 
 ### Team 包授权
 
+> **注意**：授权包访问时，操作者必须是该包的 maintainer（Admin 不受此限制）。这确保了 Team Owner 只能将自己有权限的包添加到团队中。
+
 ```bash
 # 授权（npm CLI 兼容）
 npm access grant read-only @mycompany:frontend @mycompany/ui-lib \
@@ -294,7 +297,8 @@ npm access revoke @mycompany:frontend @mycompany/ui-lib \
 | 删除 Team | Admin、Org Owner 或 **Team Owner** |
 | 查看 Team / Team 信息 / Team 成员 | 登录用户 |
 | 添加 / 移除 Team 成员 | Admin、Org Owner 或 **Team Owner** |
-| 授权 / 撤销包访问 | Admin、Org Owner 或 **Team Owner** |
+| 授权包访问 | Admin、Org Owner 或 **Team Owner**（且必须是包的 maintainer，Admin 除外） |
+| 撤销包访问 | Admin、Org Owner 或 **Team Owner** |
 | 查看 Team 包列表 | 登录用户 |
 
 > **Team Owner** 是 cnpmcore 的扩展角色。创建 Team 时，创建者自动成为 Team Owner。Team Owner 可以管理自己的团队，无需 Org 级别的 Owner 权限。
