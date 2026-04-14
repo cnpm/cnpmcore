@@ -125,12 +125,26 @@ const binaries = {
     repo: 'grpc/grpc-node',
     distUrl: 'https://node-precompiled-binaries.grpc.io',
   },
+  '@discordjs/opus': {
+    category: '@discordjs/opus',
+    description: 'Opus bindings for Node',
+    type: BinaryType.GitHub,
+    repo: 'discordjs/opus',
+    distUrl: 'https://github.com/discordjs/opus/releases',
+  },
   'skia-canvas': {
     category: 'skia-canvas',
     description: 'A canvas environment for Node',
     type: BinaryType.GitHub,
     repo: 'samizdatco/skia-canvas',
     distUrl: 'https://github.com/samizdatco/skia-canvas/releases',
+  },
+  '@matrix-org/matrix-sdk-crypto-nodejs': {
+    category: '@matrix-org/matrix-sdk-crypto-nodejs',
+    description: 'Node.js binding for the Rust matrix-sdk-crypto library',
+    type: BinaryType.GitHub,
+    repo: 'matrix-org/matrix-rust-sdk-crypto-nodejs',
+    distUrl: 'https://github.com/matrix-org/matrix-rust-sdk-crypto-nodejs/releases',
   },
   protobuf: {
     category: 'protobuf',
