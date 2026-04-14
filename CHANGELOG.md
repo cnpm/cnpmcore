@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.33.0 (2026-04-14)
+
+* feat: add @discordjs/opus and @matrix-org/matrix-sdk-crypto-nodejs binary (#1030) ([ff49e85](https://github.com/cnpm/cnpmcore/commit/ff49e85)), closes [#1030](https://github.com/cnpm/cnpmcore/issues/1030)
+
 ## <small>4.32.1 (2026-04-08)</small>
 
 * fix(EdgedriverBinary): generate per-platform URLs, drop dead listing API (#1026) ([b85f1cd](https://github.com/cnpm/cnpmcore/commit/b85f1cd)), closes [#1026](https://github.com/cnpm/cnpmcore/issues/1026)
