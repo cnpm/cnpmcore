@@ -119,22 +119,6 @@ export abstract class AbstractBinary {
       win32: ['unknown'],
     };
   }
-
-  protected listNodeLibcVersions(binaryConfig?: BinaryTaskConfig) {
-    if (binaryConfig?.options?.nodeLibcVersions) return binaryConfig.options.nodeLibcVersions;
-    return {
-      darwin: {
-        unknown: ['unknown'],
-      },
-      linux: {
-        glibc: ['unknown'],
-        musl: ['unknown'],
-      },
-      win32: {
-        unknown: ['unknown'],
-      },
-    };
-  }
 }
 
 export const BinaryAdapter: ImplDecorator<AbstractBinary, typeof BinaryType> =

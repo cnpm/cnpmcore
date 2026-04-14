@@ -128,30 +128,9 @@ const binaries = {
   '@discordjs/opus': {
     category: '@discordjs/opus',
     description: 'Opus bindings for Node',
-    type: BinaryType.NodePreGyp,
+    type: BinaryType.GitHub,
     repo: 'discordjs/opus',
-    distUrl: 'https://github.com/discordjs/opus/releases/download',
-    options: {
-      npmPackageName: '@discordjs/opus',
-      requiredNapiVersions: true,
-      nodeArchs: {
-        linux: ['arm', 'arm64', 'ia32', 'x64'],
-        darwin: ['arm64', 'x64'],
-        win32: ['x64'],
-      },
-      nodeLibcVersions: {
-        darwin: {
-          unknown: ['unknown'],
-        },
-        linux: {
-          glibc: ['2.31', '2.35'],
-          musl: ['1.2.2', '1.2.5'],
-        },
-        win32: {
-          unknown: ['unknown'],
-        },
-      },
-    },
+    distUrl: 'https://github.com/discordjs/opus/releases',
   },
   'skia-canvas': {
     category: 'skia-canvas',
@@ -1037,7 +1016,6 @@ export interface BinaryTaskConfig {
     npmPackageName?: string;
     // custom for NodePreGypBinary
     requiredNapiVersions?: boolean;
-    nodeLibcVersions?: Record<string, Record<string, readonly string[]>>;
     // ignore download fail response status
     ignoreDownloadStatuses?: number[];
   };

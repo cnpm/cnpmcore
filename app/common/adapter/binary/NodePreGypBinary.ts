@@ -29,7 +29,6 @@ export class NodePreGypBinary extends AbstractBinary {
     const nodePlatforms = this.listNodePlatforms();
     const nodeArchs = this.listNodeArchs(binaryConfig);
     const nodeLibcs = this.listNodeLibcs();
-    const nodeLibcVersions = this.listNodeLibcVersions(binaryConfig);
     for (const version in data.versions) {
       const date = data.time[version];
       const pkgVersion = data.versions[version];
@@ -70,53 +69,6 @@ export class NodePreGypBinary extends AbstractBinary {
       //   "package_name": "{node_abi}-{platform}-{arch}-{libc}.tar.gz"
       // },
       if (
-        binaryFile.includes('{node_abi}') &&
-        binaryFile.includes('{platform}') &&
-        binaryFile.includes('{arch}') &&
-        binaryFile.includes('{libc}') &&
-        binaryFile.includes('{libc_version}')
-      ) {
-        for (const nodeAbi of nodeABIVersions) {
-          for (const platform of nodePlatforms) {
-            const archs = nodeArchs[platform];
-            const libcs = nodeLibcs[platform];
-            for (const arch of archs) {
-              for (const libc of libcs) {
-                const libcVersions = nodeLibcVersions[platform]?.[libc] ?? ['unknown'];
-                const napiBuildVersions = binaryFile.includes('{napi_build_version}') ? napiVersions : [undefined];
-                for (const libcVersion of libcVersions) {
-                  for (const napiBuildVersion of napiBuildVersions) {
-                    let name = binaryFile
-                      .replace('{node_abi}', `node-v${nodeAbi}`)
-                      .replace('{platform}', platform)
-                      .replace('{arch}', arch)
-                      .replace('{libc}', libc)
-                      .replace('{libc_version}', libcVersion);
-                    if (napiBuildVersion !== undefined) {
-                      name = name.replace('{napi_build_version}', `${napiBuildVersion}`);
-                    }
-                    const resolvedRemotePath = (remotePath ?? '')
-                      .replace('{module_name}', moduleName)
-                      .replace('{name}', binaryName)
-                      .replace('{version}', version)
-                      .replace('{configuration}', 'Release');
-                    const binaryFilePath = join('/', resolvedRemotePath, name);
-                    const remoteUrl = `${binaryConfig.distUrl}${binaryFilePath}`;
-                    currentDir.push({
-                      name,
-                      date,
-                      size: '-',
-                      isDir: false,
-                      url: remoteUrl,
-                      ignoreDownloadStatuses: [404],
-                    });
-                  }
-                }
-              }
-            }
-          }
-        }
-      } else if (
         binaryFile.includes('{node_abi}') &&
         binaryFile.includes('{platform}') &&
         binaryFile.includes('{arch}') &&
