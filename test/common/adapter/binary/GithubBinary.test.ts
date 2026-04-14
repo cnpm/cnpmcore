@@ -102,6 +102,88 @@ describe('test/common/adapter/binary/GithubBinary.test.ts', () => {
       assert.ok(matchFile3);
     });
 
+    it('should fetch @matrix-org/matrix-sdk-crypto-nodejs', async () => {
+      app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/matrix-org\/matrix-rust-sdk-crypto-nodejs\/releases/, 'GET', {
+        data: [
+          {
+            tag_name: 'v0.4.0',
+            url: 'https://api.github.com/repos/matrix-org/matrix-rust-sdk-crypto-nodejs/releases/277244048',
+            published_at: '2026-01-16T01:50:49Z',
+            tarball_url: 'https://api.github.com/repos/matrix-org/matrix-rust-sdk-crypto-nodejs/tarball/v0.4.0',
+            zipball_url: 'https://api.github.com/repos/matrix-org/matrix-rust-sdk-crypto-nodejs/zipball/v0.4.0',
+            assets: [
+              {
+                name: 'matrix-sdk-crypto.linux-x64-gnu.node',
+                size: 22_027_000,
+                updated_at: '2026-01-16T01:31:27Z',
+                browser_download_url:
+                  'https://github.com/matrix-org/matrix-rust-sdk-crypto-nodejs/releases/download/v0.4.0/matrix-sdk-crypto.linux-x64-gnu.node',
+              },
+              {
+                name: 'matrix-sdk-crypto.win32-x64-msvc.node',
+                size: 15_202_816,
+                updated_at: '2026-01-16T01:37:41Z',
+                browser_download_url:
+                  'https://github.com/matrix-org/matrix-rust-sdk-crypto-nodejs/releases/download/v0.4.0/matrix-sdk-crypto.win32-x64-msvc.node',
+              },
+            ],
+          },
+        ],
+        status: 200,
+      });
+      let result = await binary.fetch('/', '@matrix-org/matrix-sdk-crypto-nodejs');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchDir = false;
+      for (const item of result.items) {
+        assert.ok(item.isDir === true);
+        if (item.name === 'v0.4.0/') {
+          assert.equal(item.date, '2026-01-16T01:50:49Z');
+          assert.equal(item.size, '-');
+          matchDir = true;
+        }
+      }
+      assert.ok(matchDir);
+
+      result = await binary.fetch('/v0.4.0/', '@matrix-org/matrix-sdk-crypto-nodejs');
+      assert.ok(result);
+      assert.ok(result.items.length > 0);
+      let matchFile1 = false;
+      let matchFile2 = false;
+      let matchFile3 = false;
+      for (const item of result.items) {
+        assert.ok(item.isDir === false);
+        if (item.name === 'matrix-sdk-crypto.linux-x64-gnu.node') {
+          assert.equal(item.date, '2026-01-16T01:31:27Z');
+          assert.equal(item.size, 22_027_000);
+          assert.equal(
+            item.url,
+            'https://github.com/matrix-org/matrix-rust-sdk-crypto-nodejs/releases/download/v0.4.0/matrix-sdk-crypto.linux-x64-gnu.node',
+          );
+          matchFile1 = true;
+        }
+        if (item.name === 'matrix-sdk-crypto.win32-x64-msvc.node') {
+          assert.equal(item.date, '2026-01-16T01:37:41Z');
+          assert.equal(item.size, 15_202_816);
+          assert.equal(
+            item.url,
+            'https://github.com/matrix-org/matrix-rust-sdk-crypto-nodejs/releases/download/v0.4.0/matrix-sdk-crypto.win32-x64-msvc.node',
+          );
+          matchFile2 = true;
+        }
+        if (item.name === 'v0.4.0.tar.gz') {
+          assert.equal(
+            item.url,
+            'https://github.com/matrix-org/matrix-rust-sdk-crypto-nodejs/archive/v0.4.0.tar.gz',
+          );
+          matchFile3 = true;
+        }
+      }
+      assert.ok(matchFile1);
+      assert.ok(matchFile2);
+      assert.ok(matchFile3);
+    });
+
     it('should fetch protobuf', async () => {
       const response = await TestUtil.readJSONFile(TestUtil.getFixtures('protobuf-releases.json'));
       app.mockHttpclient(/https:\/\/api\.github\.com\/repos\/protocolbuffers\/protobuf\/releases/, 'GET', {
