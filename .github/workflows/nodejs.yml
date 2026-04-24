@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v6
+        uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -67,7 +67,7 @@ jobs:
           - 6379:6379
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v6
+        uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -379,7 +379,7 @@ jobs:
           - 5432:5432
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v6
+        uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -457,7 +457,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v6
+        uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
@@ -506,7 +506,7 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: actions/checkout@v6
+        uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
