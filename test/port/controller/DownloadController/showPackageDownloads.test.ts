@@ -1,6 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { app, mock } from 'egg-mock/bootstrap';
 import dayjs from '../../../../app/common/dayjs';
+import { getScopeAndName } from '../../../../app/common/PackageUtil';
+import { PackageRepository } from '../../../../app/repository/PackageRepository';
+import { PackageVersionDownloadRepository } from '../../../../app/repository/PackageVersionDownloadRepository';
 import { TestUtil } from '../../../../test/TestUtil';
 
 const SavePackageVersionDownloadCounterPath = require.resolve('../../../../app/port/schedule/SavePackageVersionDownloadCounter');
@@ -236,6 +239,61 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
         .expect('content-type', 'application/json; charset=utf-8');
       const data = res.body;
       assert.match(data.error, /beyond the processable range/);
+    });
+
+    it('should crop downloads to the requested day range, not return the whole month', async () => {
+      const { pkg } = await TestUtil.createPackage({ name: '@cnpm/range-crop', version: '1.0.0' });
+      const [ scope, name ] = getScopeAndName(pkg.name);
+      const packageRepository = await app.getEggObject(PackageRepository);
+      const pkgEntity = await packageRepository.findPackage(scope, name);
+      assert(pkgEntity);
+
+      const downloadRepository = await app.getEggObject(PackageVersionDownloadRepository);
+      // seed download counts at days 5, 15, 28 of 2023-03 directly
+      await downloadRepository.saveSyncDataByMonth(pkgEntity.packageId, 202303, [
+        [ '05', 100 ],
+        [ '15', 200 ],
+        [ '28', 300 ],
+      ]);
+
+      // 2-day range covering only day 5 — must NOT leak day 15 or 28
+      let res = await app.httpRequest()
+        .get(`/downloads/range/2023-03-05:2023-03-06/${pkg.name}`)
+        .expect(200);
+      assert.deepEqual(res.body.downloads, [
+        { day: '2023-03-05', downloads: 100 },
+      ]);
+
+      // mid-month range covering only day 15
+      res = await app.httpRequest()
+        .get(`/downloads/range/2023-03-10:2023-03-20/${pkg.name}`)
+        .expect(200);
+      assert.deepEqual(res.body.downloads, [
+        { day: '2023-03-15', downloads: 200 },
+      ]);
+
+      // full-month range returns every seeded day
+      res = await app.httpRequest()
+        .get(`/downloads/range/2023-03-01:2023-03-31/${pkg.name}`)
+        .expect(200);
+      assert.deepEqual(res.body.downloads, [
+        { day: '2023-03-05', downloads: 100 },
+        { day: '2023-03-15', downloads: 200 },
+        { day: '2023-03-28', downloads: 300 },
+      ]);
+
+      // cross-month range — middle months are NOT cropped, boundaries are
+      await downloadRepository.saveSyncDataByMonth(pkgEntity.packageId, 202304, [
+        [ '01', 10 ],
+        [ '20', 20 ],
+      ]);
+      res = await app.httpRequest()
+        .get(`/downloads/range/2023-03-28:2023-04-15/${pkg.name}`)
+        .expect(200);
+      assert.deepEqual(res.body.downloads, [
+        { day: '2023-03-28', downloads: 300 },
+        { day: '2023-04-01', downloads: 10 },
+      ]);
     });
 
     it('should 422 when range format invalid', async () => {
