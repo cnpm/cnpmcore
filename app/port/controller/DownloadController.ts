@@ -100,14 +100,13 @@ export class DownloadController extends AbstractController {
     const month = yearMonth % 100;
     const startYM = startDate.year() * 100 + startDate.month() + 1;
     const endYM = endDate.year() * 100 + endDate.month() + 1;
-    const entityYM = year * 100 + month;
     const daysInMonth = dayjs(`${year}-${String(month).padStart(2, '0')}-01`).daysInMonth();
     let fromDay = 1;
     let toDay = daysInMonth;
-    if (entityYM === startYM) {
+    if (yearMonth === startYM) {
       fromDay = startDate.date();
     }
-    if (entityYM === endYM) {
+    if (yearMonth === endYM) {
       toDay = endDate.date();
     }
     return [ fromDay, toDay ];
