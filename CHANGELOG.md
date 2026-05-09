@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.82.1 (2026-05-09)</small>
+
+* fix(DownloadController): crop /downloads/range to requested day boundaries (#1039) ([602b243](https://github.com/cnpm/cnpmcore/commit/602b243)), closes [#1039](https://github.com/cnpm/cnpmcore/issues/1039) [#986](https://github.com/cnpm/cnpmcore/issues/986) [#986](https://github.com/cnpm/cnpmcore/issues/986)
+
 ## 3.82.0 (2026-04-10)
 
 * feat: require package maintainer permission when granting team package access (#1027) ([33784a7](https://github.com/cnpm/cnpmcore/commit/33784a7)), closes [#1027](https://github.com/cnpm/cnpmcore/issues/1027)
