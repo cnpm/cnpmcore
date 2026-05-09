@@ -122,7 +122,7 @@
     "tar": "^7.5.2",
     "type-fest": "^5.3.1",
     "ua-parser-js": "^2.0.7",
-    "validate-npm-package-name": "^7.0.0"
+    "validate-npm-package-name": "^8.0.0"
   },
   "devDependencies": {
     "@eggjs/bin": "^8.0.2-beta.2",
