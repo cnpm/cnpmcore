@@ -31,9 +31,11 @@ export class DownloadController extends AbstractController {
     const days: Record<string, number> = {};
     const versions: Record<string, { day: string, downloads: number }[]> = {};
     for (const entity of entities) {
-      const yearMonth = String(entity.yearMonth);
-      const prefix = yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
-      for (let i = 1; i <= 31; i++) {
+      const yearMonth = entity.yearMonth as number;
+      const yearMonthStr = String(yearMonth);
+      const prefix = yearMonthStr.substring(0, 4) + '-' + yearMonthStr.substring(4, 6);
+      const [ fromDay, toDay ] = this.getDayRange(yearMonth, startDate, endDate);
+      for (let i = fromDay; i <= toDay; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
         const counter = entity[field] as number;
@@ -68,9 +70,11 @@ export class DownloadController extends AbstractController {
     const entities = await this.packageVersionDownloadRepository.query(scope, startDate.toDate(), endDate.toDate());
     const days: Record<string, number> = {};
     for (const entity of entities) {
-      const yearMonth = String(entity.yearMonth);
-      const prefix = yearMonth.substring(0, 4) + '-' + yearMonth.substring(4, 6);
-      for (let i = 1; i <= 31; i++) {
+      const yearMonth = entity.yearMonth as number;
+      const yearMonthStr = String(yearMonth);
+      const prefix = yearMonthStr.substring(0, 4) + '-' + yearMonthStr.substring(4, 6);
+      const [ fromDay, toDay ] = this.getDayRange(yearMonth, startDate, endDate);
+      for (let i = fromDay; i <= toDay; i++) {
         const day = String(i).padStart(2, '0');
         const field = `d${day}` as keyof typeof entity;
         const counter = entity[field] as number;
@@ -87,6 +91,25 @@ export class DownloadController extends AbstractController {
     return {
       downloads,
     };
+  }
+
+  // Get the valid day range [startDay, endDay] for a given entity's yearMonth
+  // considering the requested date range boundaries
+  private getDayRange(yearMonth: number, startDate: dayjs.Dayjs, endDate: dayjs.Dayjs): [number, number] {
+    const year = Math.floor(yearMonth / 100);
+    const month = yearMonth % 100;
+    const startYM = startDate.year() * 100 + startDate.month() + 1;
+    const endYM = endDate.year() * 100 + endDate.month() + 1;
+    const daysInMonth = dayjs(`${year}-${String(month).padStart(2, '0')}-01`).daysInMonth();
+    let fromDay = 1;
+    let toDay = daysInMonth;
+    if (yearMonth === startYM) {
+      fromDay = startDate.date();
+    }
+    if (yearMonth === endYM) {
+      toDay = endDate.date();
+    }
+    return [ fromDay, toDay ];
   }
 
   private checkAndGetRange(range: string) {
