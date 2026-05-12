@@ -145,7 +145,7 @@
     "coffee": "^5.5.1",
     "husky": "^9.1.7",
     "ioredis-mock": "^8.13.1",
-    "lint-staged": "^16.2.7",
+    "lint-staged": "^17.0.0",
     "oxfmt": "^0.49.0",
     "oxlint": "^1.32.0",
     "oxlint-tsgolint": "^0.22.0",
