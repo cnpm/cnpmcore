@@ -112,7 +112,7 @@
     "mime-types": "^3.0.2",
     "mysql2": "^3.15.3",
     "node-rsa": "^1.1.1",
-    "npm-package-arg": "^13.0.2",
+    "npm-package-arg": "^14.0.0",
     "oss-cnpm": "^5.0.1",
     "p-map": "^7.0.4",
     "pg": "^8.16.3",
