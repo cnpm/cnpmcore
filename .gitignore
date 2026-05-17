@@ -123,3 +123,6 @@ run
 !test/ctx_register.js
 
 .egg/
+
+# Benchmark test files
+benchmark/stream_download/nginx/50mb_ones.txt
