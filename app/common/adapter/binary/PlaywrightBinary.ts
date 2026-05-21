@@ -12,123 +12,134 @@ const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';
 const PLAYWRIGHT_DRIVER_ARCHS = ['win32_x64', 'mac-arm64', 'mac', 'linux-arm64', 'linux'];
 
 // https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/registry/index.ts
+// CFT entries use Chrome for Testing URLs: builds/cft/{browserVersion}/{suffix}
+// (introduced in playwright 1.58.1, see https://github.com/cnpm/cnpmcore/issues/1033)
+const cft = (suffix: string) => ({ cft: suffix }) as const;
 /* eslint-disable quote-props */
 const DOWNLOAD_PATHS = {
   chromium: {
     '<unknown>': undefined,
     'ubuntu18.04-x64': undefined,
-    'ubuntu20.04-x64': 'builds/chromium/%s/chromium-linux.zip',
-    'ubuntu22.04-x64': 'builds/chromium/%s/chromium-linux.zip',
-    'ubuntu24.04-x64': 'builds/chromium/%s/chromium-linux.zip',
+    'ubuntu20.04-x64': cft('linux64/chrome-linux64.zip'),
+    'ubuntu22.04-x64': cft('linux64/chrome-linux64.zip'),
+    'ubuntu24.04-x64': cft('linux64/chrome-linux64.zip'),
     'ubuntu18.04-arm64': undefined,
     'ubuntu20.04-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
     'ubuntu22.04-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
     'ubuntu24.04-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
-    'debian11-x64': 'builds/chromium/%s/chromium-linux.zip',
+    'debian11-x64': cft('linux64/chrome-linux64.zip'),
     'debian11-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
-    'debian12-x64': 'builds/chromium/%s/chromium-linux.zip',
+    'debian12-x64': cft('linux64/chrome-linux64.zip'),
     'debian12-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
-    'mac10.13': 'builds/chromium/%s/chromium-mac.zip',
-    'mac10.14': 'builds/chromium/%s/chromium-mac.zip',
-    'mac10.15': 'builds/chromium/%s/chromium-mac.zip',
-    mac11: 'builds/chromium/%s/chromium-mac.zip',
-    'mac11-arm64': 'builds/chromium/%s/chromium-mac-arm64.zip',
-    mac12: 'builds/chromium/%s/chromium-mac.zip',
-    'mac12-arm64': 'builds/chromium/%s/chromium-mac-arm64.zip',
-    mac13: 'builds/chromium/%s/chromium-mac.zip',
-    'mac13-arm64': 'builds/chromium/%s/chromium-mac-arm64.zip',
-    mac14: 'builds/chromium/%s/chromium-mac.zip',
-    'mac14-arm64': 'builds/chromium/%s/chromium-mac-arm64.zip',
-    mac15: 'builds/chromium/%s/chromium-mac.zip',
-    'mac15-arm64': 'builds/chromium/%s/chromium-mac-arm64.zip',
-    win64: 'builds/chromium/%s/chromium-win64.zip',
+    'debian13-x64': cft('linux64/chrome-linux64.zip'),
+    'debian13-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
+    'mac10.13': cft('mac-x64/chrome-mac-x64.zip'),
+    'mac10.14': cft('mac-x64/chrome-mac-x64.zip'),
+    'mac10.15': cft('mac-x64/chrome-mac-x64.zip'),
+    mac11: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac11-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac12: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac12-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac13: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac13-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac14: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac14-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac15: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac15-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    win64: cft('win64/chrome-win64.zip'),
   },
   'chromium-headless-shell': {
     '<unknown>': undefined,
     'ubuntu18.04-x64': undefined,
-    'ubuntu20.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
-    'ubuntu22.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
-    'ubuntu24.04-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'ubuntu20.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
+    'ubuntu22.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
+    'ubuntu24.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'ubuntu18.04-arm64': undefined,
     'ubuntu20.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
     'ubuntu22.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
     'ubuntu24.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
-    'debian11-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'debian11-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'debian11-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
-    'debian12-x64': 'builds/chromium/%s/chromium-headless-shell-linux.zip',
+    'debian12-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'debian12-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian13-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
+    'debian13-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
     'mac10.13': undefined,
     'mac10.14': undefined,
     'mac10.15': undefined,
-    mac11: 'builds/chromium/%s/chromium-headless-shell-mac.zip',
-    'mac11-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
-    mac12: 'builds/chromium/%s/chromium-headless-shell-mac.zip',
-    'mac12-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
-    mac13: 'builds/chromium/%s/chromium-headless-shell-mac.zip',
-    'mac13-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
-    mac14: 'builds/chromium/%s/chromium-headless-shell-mac.zip',
-    'mac14-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
-    mac15: 'builds/chromium/%s/chromium-headless-shell-mac.zip',
-    'mac15-arm64': 'builds/chromium/%s/chromium-headless-shell-mac-arm64.zip',
-    win64: 'builds/chromium/%s/chromium-headless-shell-win64.zip',
+    mac11: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac11-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac12: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac12-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac13: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac13-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac14: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac14-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac15: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac15-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    win64: cft('win64/chrome-headless-shell-win64.zip'),
   },
   'chromium-tip-of-tree': {
     '<unknown>': undefined,
     'ubuntu18.04-x64': undefined,
-    'ubuntu20.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
-    'ubuntu22.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
-    'ubuntu24.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'ubuntu20.04-x64': cft('linux64/chrome-linux64.zip'),
+    'ubuntu22.04-x64': cft('linux64/chrome-linux64.zip'),
+    'ubuntu24.04-x64': cft('linux64/chrome-linux64.zip'),
     'ubuntu18.04-arm64': undefined,
     'ubuntu20.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
     'ubuntu22.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
     'ubuntu24.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'debian11-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'debian11-x64': cft('linux64/chrome-linux64.zip'),
     'debian11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'debian12-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux.zip',
+    'debian12-x64': cft('linux64/chrome-linux64.zip'),
     'debian12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
-    'mac10.13': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac10.14': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac10.15': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    mac11: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
-    mac12: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
-    mac13: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac13-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
-    mac14: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac14-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
-    mac15: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac.zip',
-    'mac15-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-mac-arm64.zip',
-    win64: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-win64.zip',
+    'debian13-x64': cft('linux64/chrome-linux64.zip'),
+    'debian13-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-linux-arm64.zip',
+    'mac10.13': cft('mac-x64/chrome-mac-x64.zip'),
+    'mac10.14': cft('mac-x64/chrome-mac-x64.zip'),
+    'mac10.15': cft('mac-x64/chrome-mac-x64.zip'),
+    mac11: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac11-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac12: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac12-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac13: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac13-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac14: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac14-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    mac15: cft('mac-x64/chrome-mac-x64.zip'),
+    'mac15-arm64': cft('mac-arm64/chrome-mac-arm64.zip'),
+    win64: cft('win64/chrome-win64.zip'),
   },
   'chromium-tip-of-tree-headless-shell': {
     '<unknown>': undefined,
     'ubuntu18.04-x64': undefined,
-    'ubuntu20.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
-    'ubuntu22.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
-    'ubuntu24.04-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'ubuntu20.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
+    'ubuntu22.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
+    'ubuntu24.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'ubuntu18.04-arm64': undefined,
     'ubuntu20.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
     'ubuntu22.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
     'ubuntu24.04-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
-    'debian11-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'debian11-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'debian11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
-    'debian12-x64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux.zip',
+    'debian12-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'debian12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
+    'debian13-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
+    'debian13-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-linux-arm64.zip',
     'mac10.13': undefined,
     'mac10.14': undefined,
     'mac10.15': undefined,
-    mac11: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac11-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac12: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac12-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac13: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac13-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac14: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac14-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    mac15: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac.zip',
-    'mac15-arm64': 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-mac-arm64.zip',
-    win64: 'builds/chromium-tip-of-tree/%s/chromium-tip-of-tree-headless-shell-win64.zip',
+    mac11: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac11-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac12: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac12-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac13: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac13-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac14: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac14-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    mac15: cft('mac-x64/chrome-headless-shell-mac-x64.zip'),
+    'mac15-arm64': cft('mac-arm64/chrome-headless-shell-mac-arm64.zip'),
+    win64: cft('win64/chrome-headless-shell-win64.zip'),
   },
   firefox: {
     '<unknown>': undefined,
@@ -338,6 +349,15 @@ export class PlaywrightBinary extends AbstractBinary {
         size: '-',
         date: nowDateISO,
       });
+      // builds/cft/ holds Chrome for Testing downloads
+      // (Playwright 1.58.1+ moved chromium downloads to builds/cft/{browserVersion}/{platform}/)
+      buildDirs.push({
+        name: 'cft/',
+        isDir: true,
+        url: '',
+        size: '-',
+        date: nowDateISO,
+      });
       this.dirItems = {
         '/': [
           {
@@ -349,6 +369,7 @@ export class PlaywrightBinary extends AbstractBinary {
           },
         ],
         '/builds/': buildDirs,
+        '/builds/cft/': [],
       };
       for (const browserName of Object.keys(DOWNLOAD_PATHS)) {
         if (browserName === 'chromium-headless-shell' || browserName === 'chromium-tip-of-tree-headless-shell') {
@@ -467,21 +488,57 @@ export class PlaywrightBinary extends AbstractBinary {
           browserDirname = 'chromium-tip-of-tree';
         }
         for (const [platform, remotePath] of Object.entries(downloadPaths)) {
-          if (typeof remotePath !== 'string') continue;
+          if (!remotePath) continue;
           const revision = browser.revisionOverrides?.[platform] ?? browser.revision;
           const itemDate = browser.browserVersion || revision;
-          const url = DOWNLOAD_HOST + util.format(remotePath, revision);
-          const name = path.basename(remotePath);
-          const dir = `/builds/${browserDirname}/${revision}/`;
-          if (!this.dirItems[dir]) {
-            this.dirItems[`/builds/${browserDirname}/`].push({
-              name: `${revision}/`,
-              isDir: true,
-              url: '',
-              size: '-',
-              date: revision,
-            });
-            this.dirItems[dir] = [];
+          let url: string;
+          let name: string;
+          let dir: string;
+          if (typeof remotePath === 'string') {
+            url = DOWNLOAD_HOST + util.format(remotePath, revision);
+            name = path.basename(remotePath);
+            dir = `/builds/${browserDirname}/${revision}/`;
+            if (!this.dirItems[dir]) {
+              this.dirItems[`/builds/${browserDirname}/`].push({
+                name: `${revision}/`,
+                isDir: true,
+                url: '',
+                size: '-',
+                date: revision,
+              });
+              this.dirItems[dir] = [];
+            }
+          } else {
+            // Chrome for Testing path: builds/cft/{browserVersion}/{suffix}
+            if (!browser.browserVersion) continue;
+            const cftSuffix = remotePath.cft;
+            url = `${DOWNLOAD_HOST}builds/cft/${browser.browserVersion}/${cftSuffix}`;
+            name = path.basename(cftSuffix);
+            const platformDir = path.dirname(cftSuffix);
+            const versionDir = `/builds/cft/${browser.browserVersion}/`;
+            dir = `${versionDir}${platformDir}/`;
+            if (!this.dirItems[versionDir]) {
+              this.dirItems['/builds/cft/'].push({
+                name: `${browser.browserVersion}/`,
+                isDir: true,
+                url: '',
+                size: '-',
+                date: browser.browserVersion,
+              });
+              this.dirItems[versionDir] = [];
+            }
+            if (!this.dirItems[versionDir].some((item) => item.name === `${platformDir}/`)) {
+              this.dirItems[versionDir].push({
+                name: `${platformDir}/`,
+                isDir: true,
+                url: '',
+                size: '-',
+                date: browser.browserVersion,
+              });
+            }
+            if (!this.dirItems[dir]) {
+              this.dirItems[dir] = [];
+            }
           }
           if (!this.dirItems[dir].some((item) => item.name === name)) {
             this.dirItems[dir].push({
