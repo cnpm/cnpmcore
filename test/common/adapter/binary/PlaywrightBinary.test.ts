@@ -103,6 +103,14 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           /https:\/\/playwright\.azureedge\.net\/builds\/cft\/133\.0\.6943\.16\/mac-arm64\/(chrome|chrome-headless-shell)-mac-arm64\.zip/,
         );
       }
+
+      // linux-arm64 did NOT migrate to CFT and must still resolve under builds/chromium/{revision}/.
+      // Fixture revision is 1155.
+      const chromiumRevResult = await binary.fetch('/builds/chromium/1155/');
+      assert.ok(chromiumRevResult);
+      const linuxArm64 = chromiumRevResult.items.find((item) => item.name === 'chromium-linux-arm64.zip');
+      assert.ok(linuxArm64, 'chromium-linux-arm64.zip should still live at /builds/chromium/1155/');
+      assert.equal(linuxArm64.url, 'https://playwright.azureedge.net/builds/chromium/1155/chromium-linux-arm64.zip');
     });
 
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {

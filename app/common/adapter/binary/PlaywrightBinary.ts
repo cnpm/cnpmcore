@@ -509,7 +509,6 @@ export class PlaywrightBinary extends AbstractBinary {
               this.dirItems[dir] = [];
             }
           } else {
-            // Chrome for Testing path: builds/cft/{browserVersion}/{suffix}
             if (!browser.browserVersion) continue;
             const cftSuffix = remotePath.cft;
             url = `${DOWNLOAD_HOST}builds/cft/${browser.browserVersion}/${cftSuffix}`;
