@@ -1,5 +1,19 @@
 # Changelog
 
+## <small>4.33.1 (2026-05-22)</small>
+
+* fix(PlaywrightBinary): mirror builds/cft/{browserVersion}/ chromium paths (#1050) ([53d263e](https://github.com/cnpm/cnpmcore/commit/53d263e)), closes [#1050](https://github.com/cnpm/cnpmcore/issues/1050) [#1033](https://github.com/cnpm/cnpmcore/issues/1033)
+* chore: use `taiki-e/checkout-action` in GitHub workflows (#1035) ([2dfb374](https://github.com/cnpm/cnpmcore/commit/2dfb374)), closes [#1035](https://github.com/cnpm/cnpmcore/issues/1035)
+* chore(deps): update dependency lint-staged to v17 (#1038) ([aa8921e](https://github.com/cnpm/cnpmcore/commit/aa8921e)), closes [#1038](https://github.com/cnpm/cnpmcore/issues/1038)
+* chore(deps): update dependency oxfmt to ^0.46.0 (#1029) ([be23340](https://github.com/cnpm/cnpmcore/commit/be23340)), closes [#1029](https://github.com/cnpm/cnpmcore/issues/1029)
+* chore(deps): update dependency oxfmt to ^0.48.0 (#1037) ([52e90a7](https://github.com/cnpm/cnpmcore/commit/52e90a7)), closes [#1037](https://github.com/cnpm/cnpmcore/issues/1037)
+* chore(deps): update dependency oxfmt to ^0.49.0 (#1042) ([4c14c20](https://github.com/cnpm/cnpmcore/commit/4c14c20)), closes [#1042](https://github.com/cnpm/cnpmcore/issues/1042)
+* chore(deps): update dependency oxfmt to ^0.51.0 (#1043) ([03a169e](https://github.com/cnpm/cnpmcore/commit/03a169e)), closes [#1043](https://github.com/cnpm/cnpmcore/issues/1043)
+* chore(deps): update dependency oxlint-tsgolint to ^0.21.0 (#1031) ([bef3825](https://github.com/cnpm/cnpmcore/commit/bef3825)), closes [#1031](https://github.com/cnpm/cnpmcore/issues/1031)
+* chore(deps): update dependency oxlint-tsgolint to ^0.22.0 (#1036) ([6135e02](https://github.com/cnpm/cnpmcore/commit/6135e02)), closes [#1036](https://github.com/cnpm/cnpmcore/issues/1036)
+* chore(deps): update dependency oxlint-tsgolint to ^0.23.0 (#1045) ([f2e685f](https://github.com/cnpm/cnpmcore/commit/f2e685f)), closes [#1045](https://github.com/cnpm/cnpmcore/issues/1045)
+* chore(deps): update dependency validate-npm-package-name to v8 (#1041) ([f4d57d8](https://github.com/cnpm/cnpmcore/commit/f4d57d8)), closes [#1041](https://github.com/cnpm/cnpmcore/issues/1041)
+
 ## 4.33.0 (2026-04-14)
 
 * feat: add @discordjs/opus and @matrix-org/matrix-sdk-crypto-nodejs binary (#1030) ([ff49e85](https://github.com/cnpm/cnpmcore/commit/ff49e85)), closes [#1030](https://github.com/cnpm/cnpmcore/issues/1030)
