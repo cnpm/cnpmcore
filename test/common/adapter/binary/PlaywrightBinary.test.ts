@@ -41,6 +41,78 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.ok(matchDir1);
     });
 
+    // https://github.com/cnpm/cnpmcore/issues/1033
+    // Playwright 1.58.1+ moved chromium downloads to builds/cft/{browserVersion}/{platform}/{file}.zip
+    it('should mirror builds/cft/{browserVersion}/{platform}/ entries for chromium', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
+        persist: false,
+      });
+      app
+        .mockAgent()
+        .get('https://unpkg.com')
+        .intercept({
+          method: 'GET',
+          path: /browsers\.json/,
+        })
+        .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
+        .persist();
+
+      const buildsResult = await binary.fetch('/builds/');
+      assert.ok(buildsResult);
+      assert.ok(
+        buildsResult.items.some((item) => item.name === 'cft/' && item.isDir),
+        'builds/ should include cft/ subdir',
+      );
+
+      const cftResult = await binary.fetch('/builds/cft/');
+      assert.ok(cftResult);
+      // chromium browserVersion from fixture: 133.0.6943.16
+      // chromium-tip-of-tree browserVersion from fixture: 133.0.6943.0
+      const cftVersionDirs = cftResult.items.map((item) => item.name);
+      assert.ok(
+        cftVersionDirs.includes('133.0.6943.16/'),
+        `cft/ should include 133.0.6943.16/, got: ${cftVersionDirs.join(', ')}`,
+      );
+      assert.ok(
+        cftVersionDirs.includes('133.0.6943.0/'),
+        `cft/ should include 133.0.6943.0/, got: ${cftVersionDirs.join(', ')}`,
+      );
+
+      const cftVersionResult = await binary.fetch('/builds/cft/133.0.6943.16/');
+      assert.ok(cftVersionResult);
+      const platformDirs = cftVersionResult.items.map((item) => item.name).sort();
+      assert.deepEqual(platformDirs, ['linux64/', 'mac-arm64/', 'mac-x64/', 'win64/']);
+
+      const macArm64Result = await binary.fetch('/builds/cft/133.0.6943.16/mac-arm64/');
+      assert.ok(macArm64Result);
+      const macFileNames = macArm64Result.items.map((item) => item.name).sort();
+      // chrome (chromium) + chrome-headless-shell variants
+      assert.ok(
+        macFileNames.includes('chrome-mac-arm64.zip'),
+        `should include chrome-mac-arm64.zip, got: ${macFileNames.join(', ')}`,
+      );
+      assert.ok(
+        macFileNames.includes('chrome-headless-shell-mac-arm64.zip'),
+        `should include chrome-headless-shell-mac-arm64.zip, got: ${macFileNames.join(', ')}`,
+      );
+      for (const item of macArm64Result.items) {
+        assert.equal(item.isDir, false);
+        assert.match(
+          item.url,
+          /https:\/\/playwright\.azureedge\.net\/builds\/cft\/133\.0\.6943\.16\/mac-arm64\/(chrome|chrome-headless-shell)-mac-arm64\.zip/,
+        );
+      }
+
+      // linux-arm64 did NOT migrate to CFT and must still resolve under builds/chromium/{revision}/.
+      // Fixture revision is 1155.
+      const chromiumRevResult = await binary.fetch('/builds/chromium/1155/');
+      assert.ok(chromiumRevResult);
+      const linuxArm64 = chromiumRevResult.items.find((item) => item.name === 'chromium-linux-arm64.zip');
+      assert.ok(linuxArm64, 'chromium-linux-arm64.zip should still live at /builds/chromium/1155/');
+      assert.equal(linuxArm64.url, 'https://playwright.azureedge.net/builds/chromium/1155/chromium-linux-arm64.zip');
+    });
+
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
@@ -57,7 +129,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         .persist();
       let result = await binary.fetch('/builds/');
       assert.ok(result);
-      assert.equal(result.items.length, 9, JSON.stringify(result, null, 2));
+      assert.equal(result.items.length, 10, JSON.stringify(result, null, 2));
       assert.equal(result.items[0].name, 'chromium/');
       assert.equal(result.items[1].name, 'chromium-tip-of-tree/');
       assert.equal(result.items[2].name, 'firefox/');
@@ -67,6 +139,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(result.items[6].name, 'winldd/');
       assert.equal(result.items[7].name, 'android/');
       assert.equal(result.items[8].name, 'driver/');
+      assert.equal(result.items[9].name, 'cft/');
       assert.equal(result.items[0].isDir, true);
 
       const driverDirs = ['driver/', 'driver/next/'];
