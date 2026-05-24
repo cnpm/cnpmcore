@@ -28,6 +28,28 @@ See [DEVELOPER.md](DEVELOPER.md)
 
 See [INTEGRATE.md](INTEGRATE.md)
 
+## npmmirror.com
+
+[npmmirror.com](https://npmmirror.com) is the China NPM mirror hosted by cnpmcore, sponsored by [Alibaba Cloud / 阿里云](https://www.aliyun.com/).
+
+npmmirror.com 是由 cnpmcore 驱动的中国 NPM 镜像，由[阿里云](https://www.aliyun.com/)提供基础设施赞助。
+
+### Usage Policy
+
+To provide a more stable and reliable service:
+
+- Do not abuse the registry with excessive crawling or scraping.
+- Automated access that generates unusually high traffic may be rate-limited without notice.
+- If you have large-scale usage needs or are affected by rate limiting, please open a [GitHub Issue](https://github.com/cnpm/cnpmcore/issues) to contact us.
+
+### 使用须知
+
+为了提供更加稳定可靠的服务：
+
+- 请勿滥用 registry，禁止过度爬取或抓取数据。
+- 产生异常高流量的自动化访问可能会被限流，恕不另行通知。
+- 如果您有大规模使用需求，或受到限流策略影响，请通过 [GitHub Issue](https://github.com/cnpm/cnpmcore/issues) 与我们联系。
+
 ## License
 
 [MIT](LICENSE)
