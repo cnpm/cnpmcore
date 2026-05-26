@@ -482,23 +482,33 @@ export class PackageManagerService extends AbstractService {
     await this._refreshPackageManifestsToDists(pkg);
 
     this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+    if (block) {
+      // the version becomes visible again -> emit PACKAGE_VERSION_ADDED so consumers that only
+      // listen to it (changes stream / store-manifest / unpkg file sync) pick it up. Needed
+      // because an isolated version's PACKAGE_VERSION_ADDED was suppressed at publish; if it was
+      // permanently blocked and is now unblocked, this is the first time the event fires for it.
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, version, undefined);
+    }
     this.logger.info('[packageManagerService.unblockPackageVersion:success] packageId: %s, version: %s',
       pkg.packageId, version);
   }
 
   /**
-   * Idempotently set whether a package version is available (visible) to the outside.
-   * Thin wrapper over block/unblockPackageVersion, used by external decision sources
-   * (e.g. a deployment's security scan) to permanently block a version that is currently
-   * in the dependency-isolation buffer — the buffer record is overwritten to a permanent
-   * block (type=null) and will no longer be auto-released.
-   * `available=false` always produces a permanent block; the buffer entry path writes
-   * buffer records directly (see ensureNewVersionIsolated).
+   * Idempotently set whether a package version is available (visible) to the outside, for
+   * external decision sources (e.g. a deployment's security scan).
+   * - available=false: permanently block; if the version is currently in the dependency-isolation
+   *   buffer, the buffer record is overwritten to a permanent block (type=null, no auto-release).
+   * - available=true: only lifts a PERMANENT block. It deliberately does NOT release a buffer
+   *   record — automated "make available" must not let a version escape the isolation window
+   *   ahead of its timer. Buffer release is owned by the timer (releaseBufferedVersions); an
+   *   admin can still force-release via unblockPackageVersion (the explicit escape channel).
    */
   async ensurePackageVersionAvailability(pkg: Package, version: string, available: boolean, reason?: string): Promise<{ changed: boolean }> {
     const existing = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
     if (available) {
       if (!existing) return { changed: false };
+      // never spring a buffered version out of isolation here (no automated escape)
+      if (existing.isBuffer) return { changed: false };
       await this.unblockPackageVersion(pkg, version);
       return { changed: true };
     }

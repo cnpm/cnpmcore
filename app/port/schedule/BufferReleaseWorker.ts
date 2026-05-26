@@ -10,6 +10,11 @@ interface ReleaseJob {
   versions: string[];
 }
 
+// re-entrancy guard: each release job does a full manifest rebuild + storage write, which can
+// exceed the 1s interval; without this the scheduler would run overlapping drains on the same
+// node (same pattern as SyncPackageWorker / TriggerHookWorker).
+let executing = false;
+
 // Worker: runs on every node (ScheduleType.ALL) and pops release jobs enqueued by
 // BufferReleaseDispatcher, then performs the heavy per-package batch unblock. The queue
 // pop is atomic, so each job is handled by a single node and the unblock load (manifest
@@ -35,14 +40,21 @@ export class BufferReleaseWorker {
 
   async subscribe() {
     if (!this.config.cnpmcore.enableDependencyIsolation) return;
-    let job = await this.queueAdapter.pop<ReleaseJob>(DEPENDENCY_ISOLATION_RELEASE_QUEUE);
-    while (job) {
-      try {
-        await this.packageManagerService.releaseBufferedVersions(job.packageId, job.versions);
-      } catch (err) {
-        this.logger.error('[BufferReleaseWorker:subscribe] release packageId: %s failed: %s', job.packageId, err);
+    // skip this tick if a previous drain on this node is still running
+    if (executing) return;
+    executing = true;
+    try {
+      let job = await this.queueAdapter.pop<ReleaseJob>(DEPENDENCY_ISOLATION_RELEASE_QUEUE);
+      while (job) {
+        try {
+          await this.packageManagerService.releaseBufferedVersions(job.packageId, job.versions);
+        } catch (err) {
+          this.logger.error('[BufferReleaseWorker:subscribe] release packageId: %s failed: %s', job.packageId, err);
+        }
+        job = await this.queueAdapter.pop<ReleaseJob>(DEPENDENCY_ISOLATION_RELEASE_QUEUE);
       }
-      job = await this.queueAdapter.pop<ReleaseJob>(DEPENDENCY_ISOLATION_RELEASE_QUEUE);
+    } finally {
+      executing = false;
     }
   }
 }

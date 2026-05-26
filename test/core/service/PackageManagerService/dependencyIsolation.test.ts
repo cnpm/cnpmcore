@@ -186,6 +186,25 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       assert.deepEqual(await packageManagerService.ensurePackageVersionAvailability(pkg, '1.0.0', true), { changed: false });
     });
 
+    it('should NOT release a buffered version (no automated escape from isolation)', async () => {
+      const { packageId } = await publishVersion('foo', '1.0.0', false); // public -> isolated
+      const pkg = await packageRepository.findPackageByPackageId(packageId);
+      assert(pkg);
+      // sanity: it is buffered + hidden
+      assert((await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'))?.isBuffer);
+
+      // an automated "make available" must NOT spring it out of the buffer
+      const res = await packageManagerService.ensurePackageVersionAvailability(pkg, '1.0.0', true);
+      assert.deepEqual(res, { changed: false });
+      assert((await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'))?.isBuffer);
+      assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+
+      // but an admin force-unblock (the explicit escape channel) still releases it
+      await packageManagerService.unblockPackageVersion(pkg, '1.0.0');
+      assert.equal(await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'), null);
+      assert((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0']);
+    });
+
     it('should block then unblock idempotently', async () => {
       const { packageId } = await publishVersion('foo', '1.0.0', true);
       const pkg = await packageRepository.findPackageByPackageId(packageId);
@@ -211,6 +230,37 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       // incremental refresh (as run by sync batch / re-publish) must not re-add the blocked version
       await packageManagerService.refreshPackageChangeVersionsToDists(pkg, [ '1.0.0' ]);
       assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+    });
+  });
+
+  describe('unblockPackageVersion event (re-emit on admission)', () => {
+    it('should emit PACKAGE_VERSION_ADDED when a blocked version becomes visible again', async () => {
+      const { packageId } = await publishVersion('foo', '1.0.0', true);
+      const pkg = await packageRepository.findPackageByPackageId(packageId);
+      assert(pkg);
+      await packageManagerService.blockPackageVersion(pkg, '1.0.0', 'bad');
+
+      const emitted: string[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mock((packageManagerService as any).eventBus, 'emit', (name: string) => { emitted.push(name); });
+      await packageManagerService.unblockPackageVersion(pkg, '1.0.0');
+
+      // version becomes visible again -> consumers that only listen to PACKAGE_VERSION_ADDED must be notified
+      assert(emitted.includes('PACKAGE_VERSION_ADDED'));
+      assert(emitted.includes('PACKAGE_UNBLOCKED'));
+    });
+
+    it('should NOT emit PACKAGE_VERSION_ADDED when there was no block to remove', async () => {
+      const { packageId } = await publishVersion('foo', '1.0.0', true);
+      const pkg = await packageRepository.findPackageByPackageId(packageId);
+      assert(pkg);
+
+      const emitted: string[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mock((packageManagerService as any).eventBus, 'emit', (name: string) => { emitted.push(name); });
+      await packageManagerService.unblockPackageVersion(pkg, '1.0.0');
+
+      assert(!emitted.includes('PACKAGE_VERSION_ADDED'));
     });
   });
 });
