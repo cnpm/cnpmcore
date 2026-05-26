@@ -381,6 +381,9 @@ export class PackageManagerService extends AbstractService {
     let block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
     if (block) {
       block.reason = reason;
+      // a permanent block always overrides a dependency-isolation buffer record
+      block.type = null;
+      block.expiredAt = null;
     } else {
       block = PackageVersionBlock.create({
         packageId: pkg.packageId,
@@ -417,6 +420,30 @@ export class PackageManagerService extends AbstractService {
     this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
     this.logger.info('[packageManagerService.unblockPackageVersion:success] packageId: %s, version: %s',
       pkg.packageId, version);
+  }
+
+  /**
+   * Idempotently set whether a package version is available (visible) to the outside.
+   * Thin wrapper over block/unblockPackageVersion, used by external decision sources
+   * (e.g. a deployment's security scan) to permanently block a version that is currently
+   * in the dependency-isolation buffer — the buffer record is overwritten to a permanent
+   * block (type=null) and will no longer be auto-released.
+   * `available=false` always produces a permanent block; the buffer entry path writes
+   * buffer records directly (see ensureNewVersionIsolated).
+   */
+  async ensurePackageVersionAvailability(pkg: Package, version: string, available: boolean, reason?: string): Promise<{ changed: boolean }> {
+    const existing = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
+    if (available) {
+      if (!existing) return { changed: false };
+      await this.unblockPackageVersion(pkg, version);
+      return { changed: true };
+    }
+    // make unavailable (permanent block)
+    if (existing && !existing.isBuffer && existing.reason === (reason ?? '')) {
+      return { changed: false };
+    }
+    await this.blockPackageVersion(pkg, version, reason ?? '');
+    return { changed: true };
   }
 
 
