@@ -186,6 +186,30 @@ export type CnpmcoreConfig = {
   enableBlockPackageVersion?: boolean,
 
   /**
+   * enable dependency isolation (buffer) zone
+   * when enabled, a newly synced version is held invisible for `dependencyIsolationDuration`
+   * before being auto-released, giving deployments a window to run out-of-band validation.
+   * requires `enableBlockPackageVersion`. default is false (behavior identical to today).
+   * see RFC: https://github.com/cnpm/cnpmcore/issues/1057
+   */
+  enableDependencyIsolation?: boolean,
+
+  /**
+   * dependency isolation buffer duration in milliseconds, analogous to pnpm `minimumReleaseAge`.
+   * a synced version stays invisible until `gmt_create + dependencyIsolationDuration`.
+   * default is 6 hours. only effective when `enableDependencyIsolation` is true.
+   */
+  dependencyIsolationDuration?: number,
+
+  /**
+   * dependency isolation allowlist, analogous to pnpm `minimumReleaseAgeExclude`.
+   * matched packages skip the buffer zone (released immediately).
+   * supports exact package name and scope wildcard, e.g. `lodash`, `@scope/*`, `@scope/pkg`.
+   * default is empty.
+   */
+  dependencyIsolationExclude?: string[],
+
+  /**
    * database config
    */
   database: {
