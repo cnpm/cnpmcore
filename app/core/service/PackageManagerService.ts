@@ -277,36 +277,39 @@ export class PackageManagerService extends AbstractService {
       }
       throw e;
     }
-    // dependency isolation (buffer) zone: hold a newly synced version invisible for a
-    // while before it is auto-released. Write the buffer block record BEFORE the manifest
-    // refresh (so it is excluded) and suppress PACKAGE_VERSION_ADDED — the event (and thus
-    // search index / changes stream / file sync) fires only when the version is released.
-    // see RFC: https://github.com/cnpm/cnpmcore/issues/1057
-    const isolated = await this._tryIsolateNewVersion(pkg, cmd, pkgVersion.version);
+    // dependency isolation (buffer) zone: hold a newly synced version invisible for a while
+    // before it is auto-released. Decide first (pure), so PACKAGE_VERSION_ADDED is suppressed
+    // — the event (and thus search index / changes stream / file sync) fires only when the
+    // version is released. see RFC: https://github.com/cnpm/cnpmcore/issues/1057
+    const shouldIsolate = this._shouldIsolateNewVersion(pkg, cmd);
 
-    // skip the per-version refresh for an isolated version (it would be filtered out anyway);
-    // the version enters the manifest only when released. non-isolated path is unchanged.
-    if (!isolated && cmd.skipRefreshPackageManifests !== true) {
+    if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
     if (cmd.tags) {
       for (const tag of cmd.tags) {
         await this.savePackageTag(pkg, tag, cmd.version, true);
-        if (!isolated) {
+        if (!shouldIsolate) {
           this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
         }
       }
-    } else if (!isolated) {
+    } else if (!shouldIsolate) {
       this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, undefined);
+    }
+
+    // isolate AFTER the normal publish flow has built manifestsDist + tags (identical to a
+    // non-isolated publish up to here), then hide the version. Doing it here — rather than
+    // before the refresh — avoids the new-package case where the only version is isolated and
+    // manifestsDist is never created (which crashes savePackageTag).
+    if (shouldIsolate) {
+      await this._isolateNewVersion(pkg, cmd, pkgVersion.version);
     }
 
     return pkgVersion;
   }
 
-  // Decide whether a newly published/synced version should enter the dependency isolation
-  // buffer; if so, persist a buffer block record (type='buffer', expiredAt) directly.
-  // Returns true when the version was isolated (caller must suppress PACKAGE_VERSION_ADDED).
-  private async _tryIsolateNewVersion(pkg: Package, cmd: PublishPackageCmd, version: string): Promise<boolean> {
+  // Decide whether a newly published/synced version should enter the dependency isolation buffer.
+  private _shouldIsolateNewVersion(pkg: Package, cmd: PublishPackageCmd): boolean {
     const config = this.config.cnpmcore;
     if (!config.enableDependencyIsolation) return false;
     // buffer enforcement reuses version-level block; without it the version can't be hidden
@@ -317,7 +320,12 @@ export class PackageManagerService extends AbstractService {
     if (cmd.isPrivate) return false;
     // allowlist: trusted packages skip the buffer (analogous to pnpm minimumReleaseAgeExclude)
     if (this._isDependencyIsolationExcluded(pkg.fullname)) return false;
+    return true;
+  }
 
+  // Persist a buffer block record (type='buffer', expiredAt) and hide the version from the manifest.
+  private async _isolateNewVersion(pkg: Package, cmd: PublishPackageCmd, version: string): Promise<void> {
+    const duration = this.config.cnpmcore.dependencyIsolationDuration as number;
     const expiredAt = new Date(Date.now() + duration);
     const block = PackageVersionBlock.create({
       packageId: pkg.packageId,
@@ -327,9 +335,13 @@ export class PackageManagerService extends AbstractService {
       expiredAt,
     });
     await this.packageVersionBlockRepository.savePackageVersionBlock(block);
+    // hide it now for the user-publish path (manifestsDist already built above). the sync path
+    // (skipRefreshPackageManifests) leaves it to the batch refresh, which is block-aware.
+    if (cmd.skipRefreshPackageManifests !== true) {
+      await this._refreshPackageManifestsToDists(pkg);
+    }
     this.logger.info('[packageManagerService.isolateNewVersion] packageId: %s, version: %s, release at: %s',
       pkg.packageId, version, expiredAt.toISOString());
-    return true;
   }
 
   // Match `dependencyIsolationExclude` rules: exact name (`lodash`, `@scope/pkg`) or scope wildcard (`@scope/*`)
