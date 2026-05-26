@@ -27,7 +27,7 @@ import { DistRepository } from '../../repository/DistRepository';
 import { isDuplicateKeyError } from '../../repository/util/ErrorUtil';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
-import { PackageVersionBlock } from '../entity/PackageVersionBlock';
+import { PackageVersionBlock, PACKAGE_VERSION_BLOCK_TYPE_BUFFER } from '../entity/PackageVersionBlock';
 import { PackageTag } from '../entity/PackageTag';
 import { User } from '../entity/User';
 import { Dist } from '../entity/Dist';
@@ -277,19 +277,69 @@ export class PackageManagerService extends AbstractService {
       }
       throw e;
     }
+    // dependency isolation (buffer) zone: hold a newly synced version invisible for a
+    // while before it is auto-released. Write the buffer block record BEFORE the manifest
+    // refresh (so it is excluded) and suppress PACKAGE_VERSION_ADDED — the event (and thus
+    // search index / changes stream / file sync) fires only when the version is released.
+    // see RFC: https://github.com/cnpm/cnpmcore/issues/1057
+    const isolated = await this._tryIsolateNewVersion(pkg, cmd, pkgVersion.version);
+
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
     if (cmd.tags) {
       for (const tag of cmd.tags) {
         await this.savePackageTag(pkg, tag, cmd.version, true);
-        this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
+        if (!isolated) {
+          this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
+        }
       }
-    } else {
+    } else if (!isolated) {
       this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, undefined);
     }
 
     return pkgVersion;
+  }
+
+  // Decide whether a newly published/synced version should enter the dependency isolation
+  // buffer; if so, persist a buffer block record (type='buffer', expiredAt) directly.
+  // Returns true when the version was isolated (caller must suppress PACKAGE_VERSION_ADDED).
+  private async _tryIsolateNewVersion(pkg: Package, cmd: PublishPackageCmd, version: string): Promise<boolean> {
+    const config = this.config.cnpmcore;
+    if (!config.enableDependencyIsolation) return false;
+    // buffer enforcement reuses version-level block; without it the version can't be hidden
+    if (!config.enableBlockPackageVersion) return false;
+    const duration = config.dependencyIsolationDuration;
+    if (!duration || duration <= 0) return false;
+    // only isolate external/synced (public) versions, never user-published private packages
+    if (cmd.isPrivate) return false;
+    // allowlist: trusted packages skip the buffer (analogous to pnpm minimumReleaseAgeExclude)
+    if (this._isDependencyIsolationExcluded(pkg.fullname)) return false;
+
+    const expiredAt = new Date(Date.now() + duration);
+    const block = PackageVersionBlock.create({
+      packageId: pkg.packageId,
+      version,
+      reason: `[buffer] in dependency isolation zone, release at ${expiredAt.toISOString()}`,
+      type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+      expiredAt,
+    });
+    await this.packageVersionBlockRepository.savePackageVersionBlock(block);
+    this.logger.info('[packageManagerService.isolateNewVersion] packageId: %s, version: %s, release at: %s',
+      pkg.packageId, version, expiredAt.toISOString());
+    return true;
+  }
+
+  // Match `dependencyIsolationExclude` rules: exact name (`lodash`, `@scope/pkg`) or scope wildcard (`@scope/*`)
+  private _isDependencyIsolationExcluded(fullname: string): boolean {
+    const list = this.config.cnpmcore.dependencyIsolationExclude;
+    if (!list || list.length === 0) return false;
+    const [ scope ] = getScopeAndName(fullname);
+    return list.some(rule => {
+      if (rule === fullname) return true;
+      if (rule.endsWith('/*')) return scope !== '' && scope === rule.slice(0, -2);
+      return false;
+    });
   }
 
   async blockPackageByFullname(name: string, reason: string) {
