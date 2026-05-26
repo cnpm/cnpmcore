@@ -41,7 +41,8 @@ export class BufferReleaseDispatcher {
     // lock TTL is kept comfortably larger than the schedule interval (60s) so a slow scan/enqueue
     // run cannot let the lock expire mid-run and a parallel node re-scan + double-enqueue.
     await this.cacheAdapter.usingLock('BufferReleaseDispatcher', 120, async () => {
-      const expiredBlocks = await this.packageVersionBlockRepository.findExpiredBufferedVersions(1000);
+      // per-cycle batch cap: bounds backlog catch-up / re-enqueue churn (indexed query, cheap)
+      const expiredBlocks = await this.packageVersionBlockRepository.findExpiredBufferedVersions(500);
       if (expiredBlocks.length === 0) return;
       // group by package so the worker rebuilds each package's manifest only once
       const versionsByPackageId = new Map<string, string[]>();
