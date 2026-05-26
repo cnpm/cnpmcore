@@ -1,7 +1,7 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import { ModelConvertor } from './util/ModelConvertor';
 import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock';
-import { PackageVersionBlock as PackageVersionBlockEntity } from '../core/entity/PackageVersionBlock';
+import { PackageVersionBlock as PackageVersionBlockEntity, PACKAGE_VERSION_BLOCK_TYPE_BUFFER } from '../core/entity/PackageVersionBlock';
 import { AbstractRepository } from './AbstractRepository';
 
 @SingletonProto({
@@ -41,6 +41,16 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     const removeCount = await this.PackageVersionBlock.remove({ packageVersionBlockId });
     this.logger.info('[PackageVersionBlockRepository:removePackageVersionBlock:remove] %d rows, packageVersionBlockId: %s',
       removeCount, packageVersionBlockId);
+  }
+
+  // Dependency isolation: list buffer records whose hold has expired (ready to release).
+  // Indexed by (type, expired_at); ordered oldest-first so the most overdue release first.
+  async findExpiredBufferedVersions(limit: number) {
+    const models = await this.PackageVersionBlock.find({
+      type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+      expiredAt: { $lte: new Date() },
+    }).order('expiredAt', 'asc').limit(limit);
+    return models.map(model => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
   }
 
   // Find a specific version block (not '*')

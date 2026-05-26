@@ -496,6 +496,38 @@ export class PackageManagerService extends AbstractService {
     return { changed: true };
   }
 
+  /**
+   * Dependency isolation: release expired buffer versions of a single package in one batch.
+   * Only records still of type='buffer' are released (a record overwritten to a permanent
+   * block is left alone). The package manifest is rebuilt once for the whole batch (the
+   * rebuild is O(versions) regardless of how many are released), then PACKAGE_VERSION_ADDED
+   * is emitted per released version so search / changes stream / file sync pick them up.
+   * Idempotent: already-removed / no-longer-buffer versions are skipped.
+   */
+  async releaseBufferedVersions(packageId: string, versions: string[]): Promise<string[]> {
+    const pkg = await this.packageRepository.findPackageByPackageId(packageId);
+    if (!pkg) return [];
+    const released: string[] = [];
+    for (const version of versions) {
+      const block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(packageId, version);
+      if (block && block.isBuffer) {
+        await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
+        released.push(version);
+      }
+    }
+    if (released.length === 0) return [];
+    // rebuild the package manifest once for the whole batch (restores released versions + dist-tags)
+    await this._refreshPackageManifestsToDists(pkg);
+    this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+    for (const version of released) {
+      // the version becomes visible now -> emit the deferred PACKAGE_VERSION_ADDED
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, version, undefined);
+    }
+    this.logger.info('[packageManagerService.releaseBufferedVersions:success] packageId: %s, released: %j',
+      packageId, released);
+    return released;
+  }
+
 
   async replacePackageMaintainersAndDist(pkg: Package, maintainers: User[]) {
     await this.packageRepository.replacePackageMaintainers(pkg.packageId, maintainers.map(m => m.userId));
