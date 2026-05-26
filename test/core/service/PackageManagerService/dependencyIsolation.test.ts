@@ -152,6 +152,40 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       const { packageId } = await publishVersion('foo', '1.0.0', true);
       assert.deepEqual(await packageManagerService.releaseBufferedVersions(packageId, [ '9.9.9' ]), []);
     });
+
+    it('should re-create buffer rows and emit nothing when the manifest rebuild fails', async () => {
+      const { packageId } = await publishVersion('foo', '1.0.0', false); // isolated
+      const emitted: string[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mock((packageManagerService as any).eventBus, 'emit', (name: string) => { emitted.push(name); });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mock(PackageManagerService.prototype as any, '_refreshPackageManifestsToDists', async () => { throw new Error('nfs down'); });
+
+      await assert.rejects(packageManagerService.releaseBufferedVersions(packageId, [ '1.0.0' ]), /nfs down/);
+      // no phantom publish event on failure
+      assert(!emitted.includes('PACKAGE_VERSION_ADDED'));
+      // buffer row re-created so the dispatcher can retry (DB stays the release source-of-truth)
+      const block = await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0');
+      assert(block?.isBuffer);
+    });
+
+    it('should clean an orphan buffer row without a publish event when the version was removed', async () => {
+      const { packageId } = await publishVersion('foo', '1.0.0', false); // isolated
+      // simulate the version being unpublished while still buffered (orphan buffer row left behind)
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { PackageVersion: PackageVersionModel } = require('../../../../app/repository/model/PackageVersion');
+      await PackageVersionModel.remove({ packageId, version: '1.0.0' });
+
+      const emitted: string[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mock((packageManagerService as any).eventBus, 'emit', (name: string) => { emitted.push(name); });
+      const released = await packageManagerService.releaseBufferedVersions(packageId, [ '1.0.0' ]);
+
+      assert.deepEqual(released, []);
+      assert(!emitted.includes('PACKAGE_VERSION_ADDED'));
+      // orphan buffer row cleaned up
+      assert.equal(await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'), null);
+    });
   });
 
   describe('findExpiredBufferedVersions (C5)', () => {

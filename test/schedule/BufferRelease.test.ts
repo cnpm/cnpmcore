@@ -77,10 +77,16 @@ describe('test/schedule/BufferRelease.test.ts', () => {
     assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
   });
 
-  it('should be a no-op when isolation is disabled', async () => {
+  it('should still release already-buffered versions after the flag is turned off (rollback)', async () => {
+    const { packageId } = await publishIsolated('foo', '1.0.0'); // buffered while flag on
+    await PackageVersionBlockModel.update({ packageId, version: '1.0.0' }, { expiredAt: new Date(Date.now() - 1000) });
+    // operator disables the feature (rollback) — existing buffer rows must still drain
     mock(app.config.cnpmcore, 'enableDependencyIsolation', false);
-    // nothing enqueued / released; just verify the schedules run without error
+
     await app.runSchedule(DispatcherPath);
     await app.runSchedule(WorkerPath);
+
+    assert.equal(await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'), null);
+    assert((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0']);
   });
 });

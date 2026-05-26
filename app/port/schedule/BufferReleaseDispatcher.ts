@@ -1,4 +1,4 @@
-import { EggAppConfig, EggLogger } from 'egg';
+import { EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { QueueAdapter } from '../../common/typing';
@@ -32,13 +32,12 @@ export class BufferReleaseDispatcher {
   private readonly cacheAdapter: CacheAdapter;
 
   @Inject()
-  private readonly config: EggAppConfig;
-
-  @Inject()
   private readonly logger: EggLogger;
 
   async subscribe() {
-    if (!this.config.cnpmcore.enableDependencyIsolation) return;
+    // intentionally NOT gated on enableDependencyIsolation: the flag only gates *new* isolation
+    // decisions at publish; existing buffer rows must still be drained/released even after the
+    // flag is turned off (e.g. rollback), otherwise those versions stay blocked forever.
     // lock TTL is kept comfortably larger than the schedule interval (60s) so a slow scan/enqueue
     // run cannot let the lock expire mid-run and a parallel node re-scan + double-enqueue.
     await this.cacheAdapter.usingLock('BufferReleaseDispatcher', 120, async () => {

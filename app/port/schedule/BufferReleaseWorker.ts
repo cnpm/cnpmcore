@@ -1,4 +1,4 @@
-import { EggAppConfig, EggLogger } from 'egg';
+import { EggLogger } from 'egg';
 import { IntervalParams, Schedule, ScheduleType } from '@eggjs/tegg/schedule';
 import { Inject } from '@eggjs/tegg';
 import { QueueAdapter } from '../../common/typing';
@@ -33,13 +33,12 @@ export class BufferReleaseWorker {
   private readonly packageManagerService: PackageManagerService;
 
   @Inject()
-  private readonly config: EggAppConfig;
-
-  @Inject()
   private readonly logger: EggLogger;
 
   async subscribe() {
-    if (!this.config.cnpmcore.enableDependencyIsolation) return;
+    // intentionally NOT gated on enableDependencyIsolation: must keep draining/releasing buffer
+    // rows enqueued before the flag was turned off. when no rows are buffered the queue is empty,
+    // so this is a cheap no-op pop.
     // skip this tick if a previous drain on this node is still running
     if (executing) return;
     executing = true;

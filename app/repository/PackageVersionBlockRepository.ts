@@ -43,6 +43,17 @@ export class PackageVersionBlockRepository extends AbstractRepository {
       removeCount, packageVersionBlockId);
   }
 
+  // Atomically remove a row only while it is still a buffer record (type='buffer'). A concurrent
+  // permanent block sets type=null, so this single conditional delete won't clobber it. Returns
+  // true only when a buffer row was actually removed.
+  async removeBufferBlock(packageVersionBlockId: string): Promise<boolean> {
+    const removeCount = await this.PackageVersionBlock.remove({
+      packageVersionBlockId,
+      type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+    });
+    return removeCount > 0;
+  }
+
   // Dependency isolation: list buffer records whose hold has expired (ready to release).
   // Indexed by (type, expired_at); ordered oldest-first so the most overdue release first.
   async findExpiredBufferedVersions(limit: number) {

@@ -531,25 +531,50 @@ export class PackageManagerService extends AbstractService {
   async releaseBufferedVersions(packageId: string, versions: string[]): Promise<string[]> {
     const pkg = await this.packageRepository.findPackageByPackageId(packageId);
     if (!pkg) return [];
-    const released: string[] = [];
+    const released: { version: string; reason: string; expiredAt: Date | null }[] = [];
     for (const version of versions) {
       const block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(packageId, version);
-      if (block && block.isBuffer) {
-        await this.packageVersionBlockRepository.removePackageVersionBlock(block.packageVersionBlockId);
-        released.push(version);
+      if (!block || !block.isBuffer) continue;
+      // atomically remove only while it is still a buffer row: a concurrent permanent block
+      // (ensurePackageVersionAvailability(false) / blockPackageVersion sets type=null) must win
+      // this race and keep the version hidden.
+      const removed = await this.packageVersionBlockRepository.removeBufferBlock(block.packageVersionBlockId);
+      if (!removed) continue;
+      // only emit a publish event for a version that still exists; an orphan buffer row left by
+      // an unpublished version is cleaned up above without a phantom PACKAGE_VERSION_ADDED.
+      const pkgVersion = await this.packageRepository.findPackageVersion(packageId, version);
+      if (pkgVersion) {
+        released.push({ version, reason: block.reason, expiredAt: block.expiredAt });
       }
     }
     if (released.length === 0) return [];
-    // rebuild the package manifest once for the whole batch (restores released versions + dist-tags)
-    await this._refreshPackageManifestsToDists(pkg);
-    this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
-    for (const version of released) {
-      // the version becomes visible now -> emit the deferred PACKAGE_VERSION_ADDED
-      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, version, undefined);
+    try {
+      // rebuild the package manifest once for the whole batch (restores released versions + dist-tags)
+      await this._refreshPackageManifestsToDists(pkg);
+    } catch (err) {
+      // the manifest rebuild (NFS write) is the only non-transactional step. if it fails after the
+      // buffer rows were removed, re-create them so the dispatcher re-enqueues and retries — keeping
+      // DB rows as the release source-of-truth instead of leaving the version permanently stale.
+      for (const r of released) {
+        await this.packageVersionBlockRepository.savePackageVersionBlock(PackageVersionBlock.create({
+          packageId,
+          version: r.version,
+          reason: r.reason,
+          type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+          expiredAt: r.expiredAt ?? new Date(0),
+        }));
+      }
+      throw err;
     }
+    // emit only after a successful refresh, so a failed rebuild never produces phantom events
+    this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+    for (const r of released) {
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, r.version, undefined);
+    }
+    const releasedVersions = released.map(r => r.version);
     this.logger.info('[packageManagerService.releaseBufferedVersions:success] packageId: %s, released: %j',
-      packageId, released);
-    return released;
+      packageId, releasedVersions);
+    return releasedVersions;
   }
 
 
