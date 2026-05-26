@@ -284,7 +284,9 @@ export class PackageManagerService extends AbstractService {
     // see RFC: https://github.com/cnpm/cnpmcore/issues/1057
     const isolated = await this._tryIsolateNewVersion(pkg, cmd, pkgVersion.version);
 
-    if (cmd.skipRefreshPackageManifests !== true) {
+    // skip the per-version refresh for an isolated version (it would be filtered out anyway);
+    // the version enters the manifest only when released. non-isolated path is unchanged.
+    if (!isolated && cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
     if (cmd.tags) {
@@ -833,7 +835,25 @@ export class PackageManagerService extends AbstractService {
     }
 
     if (updateVersions) {
+      // blocked versions (incl. dependency-isolation buffer) must stay out of the manifest.
+      // this incremental path adds versions directly, so it must filter the same way the
+      // full rebuild (_listPackageFullManifests) does — otherwise an isolated/blocked version
+      // would leak into the dist on publish/sync refresh.
+      let blockedVersionSet: Set<string> | undefined;
+      if (this.config.cnpmcore.enableBlockPackageVersion) {
+        const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+        if (blockedVersions.length > 0) {
+          blockedVersionSet = new Set(blockedVersions.map(v => v.version));
+        }
+      }
       for (const version of updateVersions) {
+        if (blockedVersionSet?.has(version)) {
+          // keep hidden; also drop it if a previous dist happened to contain it (e.g. re-sync of a blocked version)
+          delete fullManifests.versions[version];
+          if (fullManifests.time) delete fullManifests.time[version];
+          delete abbreviatedManifests.versions[version];
+          continue;
+        }
         const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (packageVersion) {
           const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);

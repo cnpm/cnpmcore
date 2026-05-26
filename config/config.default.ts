@@ -64,7 +64,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   strictValidatePackageDeps: false,
   enableBlockPackageVersion: env('CNPMCORE_CONFIG_ENABLE_BLOCK_PACKAGE_VERSION', 'boolean', false),
   enableDependencyIsolation: env('CNPMCORE_CONFIG_ENABLE_DEPENDENCY_ISOLATION', 'boolean', false),
-  dependencyIsolationDuration: 6 * 3600 * 1000,
+  dependencyIsolationDuration: env('CNPMCORE_CONFIG_DEPENDENCY_ISOLATION_DURATION', 'number', 6 * 3600 * 1000),
   dependencyIsolationExclude: [],
   database: {
     type: database.type,
