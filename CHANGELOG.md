@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.83.0 (2026-05-27)
+
+* feat: dependency isolation (buffer) zone (RFC #1057) (#1058) ([c24a2e9](https://github.com/cnpm/cnpmcore/commit/c24a2e9)), closes [#1057](https://github.com/cnpm/cnpmcore/issues/1057) [#1058](https://github.com/cnpm/cnpmcore/issues/1058) [#1057](https://github.com/cnpm/cnpmcore/issues/1057)
+
 ## <small>3.82.1 (2026-05-09)</small>
 
 * fix(DownloadController): crop /downloads/range to requested day boundaries (#1039) ([602b243](https://github.com/cnpm/cnpmcore/commit/602b243)), closes [#1039](https://github.com/cnpm/cnpmcore/issues/1039) [#986](https://github.com/cnpm/cnpmcore/issues/986) [#986](https://github.com/cnpm/cnpmcore/issues/986)
