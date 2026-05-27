@@ -27,7 +27,7 @@ import { DistRepository } from '../../repository/DistRepository';
 import { isDuplicateKeyError } from '../../repository/util/ErrorUtil';
 import { Package } from '../entity/Package';
 import { PackageVersion } from '../entity/PackageVersion';
-import { PackageVersionBlock } from '../entity/PackageVersionBlock';
+import { PackageVersionBlock, PACKAGE_VERSION_BLOCK_TYPE_BUFFER } from '../entity/PackageVersionBlock';
 import { PackageTag } from '../entity/PackageTag';
 import { User } from '../entity/User';
 import { Dist } from '../entity/Dist';
@@ -277,19 +277,83 @@ export class PackageManagerService extends AbstractService {
       }
       throw e;
     }
+    // dependency isolation (buffer) zone: hold a newly synced version invisible for a while
+    // before it is auto-released. Decide first (pure), so PACKAGE_VERSION_ADDED is suppressed
+    // — the event (and thus search index / changes stream / file sync) fires only when the
+    // version is released. see RFC: https://github.com/cnpm/cnpmcore/issues/1057
+    const shouldIsolate = this._shouldIsolateNewVersion(pkg, cmd);
+
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
     }
     if (cmd.tags) {
       for (const tag of cmd.tags) {
         await this.savePackageTag(pkg, tag, cmd.version, true);
-        this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
+        if (!shouldIsolate) {
+          this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
+        }
       }
-    } else {
+    } else if (!shouldIsolate) {
       this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, undefined);
     }
 
+    // isolate AFTER the normal publish flow has built manifestsDist + tags (identical to a
+    // non-isolated publish up to here), then hide the version. Doing it here — rather than
+    // before the refresh — avoids the new-package case where the only version is isolated and
+    // manifestsDist is never created (which crashes savePackageTag).
+    if (shouldIsolate) {
+      await this._isolateNewVersion(pkg, cmd, pkgVersion.version);
+    }
+
     return pkgVersion;
+  }
+
+  // Decide whether a newly published/synced version should enter the dependency isolation buffer.
+  private _shouldIsolateNewVersion(pkg: Package, cmd: PublishPackageCmd): boolean {
+    const config = this.config.cnpmcore;
+    if (!config.enableDependencyIsolation) return false;
+    // buffer enforcement reuses version-level block; without it the version can't be hidden
+    if (!config.enableBlockPackageVersion) return false;
+    const duration = config.dependencyIsolationDuration;
+    if (!duration || duration <= 0) return false;
+    // only isolate external/synced (public) versions, never user-published private packages
+    if (cmd.isPrivate) return false;
+    // allowlist: trusted packages skip the buffer (analogous to pnpm minimumReleaseAgeExclude)
+    if (this._isDependencyIsolationExcluded(pkg.fullname)) return false;
+    return true;
+  }
+
+  // Persist a buffer block record (type='buffer', expiredAt) and hide the version from the manifest.
+  private async _isolateNewVersion(pkg: Package, cmd: PublishPackageCmd, version: string): Promise<void> {
+    const duration = this.config.cnpmcore.dependencyIsolationDuration as number;
+    const expiredAt = new Date(Date.now() + duration);
+    const block = PackageVersionBlock.create({
+      packageId: pkg.packageId,
+      version,
+      reason: `[buffer] in dependency isolation zone, release at ${expiredAt.toISOString()}`,
+      type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+      expiredAt,
+    });
+    await this.packageVersionBlockRepository.savePackageVersionBlock(block);
+    // hide it now for the user-publish path (manifestsDist already built above). the sync path
+    // (skipRefreshPackageManifests) leaves it to the batch refresh, which is block-aware.
+    if (cmd.skipRefreshPackageManifests !== true) {
+      await this._refreshPackageManifestsToDists(pkg);
+    }
+    this.logger.info('[packageManagerService.isolateNewVersion] packageId: %s, version: %s, release at: %s',
+      pkg.packageId, version, expiredAt.toISOString());
+  }
+
+  // Match `dependencyIsolationExclude` rules: exact name (`lodash`, `@scope/pkg`) or scope wildcard (`@scope/*`)
+  private _isDependencyIsolationExcluded(fullname: string): boolean {
+    const list = this.config.cnpmcore.dependencyIsolationExclude;
+    if (!list || list.length === 0) return false;
+    const [ scope ] = getScopeAndName(fullname);
+    return list.some(rule => {
+      if (rule === fullname) return true;
+      if (rule.endsWith('/*')) return scope !== '' && scope === rule.slice(0, -2);
+      return false;
+    });
   }
 
   async blockPackageByFullname(name: string, reason: string) {
@@ -381,6 +445,9 @@ export class PackageManagerService extends AbstractService {
     let block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
     if (block) {
       block.reason = reason;
+      // a permanent block always overrides a dependency-isolation buffer record
+      block.type = null;
+      block.expiredAt = null;
     } else {
       block = PackageVersionBlock.create({
         packageId: pkg.packageId,
@@ -415,8 +482,99 @@ export class PackageManagerService extends AbstractService {
     await this._refreshPackageManifestsToDists(pkg);
 
     this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+    if (block) {
+      // the version becomes visible again -> emit PACKAGE_VERSION_ADDED so consumers that only
+      // listen to it (changes stream / store-manifest / unpkg file sync) pick it up. Needed
+      // because an isolated version's PACKAGE_VERSION_ADDED was suppressed at publish; if it was
+      // permanently blocked and is now unblocked, this is the first time the event fires for it.
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, version, undefined);
+    }
     this.logger.info('[packageManagerService.unblockPackageVersion:success] packageId: %s, version: %s',
       pkg.packageId, version);
+  }
+
+  /**
+   * Idempotently set whether a package version is available (visible) to the outside, for
+   * external decision sources (e.g. a deployment's security scan).
+   * - available=false: permanently block; if the version is currently in the dependency-isolation
+   *   buffer, the buffer record is overwritten to a permanent block (type=null, no auto-release).
+   * - available=true: only lifts a PERMANENT block. It deliberately does NOT release a buffer
+   *   record — automated "make available" must not let a version escape the isolation window
+   *   ahead of its timer. Buffer release is owned by the timer (releaseBufferedVersions); an
+   *   admin can still force-release via unblockPackageVersion (the explicit escape channel).
+   */
+  async ensurePackageVersionAvailability(pkg: Package, version: string, available: boolean, reason?: string): Promise<{ changed: boolean }> {
+    const existing = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
+    if (available) {
+      if (!existing) return { changed: false };
+      // never spring a buffered version out of isolation here (no automated escape)
+      if (existing.isBuffer) return { changed: false };
+      await this.unblockPackageVersion(pkg, version);
+      return { changed: true };
+    }
+    // make unavailable (permanent block)
+    if (existing && !existing.isBuffer && existing.reason === (reason ?? '')) {
+      return { changed: false };
+    }
+    await this.blockPackageVersion(pkg, version, reason ?? '');
+    return { changed: true };
+  }
+
+  /**
+   * Dependency isolation: release expired buffer versions of a single package in one batch.
+   * Only records still of type='buffer' are released (a record overwritten to a permanent
+   * block is left alone). The package manifest is rebuilt once for the whole batch (the
+   * rebuild is O(versions) regardless of how many are released), then PACKAGE_VERSION_ADDED
+   * is emitted per released version so search / changes stream / file sync pick them up.
+   * Idempotent: already-removed / no-longer-buffer versions are skipped.
+   */
+  async releaseBufferedVersions(packageId: string, versions: string[]): Promise<string[]> {
+    const pkg = await this.packageRepository.findPackageByPackageId(packageId);
+    if (!pkg) return [];
+    const released: { version: string; reason: string; expiredAt: Date | null }[] = [];
+    for (const version of versions) {
+      const block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(packageId, version);
+      if (!block || !block.isBuffer) continue;
+      // atomically remove only while it is still a buffer row: a concurrent permanent block
+      // (ensurePackageVersionAvailability(false) / blockPackageVersion sets type=null) must win
+      // this race and keep the version hidden.
+      const removed = await this.packageVersionBlockRepository.removeBufferBlock(block.packageVersionBlockId);
+      if (!removed) continue;
+      // only emit a publish event for a version that still exists; an orphan buffer row left by
+      // an unpublished version is cleaned up above without a phantom PACKAGE_VERSION_ADDED.
+      const pkgVersion = await this.packageRepository.findPackageVersion(packageId, version);
+      if (pkgVersion) {
+        released.push({ version, reason: block.reason, expiredAt: block.expiredAt });
+      }
+    }
+    if (released.length === 0) return [];
+    try {
+      // rebuild the package manifest once for the whole batch (restores released versions + dist-tags)
+      await this._refreshPackageManifestsToDists(pkg);
+    } catch (err) {
+      // the manifest rebuild (NFS write) is the only non-transactional step. if it fails after the
+      // buffer rows were removed, re-create them so the dispatcher re-enqueues and retries — keeping
+      // DB rows as the release source-of-truth instead of leaving the version permanently stale.
+      for (const r of released) {
+        await this.packageVersionBlockRepository.savePackageVersionBlock(PackageVersionBlock.create({
+          packageId,
+          version: r.version,
+          reason: r.reason,
+          type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+          expiredAt: r.expiredAt ?? new Date(0),
+        }));
+      }
+      throw err;
+    }
+    // emit only after a successful refresh, so a failed rebuild never produces phantom events
+    this.eventBus.emit(PACKAGE_UNBLOCKED, pkg.fullname);
+    for (const r of released) {
+      this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, r.version, undefined);
+    }
+    const releasedVersions = released.map(r => r.version);
+    this.logger.info('[packageManagerService.releaseBufferedVersions:success] packageId: %s, released: %j',
+      packageId, releasedVersions);
+    return releasedVersions;
   }
 
 
@@ -724,7 +882,25 @@ export class PackageManagerService extends AbstractService {
     }
 
     if (updateVersions) {
+      // blocked versions (incl. dependency-isolation buffer) must stay out of the manifest.
+      // this incremental path adds versions directly, so it must filter the same way the
+      // full rebuild (_listPackageFullManifests) does — otherwise an isolated/blocked version
+      // would leak into the dist on publish/sync refresh.
+      let blockedVersionSet: Set<string> | undefined;
+      if (this.config.cnpmcore.enableBlockPackageVersion) {
+        const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
+        if (blockedVersions.length > 0) {
+          blockedVersionSet = new Set(blockedVersions.map(v => v.version));
+        }
+      }
       for (const version of updateVersions) {
+        if (blockedVersionSet?.has(version)) {
+          // keep hidden; also drop it if a previous dist happened to contain it (e.g. re-sync of a blocked version)
+          delete fullManifests.versions[version];
+          if (fullManifests.time) delete fullManifests.time[version];
+          delete abbreviatedManifests.versions[version];
+          continue;
+        }
         const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (packageVersion) {
           const manifest = await this.distRepository.readDistBytesToJSON<PackageJSONType>(packageVersion.manifestDist);

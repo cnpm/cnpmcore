@@ -28,4 +28,13 @@ export class PackageVersionBlock extends Bone {
 
   @Attribute(DataTypes.TEXT(LENGTH_VARIANTS.long))
   reason: string;
+
+  // dependency isolation: 'buffer' = isolation buffer record (auto-releasable),
+  // null = permanent block (existing semantics: security / manual / blacklist)
+  @Attribute(DataTypes.STRING(16), { allowNull: true })
+  type: string | null;
+
+  // dependency isolation: buffer expiration time; auto-released after this when type='buffer'
+  @Attribute(DataTypes.DATE, { allowNull: true })
+  expiredAt: Date | null;
 }
