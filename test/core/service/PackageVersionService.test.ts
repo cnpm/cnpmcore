@@ -553,6 +553,12 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         const version = await packageVersionService.getVersion(npa('mock_package@>=1.2.0-0 <1.4.0'));
         assert.equal(version, '1.2.0');
       });
+
+      it('should resolve range for an unknown package without blocked-version lookup', async () => {
+        // findBlockedVersions short-circuits to [] when the package does not exist
+        const version = await packageVersionService.getVersion(npa('not_exist_package@^1.0.0'));
+        assert(!version);
+      });
     });
   });
 });
