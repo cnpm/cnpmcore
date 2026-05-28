@@ -487,6 +487,24 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         assert.equal(version, '1.1.0');
       });
 
+      it('should still skip an expired buffer version until the release worker removes it', async () => {
+        // Manifest refresh filters by block existence, not expiredAt (PackageManagerService
+        // uses listBlockedVersions). So while a buffer row lingers past expiry — before the
+        // release worker deletes it — the version stays hidden from the manifest. Range
+        // resolution must agree and keep skipping it, otherwise it would resolve to a version
+        // the client cannot see yet.
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_buf_exp_1.2.0',
+          version: '1.2.0',
+          reason: '[buffer] isolation',
+          type: 'buffer',
+          expiredAt: new Date(Date.now() - 1000),
+        });
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        assert.equal(version, '1.1.0');
+      });
+
       it('should skip a permanently-blocked version and fall back to the next satisfying one', async () => {
         await PackageVersionBlockModel.create({
           packageId: 'mock_package_id',

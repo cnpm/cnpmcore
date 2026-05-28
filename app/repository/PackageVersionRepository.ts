@@ -79,7 +79,7 @@ export class PackageVersionRepository {
       ...sqlRange.condition,
     };
     if (excludeVersions.length > 0) {
-      where.version = { $notIn: excludeVersions };
+      where['packageVersions.version'] = { $notIn: excludeVersions };
     }
     const versions = await this.PackageVersion
       .select('version')
