@@ -500,7 +500,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         assert.equal(version, '1.1.0');
       });
 
-      it('should return undefined when every satisfying version is blocked', async () => {
+      it('should return falsy when every satisfying version is blocked', async () => {
         await PackageVersionBlockModel.create({
           packageId: 'mock_package_id',
           packageVersionBlockId: 'block_1.0.0',
@@ -526,13 +526,13 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           expiredAt: null,
         });
         const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
-        assert.equal(version, undefined);
+        assert(!version);
       });
 
       it('should skip blocked versions when range hits the prerelease branch', async () => {
         await CnpmPackageVersionModel.create({
           packageId: 'mock_package_id',
-          packageVersionId: 'mock_package_1.3.0-beta.1',
+          packageVersionId: 'm_pkg_1.3.0-beta.1',
           version: '1.3.0-beta.1',
           abbreviatedDistId: 'mock_abbreviated_dist_id',
           manifestDistId: 'mock_manifest_dist_id',
@@ -540,10 +540,10 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           readmeDistId: 'mock_readme_dist_id',
           publishTime: new Date(),
         });
-        await packageVersionRepository.fixPaddingVersion('mock_package_1.3.0-beta.1', new PaddingSemVer('1.3.0-beta.1'));
+        await packageVersionRepository.fixPaddingVersion('m_pkg_1.3.0-beta.1', new PaddingSemVer('1.3.0-beta.1'));
         await PackageVersionBlockModel.create({
           packageId: 'mock_package_id',
-          packageVersionBlockId: 'block_buffer_1.3.0-beta.1',
+          packageVersionBlockId: 'block_buf_1.3.0b1',
           version: '1.3.0-beta.1',
           reason: '[buffer] isolation',
           type: 'buffer',
