@@ -55,7 +55,7 @@ export class PackageVersionRepository {
   /**
    * if sql version not contains prerelease, find the max version
    */
-  async findMaxSatisfyVersion(scope: string, name: string, sqlRange: SqlRange, excludeVersions: string[] = []): Promise<string | undefined> {
+  async findMaxSatisfyVersion(scope: string, name: string, sqlRange: SqlRange, excludeVersions: string[]): Promise<string | undefined> {
     const where: Record<string, unknown> = {
       'packages.scope': scope,
       'packages.name': name,
@@ -72,7 +72,7 @@ export class PackageVersionRepository {
     return versions?.[0]?.version;
   }
 
-  async findSatisfyVersionsWithPrerelease(scope: string, name: string, sqlRange: SqlRange, excludeVersions: string[] = []): Promise<Array<string>> {
+  async findSatisfyVersionsWithPrerelease(scope: string, name: string, sqlRange: SqlRange, excludeVersions: string[]): Promise<Array<string>> {
     const where: Record<string, unknown> = {
       scope,
       name,
