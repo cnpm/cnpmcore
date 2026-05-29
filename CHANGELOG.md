@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.83.1 (2026-05-29)</small>
+
+* fix(PackageVersionService): skip blocked versions when resolving semver ranges (#1061) ([531408e](https://github.com/cnpm/cnpmcore/commit/531408e)), closes [#1061](https://github.com/cnpm/cnpmcore/issues/1061)
+
 ## 3.83.0 (2026-05-27)
 
 * feat: dependency isolation (buffer) zone (RFC #1057) (#1058) ([c24a2e9](https://github.com/cnpm/cnpmcore/commit/c24a2e9)), closes [#1057](https://github.com/cnpm/cnpmcore/issues/1057) [#1058](https://github.com/cnpm/cnpmcore/issues/1058) [#1057](https://github.com/cnpm/cnpmcore/issues/1057)
