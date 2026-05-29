@@ -5,6 +5,7 @@ import npa from 'npm-package-arg';
 import { Package as PackageModel } from '../../../app/repository/model/Package';
 import { PackageVersion as CnpmPackageVersionModel } from '../../../app//repository/model/PackageVersion';
 import { PackageTag as PackageTagModel } from '../../../app/repository/model/PackageTag';
+import { PackageVersionBlock as PackageVersionBlockModel } from '../../../app/repository/model/PackageVersionBlock';
 import { PackageVersionService } from '../../../app/core/service/PackageVersionService';
 import { PaddingSemVer } from '../../../app/core/entity/PaddingSemVer';
 import { BugVersionService } from '../../../app/core/service/BugVersionService';
@@ -78,6 +79,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
     await PackageModel.truncate();
     await PackageTagModel.truncate();
     await CnpmPackageVersionModel.truncate();
+    await PackageVersionBlockModel.truncate();
     mock.restore();
   });
 
@@ -441,6 +443,140 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
       await packageVersionRepository.fixPaddingVersion('mock_package_17.0.9', new PaddingSemVer('17.0.9'));
       const version = await packageVersionService.getVersion(npa('mock_package@<18.0.0'));
       assert(version, '17.0.18');
+    });
+
+    describe('block-aware range resolution', () => {
+      beforeEach(async () => {
+        // 1.0.0 is created in the outer beforeEach with paddingVersion = null;
+        // recompute it so it participates in the SqlRange query.
+        await packageVersionRepository.fixPaddingVersion('mock_package_1.0.0', new PaddingSemVer('1.0.0'));
+        await CnpmPackageVersionModel.create({
+          packageId: 'mock_package_id',
+          packageVersionId: 'mock_package_1.1.0',
+          version: '1.1.0',
+          abbreviatedDistId: 'mock_abbreviated_dist_id',
+          manifestDistId: 'mock_manifest_dist_id',
+          tarDistId: 'mock_tar_dist_id',
+          readmeDistId: 'mock_readme_dist_id',
+          publishTime: new Date(),
+        });
+        await packageVersionRepository.fixPaddingVersion('mock_package_1.1.0', new PaddingSemVer('1.1.0'));
+        await CnpmPackageVersionModel.create({
+          packageId: 'mock_package_id',
+          packageVersionId: 'mock_package_1.2.0',
+          version: '1.2.0',
+          abbreviatedDistId: 'mock_abbreviated_dist_id',
+          manifestDistId: 'mock_manifest_dist_id',
+          tarDistId: 'mock_tar_dist_id',
+          readmeDistId: 'mock_readme_dist_id',
+          publishTime: new Date(),
+        });
+        await packageVersionRepository.fixPaddingVersion('mock_package_1.2.0', new PaddingSemVer('1.2.0'));
+      });
+
+      it('should skip a buffered version and fall back to the next satisfying one', async () => {
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_buffer_1.2.0',
+          version: '1.2.0',
+          reason: '[buffer] isolation',
+          type: 'buffer',
+          expiredAt: new Date(Date.now() + 6 * 3600 * 1000),
+        });
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        assert.equal(version, '1.1.0');
+      });
+
+      it('should still skip an expired buffer version until the release worker removes it', async () => {
+        // Manifest refresh filters by block existence, not expiredAt (PackageManagerService
+        // uses listBlockedVersions). So while a buffer row lingers past expiry — before the
+        // release worker deletes it — the version stays hidden from the manifest. Range
+        // resolution must agree and keep skipping it, otherwise it would resolve to a version
+        // the client cannot see yet.
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_buf_exp_1.2.0',
+          version: '1.2.0',
+          reason: '[buffer] isolation',
+          type: 'buffer',
+          expiredAt: new Date(Date.now() - 1000),
+        });
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        assert.equal(version, '1.1.0');
+      });
+
+      it('should skip a permanently-blocked version and fall back to the next satisfying one', async () => {
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_perm_1.2.0',
+          version: '1.2.0',
+          reason: 'security takedown',
+          type: null,
+          expiredAt: null,
+        });
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        assert.equal(version, '1.1.0');
+      });
+
+      it('should return falsy when every satisfying version is blocked', async () => {
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_1.0.0',
+          version: '1.0.0',
+          reason: 'blocked',
+          type: null,
+          expiredAt: null,
+        });
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_1.1.0',
+          version: '1.1.0',
+          reason: 'blocked',
+          type: null,
+          expiredAt: null,
+        });
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_1.2.0',
+          version: '1.2.0',
+          reason: 'blocked',
+          type: null,
+          expiredAt: null,
+        });
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        assert(!version);
+      });
+
+      it('should skip blocked versions when range hits the prerelease branch', async () => {
+        await CnpmPackageVersionModel.create({
+          packageId: 'mock_package_id',
+          packageVersionId: 'm_pkg_1.3.0-beta.1',
+          version: '1.3.0-beta.1',
+          abbreviatedDistId: 'mock_abbreviated_dist_id',
+          manifestDistId: 'mock_manifest_dist_id',
+          tarDistId: 'mock_tar_dist_id',
+          readmeDistId: 'mock_readme_dist_id',
+          publishTime: new Date(),
+        });
+        await packageVersionRepository.fixPaddingVersion('m_pkg_1.3.0-beta.1', new PaddingSemVer('1.3.0-beta.1'));
+        await PackageVersionBlockModel.create({
+          packageId: 'mock_package_id',
+          packageVersionBlockId: 'block_buf_1.3.0b1',
+          version: '1.3.0-beta.1',
+          reason: '[buffer] isolation',
+          type: 'buffer',
+          expiredAt: new Date(Date.now() + 6 * 3600 * 1000),
+        });
+        // prerelease in the range triggers findSatisfyVersionsWithPrerelease
+        const version = await packageVersionService.getVersion(npa('mock_package@>=1.2.0-0 <1.4.0'));
+        assert.equal(version, '1.2.0');
+      });
+
+      it('should resolve range for an unknown package without blocked-version lookup', async () => {
+        // findBlockedVersions short-circuits to [] when the package does not exist
+        const version = await packageVersionService.getVersion(npa('not_exist_package@^1.0.0'));
+        assert(!version);
+      });
     });
   });
 });

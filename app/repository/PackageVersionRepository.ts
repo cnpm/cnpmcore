@@ -55,28 +55,36 @@ export class PackageVersionRepository {
   /**
    * if sql version not contains prerelease, find the max version
    */
-  async findMaxSatisfyVersion(scope: string, name: string, sqlRange: SqlRange): Promise<string | undefined> {
+  async findMaxSatisfyVersion(scope: string, name: string, sqlRange: SqlRange, excludeVersions: string[]): Promise<string | undefined> {
+    const where: Record<string, unknown> = {
+      'packages.scope': scope,
+      'packages.name': name,
+      ...sqlRange.condition,
+    };
+    if (excludeVersions.length > 0) {
+      where['packageVersions.version'] = { $notIn: excludeVersions };
+    }
     const versions = await this.PackageVersion
       .select('packageVersions.version')
       .join(this.Package as any, 'packageVersions.packageId = packages.packageId')
-      .where({
-        'packages.scope': scope,
-        'packages.name': name,
-        ...sqlRange.condition,
-      } as object)
+      .where(where as object)
       .order('packageVersions.paddingVersion', 'desc') as { version: string }[];
     return versions?.[0]?.version;
   }
 
-  async findSatisfyVersionsWithPrerelease(scope: string, name: string, sqlRange: SqlRange): Promise<Array<string>> {
+  async findSatisfyVersionsWithPrerelease(scope: string, name: string, sqlRange: SqlRange, excludeVersions: string[]): Promise<Array<string>> {
+    const where: Record<string, unknown> = {
+      scope,
+      name,
+      ...sqlRange.condition,
+    };
+    if (excludeVersions.length > 0) {
+      where['packageVersions.version'] = { $notIn: excludeVersions };
+    }
     const versions = await this.PackageVersion
       .select('version')
       .join(this.Package as any, 'packageVersions.packageId = packages.packageId')
-      .where({
-        scope,
-        name,
-        ...sqlRange.condition,
-      } as object);
+      .where(where as object);
     return (versions as any).toObject()
       .map((t: { version: string }) => t.version);
   }
