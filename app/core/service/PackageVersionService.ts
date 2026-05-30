@@ -101,18 +101,21 @@ export class PackageVersionService {
       if (versionMatchTag) {
         version = versionMatchTag;
       } else {
-        // Skip blocked versions (both dependency-isolation buffer and permanent blocks)
-        // so range resolution matches what the client sees in the manifest — e.g. for
-        // ^1.0.0 with 1.1.0 visible and 1.2.0 blocked, resolve to 1.1.0 instead of
-        // returning 1.2.0 and forcing a blockReason response.
         const excludeVersions = await this.findBlockedVersions(scope, name);
         const range = new Range(spec.fetchSpec!);
-        const paddingSemVer = new SqlRange(range);
-        if (paddingSemVer.containPreRelease) {
-          const versions = await this.packageVersionRepository.findSatisfyVersionsWithPrerelease(scope, name, paddingSemVer, excludeVersions);
-          version = semver.maxSatisfying(versions, range);
+        // Prefer latest tag version if it satisfies the range, unless it is hidden by
+        // dependency-isolation buffering or a permanent version block.
+        const latestVersion = await this.packageVersionRepository.findVersionByTag(scope, name, 'latest');
+        if (latestVersion && !excludeVersions.includes(latestVersion) && semver.satisfies(latestVersion, range)) {
+          version = latestVersion;
         } else {
-          version = await this.packageVersionRepository.findMaxSatisfyVersion(scope, name, paddingSemVer, excludeVersions);
+          const paddingSemVer = new SqlRange(range);
+          if (paddingSemVer.containPreRelease) {
+            const versions = await this.packageVersionRepository.findSatisfyVersionsWithPrerelease(scope, name, paddingSemVer, excludeVersions);
+            version = semver.maxSatisfying(versions, range);
+          } else {
+            version = await this.packageVersionRepository.findMaxSatisfyVersion(scope, name, paddingSemVer, excludeVersions);
+          }
         }
       }
     }
