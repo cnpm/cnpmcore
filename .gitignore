@@ -7,7 +7,6 @@ yarn-error.log*
 lerna-debug.log*
 
 .npmrc
-package-lock.json
 pnpm-lock.yaml
 
 config/config.prod.ts

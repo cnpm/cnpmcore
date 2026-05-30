@@ -14,7 +14,7 @@ export default defineConfig({
   lint: {
     env: {
       node: true,
-      mocha: true,
+      vitest: true,
     },
     rules: {
       'max-params': ['error', 6],

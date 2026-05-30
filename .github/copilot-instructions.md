@@ -8,26 +8,27 @@ cnpmcore is a TypeScript-based private NPM registry implementation built with Eg
 
 ### Linting and Formatting
 
-- **Linter**: Oxlint (fast Rust-based linter) with type-aware checking
-- **Formatter**: Oxfmt (sole formatter, no Prettier)
-- **Pre-commit hooks**: Husky + lint-staged runs both `oxfmt` and `oxlint --fix`
+The project uses **Vite+** (the `vp` CLI) as the unified toolchain. Lint/format config lives in `vite.config.ts` (`lint` and `fmt` blocks) — there are no standalone `.oxlintrc.json`/`.oxfmtrc.json` files (running `oxlint`/`oxfmt` directly would NOT pick up project rules; always go through `vp`).
 
-**Code Style Rules:**
+- **Linter**: Oxlint via `vp lint` (fast Rust-based linter) with type-aware checking
+- **Formatter**: Oxfmt via `vp fmt` (sole formatter, no Prettier)
+- **Unified check**: `vp check` runs format + lint + type-check in one pass (`vp check --fix` auto-fixes) — the preferred validation loop
+- **Pre-commit hooks**: Vite+ git hooks installed by `vp config` (the `prepare` script); `.vite-hooks/pre-commit` runs `vp staged`, which applies `vp check --fix` to staged files (replaces the old Husky + lint-staged setup)
+
+**Code Style Rules** (configured in `vite.config.ts`):
 
 ```javascript
-// From .oxfmt.json
+// fmt block
 {
   "singleQuote": true,        // Use single quotes
-  "trailingComma": "es5",     // ES5 trailing commas
-  "tabWidth": 2,              // 2-space indentation
-  "printWidth": 120,          // 120 character line width
-  "arrowParens": "avoid"      // Avoid parens when possible
+  "printWidth": 120           // 120 character line width
+  // 2-space indentation and ES5 trailing commas are oxfmt defaults
 }
 
-// From .oxlintrc.json
+// lint block (rules)
 {
-  "max-params": 6,            // Maximum 6 function parameters
-  "no-console": "warn",       // Warn on console usage
+  "max-params": ["error", 6], // Maximum 6 function parameters
+  "no-console": "warn",        // Warn on console usage
   "import/no-anonymous-default-export": "error"
 }
 ```
@@ -35,9 +36,10 @@ cnpmcore is a TypeScript-based private NPM registry implementation built with Eg
 **Linting Commands:**
 
 ```bash
-npm run lint         # Check for linting errors
-npm run lint:fix     # Auto-fix linting issues
-npm run typecheck    # TypeScript type checking without build
+npm run lint         # Check for linting errors (= vp lint)
+npm run lint:fix     # Auto-fix linting issues (= vp lint --fix)
+npm run typecheck    # TypeScript type checking without build (tsc --noEmit)
+vp check             # Format + lint + type-check in one pass (add --fix to auto-fix)
 ```
 
 ### TypeScript Conventions
@@ -666,7 +668,7 @@ Command execution times (for timeout planning):
 - **Individual Test**: ~12 seconds for single test file
 - **Package Installation**: ~2 minutes for npm install
 - **Database Init**: <2 seconds for either MySQL or PostgreSQL
-- **Linting**: <1 second (oxlint is very fast)
+- **Linting**: <1 second (`vp lint`, oxlint-based, very fast)
 
 Always account for these timings when setting timeouts for automated processes.
 
