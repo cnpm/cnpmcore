@@ -31,6 +31,14 @@ export default defineConfig({
       'vite-plus/prefer-vite-plus-imports': 'error',
     },
     ignorePatterns: ['index.d.ts'],
+    overrides: [
+      {
+        files: ['benchmark/**'],
+        rules: {
+          'no-console': 'allow',
+        },
+      },
+    ],
     options: {
       typeAware: true,
       typeCheck: true,
