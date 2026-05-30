@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, vi } from 'vitest';
+import { afterEach, beforeEach, vi } from 'vite-plus/test';
 
 import { PackageManagerService } from '../app/core/service/PackageManagerService.ts';
 import { TestUtil } from './TestUtil.ts';

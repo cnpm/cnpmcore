@@ -54,11 +54,11 @@
     "predev": "npm run clean",
     "dev": "egg-bin dev",
     "dev:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin dev",
-    "lint": "oxlint --type-aware --type-check",
+    "lint": "vp lint",
     "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
-    "fmt": "oxfmt",
-    "fmtcheck": "oxfmt --check",
+    "fmt": "vp fmt",
+    "fmtcheck": "vp fmt --check",
     "test:postgresql": "npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
@@ -85,7 +85,7 @@
     "start": "eggctl start --daemon && touch egg.status",
     "start:foreground": "eggctl start",
     "stop": "rm -f egg.status && sleep 15 && eggctl stop",
-    "init-git-hooks": "husky"
+    "prepare": "vp config"
   },
   "dependencies": {
     "@cnpmjs/packument": "^1.7.0",
@@ -143,26 +143,21 @@
     "@types/tar": "^7.0.0",
     "@types/validate-npm-package-name": "^4.0.2",
     "coffee": "^5.5.1",
-    "husky": "^9.1.7",
     "ioredis-mock": "^8.13.1",
-    "lint-staged": "^17.0.0",
-    "oxfmt": "^0.51.0",
-    "oxlint": "^1.32.0",
-    "oxlint-tsgolint": "^0.23.0",
-    "typescript": "^6.0.0"
+    "typescript": "^6.0.0",
+    "vite-plus": "^0.1.23"
   },
   "optionalDependencies": {
     "s3-cnpmcore": "^1.1.2"
   },
-  "lint-staged": {
-    "*": [
-      "oxfmt",
-      "oxlint --type-aware --type-check --fix"
-    ]
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.23",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.23"
   },
   "engines": {
     "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
   },
+  "packageManager": "npm@11.16.0",
   "egg": {
     "typescript": true
   }
