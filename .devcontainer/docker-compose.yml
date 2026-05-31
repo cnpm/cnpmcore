@@ -1,0 +1,65 @@
+name: cnpmcore_devcontainer
+
+volumes:
+  cnpm-redis:
+  cnpm-mysql:
+  # Uncomment when switching to PostgreSQL (see .devcontainer/README.md)
+  # cnpm-postgres:
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Mount the whole Codespaces/Dev Containers workspaces dir; the repo lands in
+    # /workspaces/<repo-name>, which devcontainer.json sets as the workspaceFolder.
+    volumes:
+      - ../..:/workspaces:cached
+    # Keep the container running so VS Code can attach and exec into it.
+    command: sleep infinity
+    environment:
+      # Default to MySQL; flip to PostgreSQL by setting this to "PostgreSQL"
+      # and enabling the postgres service below.
+      CNPMCORE_DATABASE_TYPE: MySQL
+      CNPMCORE_DATABASE_HOST: mysql
+      CNPMCORE_DATABASE_PORT: '3306'
+      CNPMCORE_DATABASE_USER: root
+      # NOTE: do NOT set CNPMCORE_DATABASE_NAME here. Leaving it unset lets the test
+      # suite use its own `cnpmcore_unittest` databases; the dev `cnpmcore` database is
+      # created explicitly by post-create.sh.
+      CNPMCORE_REDIS_HOST: redis
+      CNPMCORE_REDIS_PORT: '6379'
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:9
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: unless-stopped
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - cnpm-mysql:/var/lib/mysql
+
+  redis:
+    image: redis:6-alpine
+    restart: unless-stopped
+    volumes:
+      - cnpm-redis:/data
+
+  # To develop/test against PostgreSQL instead of MySQL:
+  #   1. Uncomment this service and the `cnpm-postgres` volume above.
+  #   2. On the `app` service set CNPMCORE_DATABASE_TYPE=PostgreSQL,
+  #      CNPMCORE_DATABASE_HOST=postgres, CNPMCORE_DATABASE_PORT='5432',
+  #      CNPMCORE_DATABASE_USER=postgres, CNPMCORE_DATABASE_PASSWORD=postgres,
+  #      and switch `depends_on` from mysql to postgres.
+  #   3. Rebuild the container.
+  # postgres:
+  #   image: postgres:17
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #   volumes:
+  #     - cnpm-postgres:/var/lib/postgresql/data
