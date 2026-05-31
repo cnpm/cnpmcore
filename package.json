@@ -104,7 +104,7 @@
     "egg-status": "^1.0.0",
     "egg-view-nunjucks": "^2.3.0",
     "eggjs-elasticsearch": "^0.0.6",
-    "fast-xml-parser": "^5.3.2",
+    "fast-xml-parser": "^5.8.0",
     "fs-cnpm": "^2.4.1",
     "ioredis": "^5.8.2",
     "leoric": "^2.14.0",
@@ -151,7 +151,10 @@
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.23",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.23"
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.23",
+    "@aws-sdk/xml-builder": {
+      "fast-xml-parser": "$fast-xml-parser"
+    }
   },
   "engines": {
     "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
