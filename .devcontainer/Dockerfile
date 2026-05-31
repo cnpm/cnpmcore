@@ -1,6 +1,6 @@
 # Base image ships Node.js 22 (matches the project engines range) plus common dev tooling.
 # https://github.com/devcontainers/images/tree/main/src/typescript-node
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+FROM mcr.microsoft.com/devcontainers/typescript-node:4-22-bookworm
 
 # The prepare-database-*.sh scripts shell out to the `mysql` / `psql`, `createdb`,
 # `dropdb` client CLIs, which are not present in the base image. Install both so the
