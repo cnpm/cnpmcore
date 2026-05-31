@@ -150,11 +150,11 @@
     "s3-cnpmcore": "^1.1.2"
   },
   "overrides": {
-    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.23",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.23",
     "@aws-sdk/xml-builder": {
       "fast-xml-parser": "$fast-xml-parser"
-    }
+    },
+    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.23",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.23"
   },
   "engines": {
     "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
