@@ -24,6 +24,12 @@ See [internal-api.md](docs/internal-api.md) for comprehensive documentation of c
 
 See [DEVELOPER.md](DEVELOPER.md)
 
+The quickest way to get a ready-to-code environment (MySQL + Redis + dev database preconfigured) is GitHub Codespaces:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/cnpm/cnpmcore)
+
+You can also open the repo locally with the [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension. See [.devcontainer/README.md](.devcontainer/README.md) for details.
+
 ## How to integrate
 
 See [INTEGRATE.md](INTEGRATE.md)

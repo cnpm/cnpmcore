@@ -1,5 +1,23 @@
 # 如何贡献 cnpmcore
 
+## 使用 GitHub Codespaces / Dev Container（推荐）
+
+最快的上手方式是使用 [GitHub Codespaces](https://github.com/features/codespaces) 或本地的
+[Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) 扩展，
+容器会自动准备好 MySQL、Redis 以及开发数据库 `cnpmcore`。
+
+在 GitHub 仓库页面点击 **Code -> Codespaces -> Create codespace on master**，等待容器初始化完成后即可：
+
+```bash
+# 启动开发服务（MySQL）
+CNPMCORE_DATABASE_NAME=cnpmcore npm run dev
+
+# 运行测试（自动使用 cnpmcore_unittest_* 数据库）
+npm run test
+```
+
+详细说明见 [.devcontainer/README.md](.devcontainer/README.md)。如果希望手动初始化本地环境，请继续阅读下文。
+
 ## 环境初始化
 
 本项目的外部服务依赖有：MySQL 数据库或 PostgreSQL 数据库、Redis 缓存服务。

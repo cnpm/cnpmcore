@@ -1,0 +1,30 @@
+{
+  // cnpmcore dev container for GitHub Codespaces / VS Code Dev Containers.
+  // See https://aka.ms/devcontainer.json for format details.
+  "name": "cnpmcore",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  // cnpmcore registry runs on 7001 by default; 9229 is the Node inspector port.
+  "forwardPorts": [7001, 9229],
+  "portsAttributes": {
+    "7001": {
+      "label": "cnpmcore registry",
+      "onAutoForward": "notify"
+    }
+  },
+  // Runs once after the container is created (deps + dev database init).
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["oxc.oxc-vscode", "ms-azuretools.vscode-docker", "GitHub.vscode-github-actions"],
+      "settings": {
+        "files.eol": "\n"
+      }
+    }
+  },
+  "remoteUser": "node"
+}
