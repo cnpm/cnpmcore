@@ -39,11 +39,18 @@ npm run dev
 # Start development server (PostgreSQL)
 npm run dev:postgresql
 
-# Lint code
-npm run lint
+# Lint code (Oxlint via Vite+; type-aware/type-check enabled in vite.config.ts)
+npm run lint            # alias of: vp lint
 
 # Fix linting issues
 npm run lint:fix
+
+# Format code / check formatting
+npm run fmt             # alias of: vp fmt
+npm run fmtcheck        # alias of: vp fmt --check
+
+# Unified format + lint + type-check in one pass (Vite+); add --fix to auto-fix
+vp check
 
 # TypeScript type checking
 npm run typecheck
@@ -242,9 +249,12 @@ When changing a Model, update all 3 locations:
 
 ### Linting & Formatting
 
-- **Linter**: Oxlint (Rust-based, very fast) with type-aware checking
-- **Formatter**: Oxfmt (sole formatter, no Prettier)
-- **Pre-commit**: Husky + lint-staged runs both `oxfmt` and `oxlint --fix`
+The project uses **Vite+** (the `vp` CLI) as the unified toolchain. Lint/format config lives in `vite.config.ts` (`lint` and `fmt` blocks) — there are no standalone `.oxlintrc.json`/`.oxfmtrc.json` dotfiles (running `oxlint`/`oxfmt` directly would NOT pick up project rules; always go through `vp`).
+
+- **Linter**: Oxlint via `vp lint` (Rust-based, very fast) with type-aware checking
+- **Formatter**: Oxfmt via `vp fmt` (sole formatter, no Prettier)
+- **Unified check**: `vp check` runs format + lint + type-check in one pass; `vp check --fix` auto-fixes. This is the preferred validation loop.
+- **Pre-commit**: Vite+ git hooks (installed by `vp config` via the `prepare` script). `.vite-hooks/pre-commit` runs `vp staged`, which applies `vp check --fix` to staged files (replaces the old Husky + lint-staged setup).
 
 Style rules:
 
