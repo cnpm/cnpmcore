@@ -56,7 +56,7 @@ To provide a more stable and reliable service:
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=cnpm/cnpmcore)](https://github.com/cnpm/cnpmcore/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=cnpm/cnpmcore&max=100000)](https://github.com/cnpm/cnpmcore/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
 
