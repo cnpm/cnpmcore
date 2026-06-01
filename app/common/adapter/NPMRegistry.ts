@@ -73,6 +73,20 @@ export class NPMRegistry {
     throw lastError;
   }
 
+  public async getDistTags(
+    registry: string,
+    fullname: string,
+    optionalConfig?: { remoteAuthToken?: string },
+  ): Promise<{ method: HttpMethod } & HttpClientResponse<Record<string, string>>> {
+    const url = `${registry}/-/package/${encodeURIComponent(fullname)}/dist-tags?t=${Date.now()}&cache=0`;
+    const headers = optionalConfig?.remoteAuthToken
+      ? { authorization: this.genAuthorizationHeader(optionalConfig.remoteAuthToken) }
+      : undefined;
+    return await this.request('GET', url, undefined, {
+      headers,
+    });
+  }
+
   // app.put('/:name/sync', sync.sync);
   public async createSyncTask(fullname: string, optionalConfig?: { remoteAuthToken?:string}): Promise<RegistryResponse> {
     const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);

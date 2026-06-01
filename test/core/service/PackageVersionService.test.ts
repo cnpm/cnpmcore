@@ -101,27 +101,19 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
             publishTime: new Date(),
           });
 
-          mock(distRepository, 'findPackageVersionManifest', async (_: string, version: string) => {
-            assert.equal(version, '1.1.0');
-            return {
-              name: 'mock_package',
-              version: '1.1.0',
-            };
-          });
-
         });
 
         it('should return latest for *', async () => {
           const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@*'), true);
           assert(manifest);
-          assert.equal(manifest.version, '1.1.0');
+          assert.equal(manifest.version, '1.0.0');
         });
 
         describe('getVersion should work', () => {
           it('should work without options', async () => {
             const wildVersion = await packageVersionService.getVersion(npa('mock_package@*'));
             const tagVersion = await packageVersionService.getVersion(npa('mock_package@latest'));
-            assert.equal(wildVersion, '1.1.0');
+            assert.equal(wildVersion, '1.0.0');
             assert.equal(tagVersion, '1.0.0');
           });
         });
@@ -129,13 +121,13 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
         it('should return latest for x', async () => {
           const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@*'), true);
           assert(manifest);
-          assert.equal(manifest.version, '1.1.0');
+          assert.equal(manifest.version, '1.0.0');
         });
 
         it('should return latest for compose', async () => {
           const manifest = await packageVersionService.readManifest('mock_package_id', npa('mock_package@^*||~x'), true);
           assert(manifest);
-          assert.equal(manifest.version, '1.1.0');
+          assert.equal(manifest.version, '1.0.0');
         });
       });
     });
@@ -483,7 +475,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           type: 'buffer',
           expiredAt: new Date(Date.now() + 6 * 3600 * 1000),
         });
-        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.1.0'));
         assert.equal(version, '1.1.0');
       });
 
@@ -501,7 +493,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           type: 'buffer',
           expiredAt: new Date(Date.now() - 1000),
         });
-        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.1.0'));
         assert.equal(version, '1.1.0');
       });
 
@@ -514,7 +506,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
           type: null,
           expiredAt: null,
         });
-        const version = await packageVersionService.getVersion(npa('mock_package@^1.0.0'));
+        const version = await packageVersionService.getVersion(npa('mock_package@^1.1.0'));
         assert.equal(version, '1.1.0');
       });
 

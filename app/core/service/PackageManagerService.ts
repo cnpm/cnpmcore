@@ -11,6 +11,7 @@ import { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';
 import pMap from 'p-map';
+import { NPMRegistry } from '../../common/adapter/NPMRegistry';
 import {
   calculateIntegrity,
   detectInstallScript,
@@ -97,6 +98,8 @@ export class PackageManagerService extends AbstractService {
   private readonly distRepository: DistRepository;
   @Inject()
   private readonly registryManagerService: RegistryManagerService;
+  @Inject()
+  private readonly npmRegistry: NPMRegistry;
   @Inject()
   private readonly packageVersionService: PackageVersionService;
 
@@ -288,10 +291,11 @@ export class PackageManagerService extends AbstractService {
     }
     if (cmd.tags) {
       for (const tag of cmd.tags) {
-        await this.savePackageTag(pkg, tag, cmd.version, true);
-        if (!shouldIsolate) {
-          this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
+        if (shouldIsolate) {
+          continue;
         }
+        await this.savePackageTag(pkg, tag, cmd.version, true);
+        this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, tag);
       }
     } else if (!shouldIsolate) {
       this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, pkgVersion.version, undefined);
@@ -548,10 +552,22 @@ export class PackageManagerService extends AbstractService {
       }
     }
     if (released.length === 0) return [];
+    const rollbackTags: { tag: string; version?: string }[] = [];
     try {
+      await this._syncReleasedVersionDistTags(pkg, released.map(r => r.version), rollbackTags);
       // rebuild the package manifest once for the whole batch (restores released versions + dist-tags)
       await this._refreshPackageManifestsToDists(pkg);
     } catch (err) {
+      for (const rollbackTag of rollbackTags.reverse()) {
+        if (rollbackTag.version) {
+          await this.savePackageTag(pkg, rollbackTag.tag, rollbackTag.version, true, true);
+        } else {
+          const tagEntity = await this.packageRepository.findPackageTag(packageId, rollbackTag.tag);
+          if (tagEntity) {
+            await this.packageRepository.removePackageTag(tagEntity);
+          }
+        }
+      }
       // the manifest rebuild (NFS write) is the only non-transactional step. if it fails after the
       // buffer rows were removed, re-create them so the dispatcher re-enqueues and retries — keeping
       // DB rows as the release source-of-truth instead of leaving the version permanently stale.
@@ -833,7 +849,12 @@ export class PackageManagerService extends AbstractService {
     }
   }
 
-  public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false) {
+  public async savePackageTag(pkg: Package, tag: string, version: string, skipEvent = false, skipRefresh = false) {
+    if (await this._isPackageVersionBlocked(pkg.packageId, version)) {
+      this.logger.info('[PackageManagerService:savePackageTag:skipBlockedVersion] packageId: %s, tag: %s, version: %s',
+        pkg.packageId, tag, version);
+      return false;
+    }
     let tagEntity = await this.packageRepository.findPackageTag(pkg.packageId, tag);
     if (!tagEntity) {
       tagEntity = PackageTag.create({
@@ -842,7 +863,9 @@ export class PackageManagerService extends AbstractService {
         version,
       });
       await this.packageRepository.savePackageTag(tagEntity);
-      await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
+      if (!skipRefresh) {
+        await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
+      }
       if (!skipEvent) {
         this.eventBus.emit(PACKAGE_TAG_ADDED, pkg.fullname, tagEntity.tag);
       }
@@ -854,7 +877,9 @@ export class PackageManagerService extends AbstractService {
     }
     tagEntity.version = version;
     await this.packageRepository.savePackageTag(tagEntity);
-    await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
+    if (!skipRefresh) {
+      await this._refreshPackageManifestRootAttributeOnlyToDists(pkg, 'dist-tags');
+    }
     if (!skipEvent) {
       this.eventBus.emit(PACKAGE_TAG_CHANGED, pkg.fullname, tagEntity.tag);
     }
@@ -958,7 +983,8 @@ export class PackageManagerService extends AbstractService {
     for (const tag of tags) {
       // Only handle 'latest' tag fallback when blocked
       if (tag.tag === 'latest' && blockedVersionSet?.has(tag.version)) {
-        // Find the latest non-blocked version
+        // Fall back only when latest was already written to a blocked version. Dependency
+        // isolation skips tag updates to invisible versions and reconciles source dist-tags on release.
         const allVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
         const nonBlockedVersion = allVersions.find(v => !blockedVersionSet!.has(v.version));
         if (nonBlockedVersion) {
@@ -970,6 +996,45 @@ export class PackageManagerService extends AbstractService {
       }
     }
     return distTags;
+  }
+
+  private async _isPackageVersionBlocked(packageId: string, version: string): Promise<boolean> {
+    if (!this.config.cnpmcore.enableBlockPackageVersion) return false;
+    const block = await this.packageVersionBlockRepository.findPackageVersionBlockExact(packageId, version);
+    return !!block;
+  }
+
+  private async _syncReleasedVersionDistTags(
+    pkg: Package,
+    releasedVersions: string[],
+    rollbackTags: { tag: string; version?: string }[],
+  ): Promise<void> {
+    const registry = await this.getSourceRegistry(pkg);
+    const registryHost = registry?.host || this.config.cnpmcore.sourceRegistry;
+    const releasedVersionSet = new Set(releasedVersions);
+    let distTags: Record<string, string> | undefined;
+    try {
+      const res = await this.npmRegistry.getDistTags(registryHost, pkg.fullname, { remoteAuthToken: registry?.authToken });
+      if (res.status !== 200 || !res.data) {
+        throw new Error(`Get dist-tags from ${registryHost} failed, status: ${res.status}`);
+      }
+      distTags = res.data;
+    } catch (err) {
+      this.logger.warn('[PackageManagerService:syncReleasedVersionDistTags:error] packageId: %s, registry: %s, err: %s',
+        pkg.packageId, registryHost, err);
+      throw err;
+    }
+
+    for (const [ tag, version ] of Object.entries(distTags)) {
+      if (!releasedVersionSet.has(version)) continue;
+      if (await this._isPackageVersionBlocked(pkg.packageId, version)) continue;
+      const packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, version);
+      if (!packageVersion) continue;
+      const oldTag = await this.packageRepository.findPackageTag(pkg.packageId, tag);
+      if (oldTag?.version === version) continue;
+      rollbackTags.push({ tag, version: oldTag?.version });
+      await this.savePackageTag(pkg, tag, version, true, true);
+    }
   }
 
   // refresh package full manifests and abbreviated manifests to NFS

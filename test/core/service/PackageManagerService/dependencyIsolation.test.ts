@@ -39,12 +39,12 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
     await TestUtil.truncateDatabase();
   });
 
-  async function publishVersion(name: string, version: string, isPrivate: boolean) {
+  async function publishVersion(name: string, version: string, isPrivate: boolean, tags = [ '' ]) {
     const [ scope, pkgName ] = getScopeAndName(name);
     app.mockLog();
     return await packageManagerService.publish({
       dist: { content: Buffer.alloc(0) },
-      tags: [ '' ],
+      tags,
       scope,
       name: pkgName,
       description: name,
@@ -53,6 +53,15 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       version,
       isPrivate,
     }, publisher);
+  }
+
+  function mockSourceDistTags(distTags: Record<string, string>) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mock((packageManagerService as any).npmRegistry, 'getDistTags', async () => ({
+      method: 'GET',
+      status: 200,
+      data: distTags,
+    }));
   }
 
   describe('isolate new version on publish (C3/C7)', () => {
@@ -73,6 +82,42 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       assert.equal(data.versions['1.0.0'], undefined);
       assert(data.blockVersions);
       assert.match(data.blockVersions['1.0.0'], /^\[buffer\]/);
+    });
+
+    it('should preserve previous visible latest while the new latest is isolated', async () => {
+      mock(app.config.cnpmcore, 'enableDependencyIsolation', false);
+      await publishVersion('foo', '1.1.0', false, [ 'latest' ]);
+      await publishVersion('foo', '1.2.0', false, [ 'next' ]);
+
+      let manifest = await packageManagerService.listPackageFullManifests('', 'foo');
+      assert.equal(manifest.data?.['dist-tags'].latest, '1.1.0');
+      assert.equal(manifest.data?.['dist-tags'].next, '1.2.0');
+      assert(manifest.data?.versions['1.2.0']);
+
+      mock(app.config.cnpmcore, 'enableDependencyIsolation', true);
+      const { packageId } = await publishVersion('foo', '1.2.1', false, []);
+      const pkg = await packageRepository.findPackageByPackageId(packageId);
+      assert(pkg);
+      assert.equal(await packageManagerService.savePackageTag(pkg, 'latest', '1.2.1'), false);
+
+      const latestTag = await packageRepository.findPackageTag(packageId, 'latest');
+      assert.equal(latestTag?.version, '1.1.0');
+      manifest = await packageManagerService.listPackageFullManifests('', 'foo');
+      assert.equal(manifest.data?.['dist-tags'].latest, '1.1.0');
+      assert.equal(manifest.data?.['dist-tags'].next, '1.2.0');
+      assert.equal(manifest.data?.versions['1.2.1'], undefined);
+      assert(manifest.data?.versions['1.2.0']);
+
+      mockSourceDistTags({
+        latest: '1.2.1',
+        next: '1.2.0',
+      });
+      const released = await packageManagerService.releaseBufferedVersions(packageId, [ '1.2.1' ]);
+      assert.deepEqual(released, [ '1.2.1' ]);
+      assert.equal((await packageRepository.findPackageTag(packageId, 'latest'))?.version, '1.2.1');
+      manifest = await packageManagerService.listPackageFullManifests('', 'foo');
+      assert.equal(manifest.data?.['dist-tags'].latest, '1.2.1');
+      assert(manifest.data?.versions['1.2.1']);
     });
 
     it('should NOT isolate a private (user) publish', async () => {
@@ -116,6 +161,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
     it('should release a buffer version and restore it to the manifest', async () => {
       const { packageId } = await publishVersion('foo', '1.0.0', false);
       assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+      mockSourceDistTags({});
 
       const released = await packageManagerService.releaseBufferedVersions(packageId, [ '1.0.0' ]);
       assert.deepEqual(released, [ '1.0.0' ]);
@@ -160,6 +206,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       mock((packageManagerService as any).eventBus, 'emit', (name: string) => { emitted.push(name); });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mock(PackageManagerService.prototype as any, '_refreshPackageManifestsToDists', async () => { throw new Error('nfs down'); });
+      mockSourceDistTags({});
 
       await assert.rejects(packageManagerService.releaseBufferedVersions(packageId, [ '1.0.0' ]), /nfs down/);
       // no phantom publish event on failure

@@ -258,6 +258,61 @@ describe('test/port/controller/package/ShowPackageVersionController.test.ts', ()
       assert.equal(res.body.error, `[NOT_FOUND] ${pkg.name}@beta-not-exists not found`);
     });
 
+    it('should prefer latest tag version when it satisfies semver range', async () => {
+      mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+
+      const pkg110 = await TestUtil.getFullPackage({
+        name: 'foo-prefer-latest',
+        version: '1.1.0',
+        versionObject: {
+          description: 'version 1.1.0',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg110.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg110)
+        .expect(201);
+
+      const pkg120 = await TestUtil.getFullPackage({
+        name: 'foo-prefer-latest',
+        version: '1.2.0',
+        versionObject: {
+          description: 'version 1.2.0',
+        },
+        distTags: {
+          next: '1.2.0',
+        },
+      });
+      await app.httpRequest()
+        .put(`/${pkg120.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkg120)
+        .expect(201);
+
+      let res = await app.httpRequest()
+        .get(`/${pkg110.name}/latest`)
+        .expect(200);
+      assert.equal(res.body.version, '1.1.0');
+
+      res = await app.httpRequest()
+        .get(`/${pkg110.name}/^1`)
+        .expect(200);
+      assert.equal(res.body.version, '1.1.0');
+
+      res = await app.httpRequest()
+        .get(`/${pkg110.name}/%5E1`)
+        .expect(200);
+      assert.equal(res.body.version, '1.1.0');
+
+      res = await app.httpRequest()
+        .get(`/${pkg110.name}/^1.2.0`)
+        .expect(200);
+      assert.equal(res.body.version, '1.2.0');
+    });
+
     it('should 404 when version not exists', async () => {
       const pkg = await TestUtil.getFullPackage({
         name: '@cnpm/foo',
