@@ -124,6 +124,12 @@ export class TaskService extends AbstractService {
     const tasks = await this.taskRepository.findTimeoutTasks(TaskState.Processing, 60000 * 10);
     for (const task of tasks) {
       try {
+        // changes_stream 任务只能由开启了 enableChangesStream 的机器重试
+        // 否则在多集群 + redis 不共享的场景下，未开启 changesStream 的机器会把任务
+        // 重新推入自己的队列，导致任务被无法执行它的机器抢占，且无法被正常调度执行
+        if (task.type === TaskType.ChangesStream && !this.config.cnpmcore.enableChangesStream) {
+          continue;
+        }
         // ignore ChangesStream task, it won't timeout
         if (task.attempts >= 3 && task.type !== TaskType.ChangesStream) {
           await this.finishTask(task, TaskState.Timeout);
@@ -150,6 +156,10 @@ export class TaskService extends AbstractService {
     const waitingTasks = await this.taskRepository.findTimeoutTasks(TaskState.Waiting, 60000 * 30);
     for (const task of waitingTasks) {
       try {
+        // 同上，changes_stream 任务只能由开启了 enableChangesStream 的机器重试
+        if (task.type === TaskType.ChangesStream && !this.config.cnpmcore.enableChangesStream) {
+          continue;
+        }
         await this.retryTask(task);
         this.logger.warn(
           '[TaskService.retryExecuteTimeoutTasks:retryWaiting] taskType: %s, targetName: %s, taskId: %s waiting too long',

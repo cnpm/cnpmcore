@@ -52,6 +52,43 @@ describe('test/schedule/ChangesStreamWorker.test.ts', () => {
     assert(result.waiting === 0);
   });
 
+  it('should not retry changes_stream task when enableChangesStream is disabled', async () => {
+    app.mockHttpclient('https://r.cnpmjs.org/', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/index.json'),
+    });
+    app.mockHttpclient('https://r.cnpmjs.org/_changes', 'GET', {
+      data: await TestUtil.readFixturesFile('r.cnpmjs.org/_changes.json'),
+    });
+    app.mockLog();
+    // syncMode=all and enableChangesStream = true, task picked up and processing
+    mock(app.config.cnpmcore, 'syncMode', 'all');
+    mock(app.config.cnpmcore, 'changesStreamRegistry', 'https://r.cnpmjs.org');
+    mock(app.config.cnpmcore, 'enableChangesStream', true);
+    await app.runSchedule(ChangesStreamWorkerPath);
+    app.expectLog('[ChangesStreamWorker:start]');
+
+    // mock no changed after 10 mins
+    const existsTask = await Task.findOne({ type: 'changes_stream' });
+    assert(existsTask);
+    assert(existsTask.state === 'processing');
+    existsTask.updatedAt = new Date(existsTask.updatedAt.getTime() - 60000 * 10 - 1);
+    await existsTask.save();
+
+    // the machine running timeout handler has changesStream disabled
+    // (e.g. consumer cluster with non-shared redis), it must NOT retry the
+    // changes_stream task, otherwise the task is pushed into a queue that no
+    // machine listens on and can never be scheduled again
+    mock(app.config.cnpmcore, 'enableChangesStream', false);
+    app.mockLog();
+    const result = await taskService.retryExecuteTimeoutTasks();
+    app.notExpectLog('[TaskService.retryExecuteTimeoutTasks:retry]');
+    assert(result.waiting === 0);
+    // task is left untouched, still processing (not requeued to waiting)
+    const afterTask = await Task.findOne({ type: 'changes_stream' });
+    assert(afterTask);
+    assert(afterTask.state === 'processing');
+  });
+
   it('should work on replicate: r.cnpmjs.org', async () => {
     app.mockHttpclient('https://r.cnpmjs.org/', 'GET', {
       data: await TestUtil.readFixturesFile('r.cnpmjs.org/index.json'),
