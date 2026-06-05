@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.83.2 (2026-06-01)</small>
+
+* fix: preserve latest tag during dependency isolation (#1062) ([2efa321](https://github.com/cnpm/cnpmcore/commit/2efa321)), closes [#1062](https://github.com/cnpm/cnpmcore/issues/1062)
+
 ## <small>3.83.1 (2026-05-29)</small>
 
 * fix(PackageVersionService): skip blocked versions when resolving semver ranges (#1061) ([531408e](https://github.com/cnpm/cnpmcore/commit/531408e)), closes [#1061](https://github.com/cnpm/cnpmcore/issues/1061)
