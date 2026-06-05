@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.83.3 (2026-06-05)</small>
+
+* fix(TaskService): only retry changes_stream task on changesStream-enabled machine (#1080) ([909a1ed](https://github.com/cnpm/cnpmcore/commit/909a1ed)), closes [#1080](https://github.com/cnpm/cnpmcore/issues/1080)
+
 ## <small>3.83.2 (2026-06-01)</small>
 
 * fix: preserve latest tag during dependency isolation (#1062) ([2efa321](https://github.com/cnpm/cnpmcore/commit/2efa321)), closes [#1062](https://github.com/cnpm/cnpmcore/issues/1062)
