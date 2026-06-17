@@ -4,7 +4,7 @@
   "packageRules": [
     {
       "matchManagers": ["npm"],
-      "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core", "@vitest/coverage-v8"],
+      "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core", "vitest", "@vitest/coverage-v8"],
       "groupName": "vite-plus related packages",
       "groupSlug": "vite-plus-related-packages"
     }
