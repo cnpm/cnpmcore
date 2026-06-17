@@ -141,11 +141,11 @@
     "@types/semver": "^7.7.1",
     "@types/tar": "^7.0.0",
     "@types/validate-npm-package-name": "^4.0.2",
-    "@vitest/coverage-v8": "^4.1.8",
+    "@vitest/coverage-v8": "4.1.9",
     "coffee": "^5.5.1",
     "ioredis-mock": "^8.13.1",
     "typescript": "^6.0.0",
-    "vite-plus": "^0.1.24"
+    "vite-plus": "0.2.0"
   },
   "optionalDependencies": {
     "s3-cnpmcore": "^1.1.2"
@@ -154,8 +154,8 @@
     "@aws-sdk/xml-builder": {
       "fast-xml-parser": "$fast-xml-parser"
     },
-    "vite": "npm:@voidzero-dev/vite-plus-core@^0.1.24",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@^0.1.24"
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.0",
+    "vitest": "4.1.9"
   },
   "engines": {
     "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
