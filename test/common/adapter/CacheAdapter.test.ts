@@ -75,14 +75,24 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       // pin the clock so both acquisitions observe the same Date.now()
       const fixedNow = 1_700_000_000_000;
       mock(Date, 'now', () => fixedNow);
-      const lockId = await cache.lock('CNPMCORE_L_same_ms', 10);
+      const lockId = await cache.lock('unittest-same-ms', 10);
       assert.ok(lockId);
-      // force the timeout branch so the next lock() re-acquires the key
-      mock.data(app.redis, 'get', `${fixedNow - 123 * 1000}`);
-      const lockId2 = await cache.lock('CNPMCORE_L_same_ms', 10);
+      // simulate an existing lock whose expiry is already in the past, so the next lock() re-acquires the key
+      mock.data(app.redis, 'get', `${fixedNow - 1000}`);
+      const lockId2 = await cache.lock('unittest-same-ms', 10);
       assert.ok(lockId2);
       // tokens must differ so unlock() can tell owners apart even without clock movement
       assert.notEqual(lockId2, lockId);
+    });
+
+    it('should treat the lock as expired once its expiry timestamp has passed', async () => {
+      const lockId = await cache.lock('unittest-expiry', 10);
+      assert.ok(lockId);
+      // existing lock whose expiry timestamp is 1s in the past; the lock lifetime is `seconds`,
+      // not `2 * seconds`, so it must be re-acquirable
+      mock.data(app.redis, 'get', `${Date.now() - 1000}`);
+      const lockId2 = await cache.lock('unittest-expiry', 10);
+      assert.ok(lockId2);
     });
   });
 });
