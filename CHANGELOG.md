@@ -1,5 +1,29 @@
 # Changelog
 
+## <small>4.33.2 (2026-06-18)</small>
+
+* fix: make CacheAdapter lock token unique per acquisition (#1094) ([e8fea92](https://github.com/cnpm/cnpmcore/commit/e8fea92)), closes [#1094](https://github.com/cnpm/cnpmcore/issues/1094)
+* chore: devcontainer with codespaces (#350) ([78a7135](https://github.com/cnpm/cnpmcore/commit/78a7135)), closes [#350](https://github.com/cnpm/cnpmcore/issues/350)
+* chore: migrate toolchain to Vite+ (vp) (#1063) ([5f5bbab](https://github.com/cnpm/cnpmcore/commit/5f5bbab)), closes [#1063](https://github.com/cnpm/cnpmcore/issues/1063)
+* chore(deps-dev): bump tmp from 0.2.5 to 0.2.7 (#1066) ([cae4f48](https://github.com/cnpm/cnpmcore/commit/cae4f48)), closes [#1066](https://github.com/cnpm/cnpmcore/issues/1066)
+* chore(deps): update codecov/codecov-action action to v7 (#1084) ([e60509a](https://github.com/cnpm/cnpmcore/commit/e60509a)), closes [#1084](https://github.com/cnpm/cnpmcore/issues/1084)
+* chore(deps): update dependency dayjs to v1.11.21 (#1064) ([da8b4e1](https://github.com/cnpm/cnpmcore/commit/da8b4e1)), closes [#1064](https://github.com/cnpm/cnpmcore/issues/1064)
+* chore(deps): update dependency fast-xml-parser to v5.8.0 (#1068) ([e36f8d1](https://github.com/cnpm/cnpmcore/commit/e36f8d1)), closes [#1068](https://github.com/cnpm/cnpmcore/issues/1068)
+* chore(deps): update dependency ioredis to v5.11.0 (#1069) ([6cf2c39](https://github.com/cnpm/cnpmcore/commit/6cf2c39)), closes [#1069](https://github.com/cnpm/cnpmcore/issues/1069)
+* chore(deps): update dependency ioredis to v5.11.1 (#1078) ([45f951e](https://github.com/cnpm/cnpmcore/commit/45f951e)), closes [#1078](https://github.com/cnpm/cnpmcore/issues/1078)
+* chore(deps): update dependency mysql2 to v3.22.4 (#1065) ([9333643](https://github.com/cnpm/cnpmcore/commit/9333643)), closes [#1065](https://github.com/cnpm/cnpmcore/issues/1065)
+* chore(deps): update dependency mysql2 to v3.22.5 (#1083) ([76507a5](https://github.com/cnpm/cnpmcore/commit/76507a5)), closes [#1083](https://github.com/cnpm/cnpmcore/issues/1083)
+* chore(deps): update dependency node-rsa to v2 (#1053) ([248d54e](https://github.com/cnpm/cnpmcore/commit/248d54e)), closes [#1053](https://github.com/cnpm/cnpmcore/issues/1053)
+* chore(deps): update dependency npm-package-arg to v14 (#1044) ([84f86f6](https://github.com/cnpm/cnpmcore/commit/84f86f6)), closes [#1044](https://github.com/cnpm/cnpmcore/issues/1044)
+* chore(deps): update dependency ssri to v14 (#1040) ([8fc3029](https://github.com/cnpm/cnpmcore/commit/8fc3029)), closes [#1040](https://github.com/cnpm/cnpmcore/issues/1040)
+* chore(deps): update dependency tar to v7.5.16 (#1073) ([754d536](https://github.com/cnpm/cnpmcore/commit/754d536)), closes [#1073](https://github.com/cnpm/cnpmcore/issues/1073)
+* chore(deps): update dependency type-fest to v5.7.0 (#1071) ([35b6f4c](https://github.com/cnpm/cnpmcore/commit/35b6f4c)), closes [#1071](https://github.com/cnpm/cnpmcore/issues/1071)
+* chore(deps): update mcr.microsoft.com/devcontainers/typescript-node docker tag to v4 (#1070) ([632654b](https://github.com/cnpm/cnpmcore/commit/632654b)), closes [#1070](https://github.com/cnpm/cnpmcore/issues/1070)
+* chore(deps): update npm to v11.17.0 (#1086) ([98d011d](https://github.com/cnpm/cnpmcore/commit/98d011d)), closes [#1086](https://github.com/cnpm/cnpmcore/issues/1086)
+* chore(deps): update vite-plus related dependencies to v0.1.24 and group related renovate updates (#1 ([dcd3042](https://github.com/cnpm/cnpmcore/commit/dcd3042)), closes [#1075](https://github.com/cnpm/cnpmcore/issues/1075)
+* chore(deps): upgrade vite-plus to 0.2.1 (#1093) ([c84941d](https://github.com/cnpm/cnpmcore/commit/c84941d)), closes [#1093](https://github.com/cnpm/cnpmcore/issues/1093)
+* docs: add npmmirror.com usage policy and Aliyun sponsorship info (#1054) ([33cb404](https://github.com/cnpm/cnpmcore/commit/33cb404)), closes [#1054](https://github.com/cnpm/cnpmcore/issues/1054)
+
 ## <small>4.33.1 (2026-05-22)</small>
 
 * fix(PlaywrightBinary): mirror builds/cft/{browserVersion}/ chromium paths (#1050) ([53d263e](https://github.com/cnpm/cnpmcore/commit/53d263e)), closes [#1050](https://github.com/cnpm/cnpmcore/issues/1050) [#1033](https://github.com/cnpm/cnpmcore/issues/1033)
