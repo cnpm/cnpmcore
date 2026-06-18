@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 // FIXME: @eggjs/redis should use ioredis v5
 // https://github.com/eggjs/redis/issues/35
@@ -34,15 +36,19 @@ export class CacheAdapter {
 
   async lock(key: string, seconds: number) {
     const lockName = this.getLockName(key);
+    const now = Date.now();
     const existsTimestamp = await this.redis.get(lockName);
     if (existsTimestamp) {
-      if (Date.now() - Number.parseInt(existsTimestamp) < seconds * 1000) {
+      if (now < Number.parseInt(existsTimestamp)) {
         return null;
       }
       // lock timeout, delete it
       await this.redis.del(lockName);
     }
-    const timestamp = `${Date.now() + seconds * 1000}`;
+    // token format: `<expiry>.<uuid>`
+    // - keep the numeric expiry prefix so the timeout check above can recover it via Number.parseInt()
+    // - append a random uuid so every acquisition gets a unique token, even when now and seconds are identical
+    const timestamp = `${now + seconds * 1000}.${randomUUID()}`;
     const code = await this.redis.setnx(lockName, timestamp);
     // setnx fail, lock fail
     if (code === 0) return null;

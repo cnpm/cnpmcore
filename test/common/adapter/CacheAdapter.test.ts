@@ -70,5 +70,29 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       assert.ok(lockId3);
       assert.notEqual(lockId3, lockId);
     });
+
+    it('should issue a unique token when re-locking within the same millisecond', async () => {
+      // pin the clock so both acquisitions observe the same Date.now()
+      const fixedNow = Date.now();
+      mock(Date, 'now', () => fixedNow);
+      const lockId = await cache.lock('unittest-same-ms', 10);
+      assert.ok(lockId);
+      // release and re-acquire within the same millisecond; the token must still differ
+      await cache.unlock('unittest-same-ms', lockId);
+      const lockId2 = await cache.lock('unittest-same-ms', 10);
+      assert.ok(lockId2);
+      // tokens must differ so unlock() can tell owners apart even without clock movement
+      assert.notEqual(lockId2, lockId);
+    });
+
+    it('should treat the lock as expired once its expiry timestamp has passed', async () => {
+      const lockId = await cache.lock('unittest-expiry', 10);
+      assert.ok(lockId);
+      // existing lock whose expiry timestamp is 1s in the past; the lock lifetime is `seconds`,
+      // not `2 * seconds`, so it must be re-acquirable
+      mock.data(app.redis, 'get', `${Date.now() - 1000}`);
+      const lockId2 = await cache.lock('unittest-expiry', 10);
+      assert.ok(lockId2);
+    });
   });
 });

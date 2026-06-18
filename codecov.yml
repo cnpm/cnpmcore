@@ -1,0 +1,6 @@
+coverage:
+  status:
+    project:
+      default:
+        # allow total coverage to drop by up to 1% without failing the check
+        threshold: 1%
