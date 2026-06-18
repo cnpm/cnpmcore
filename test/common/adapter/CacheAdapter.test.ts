@@ -70,5 +70,19 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
       assert.ok(lockId3);
       assert.notEqual(lockId3, lockId);
     });
+
+    it('should issue a unique token when re-locking within the same millisecond', async () => {
+      // pin the clock so both acquisitions observe the same Date.now()
+      const fixedNow = 1_700_000_000_000;
+      mock(Date, 'now', () => fixedNow);
+      const lockId = await cache.lock('CNPMCORE_L_same_ms', 10);
+      assert.ok(lockId);
+      // force the timeout branch so the next lock() re-acquires the key
+      mock.data(app.redis, 'get', `${fixedNow - 123 * 1000}`);
+      const lockId2 = await cache.lock('CNPMCORE_L_same_ms', 10);
+      assert.ok(lockId2);
+      // tokens must differ so unlock() can tell owners apart even without clock movement
+      assert.notEqual(lockId2, lockId);
+    });
   });
 });
