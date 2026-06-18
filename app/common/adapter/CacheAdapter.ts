@@ -36,9 +36,10 @@ export class CacheAdapter {
 
   async lock(key: string, seconds: number) {
     const lockName = this.getLockName(key);
+    const now = Date.now();
     const existsTimestamp = await this.redis.get(lockName);
     if (existsTimestamp) {
-      if (Date.now() < Number.parseInt(existsTimestamp)) {
+      if (now < Number.parseInt(existsTimestamp)) {
         return null;
       }
       // lock timeout, delete it
@@ -46,8 +47,8 @@ export class CacheAdapter {
     }
     // token format: `<expiry>.<uuid>`
     // - keep the numeric expiry prefix so the timeout check above can recover it via Number.parseInt()
-    // - append a random uuid so every acquisition gets a unique token, even when Date.now() and seconds are identical
-    const timestamp = `${Date.now() + seconds * 1000}.${randomUUID()}`;
+    // - append a random uuid so every acquisition gets a unique token, even when now and seconds are identical
+    const timestamp = `${now + seconds * 1000}.${randomUUID()}`;
     const code = await this.redis.setnx(lockName, timestamp);
     // setnx fail, lock fail
     if (code === 0) return null;
