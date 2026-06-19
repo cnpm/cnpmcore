@@ -8,6 +8,7 @@ import type { PackageVersion as PackageVersionEntity } from '../../core/entity/P
 import type { User as UserEntity } from '../../core/entity/User.ts';
 import type { UserService } from '../../core/service/UserService.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { UserRepository } from '../../repository/UserRepository.ts';
 import { MiddlewareController } from '../middleware/index.ts';
 import { VersionRule } from '../typebox.ts';
@@ -34,6 +35,8 @@ export abstract class AbstractController extends MiddlewareController {
   protected userRoleManager: UserRoleManager;
   @Inject()
   protected packageRepository: PackageRepository;
+  @Inject()
+  protected packageVersionBlockRepository: PackageVersionBlockRepository;
   @Inject()
   protected userRepository: UserRepository;
   @Inject()
@@ -170,6 +173,15 @@ export abstract class AbstractController extends MiddlewareController {
     if (!packageVersion) {
       throw this.createPackageNotFoundErrorWithRedirect(pkg.fullname, version, allowSync);
     }
+
+    // version block (incl. dependency-isolation buffer): reject direct access to a blocked version
+    if (this.config.cnpmcore.enableBlockPackageVersion) {
+      const blockResult = await this.packageVersionBlockRepository.isVersionBlocked(pkg.packageId, version);
+      if (blockResult.blocked) {
+        throw this.createPackageBlockError(blockResult.reason as string, pkg.fullname, version);
+      }
+    }
+
     return packageVersion;
   }
 

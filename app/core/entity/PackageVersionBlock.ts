@@ -1,11 +1,16 @@
 import { EntityUtil, type EasyData } from '../util/EntityUtil.ts';
 import { Entity, type EntityData } from './Entity.ts';
 
+// dependency isolation buffer record (auto-releasable). null type = permanent block.
+export const PACKAGE_VERSION_BLOCK_TYPE_BUFFER = 'buffer';
+
 interface PackageVersionBlockData extends EntityData {
   packageVersionBlockId: string;
   packageId: string;
   version: string;
   reason: string;
+  type?: string | null;
+  expiredAt?: Date | null;
 }
 
 export class PackageVersionBlock extends Entity {
@@ -13,6 +18,8 @@ export class PackageVersionBlock extends Entity {
   packageId: string;
   version: string;
   reason: string;
+  type: string | null;
+  expiredAt: Date | null;
 
   constructor(data: PackageVersionBlockData) {
     super(data);
@@ -20,6 +27,12 @@ export class PackageVersionBlock extends Entity {
     this.packageId = data.packageId;
     this.version = data.version;
     this.reason = data.reason;
+    this.type = data.type ?? null;
+    this.expiredAt = data.expiredAt ?? null;
+  }
+
+  get isBuffer(): boolean {
+    return this.type === PACKAGE_VERSION_BLOCK_TYPE_BUFFER;
   }
 
   static create(data: EasyData<PackageVersionBlockData, 'packageVersionBlockId'>): PackageVersionBlock {

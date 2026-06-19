@@ -141,9 +141,12 @@ CREATE TABLE `package_version_blocks` (
   `package_id` varchar(24) COLLATE utf8_unicode_ci NOT NULL COMMENT 'package id',
   `version` varchar(256) COLLATE utf8_unicode_ci NOT NULL COMMENT 'package version, "*" meaning all versions',
   `reason` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'block reason',
+  `type` varchar(16) COLLATE utf8_unicode_ci NULL COMMENT 'block type: buffer = dependency isolation (auto-releasable), null = permanent',
+  `expired_at` datetime(3) NULL COMMENT 'dependency isolation buffer expiration time',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_package_version_block_id` (`package_version_block_id`),
-  UNIQUE KEY `uk_name_version` (`package_id`,`version`)
+  UNIQUE KEY `uk_name_version` (`package_id`,`version`),
+  KEY `idx_type_expired_at` (`type`,`expired_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_unicode_ci COMMENT='blocklist package versions'
 ;
 
