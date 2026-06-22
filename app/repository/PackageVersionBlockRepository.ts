@@ -92,7 +92,7 @@ export class PackageVersionBlockRepository extends AbstractRepository {
       packageId,
       version: { $ne: '*' },
     });
-    return models.map(model => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
   }
 
   // Atomically remove a row only while it is still a buffer record (type='buffer'). A concurrent
@@ -115,7 +115,7 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     })
       .order('expiredAt', 'asc')
       .limit(limit);
-    return models.map(model => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
   }
 
   async removePackageVersionBlock(packageVersionBlockId: string) {

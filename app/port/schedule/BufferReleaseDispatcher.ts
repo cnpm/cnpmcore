@@ -60,7 +60,7 @@ export class BufferReleaseDispatcher {
       this.logger.info(
         '[BufferReleaseDispatcher:subscribe] enqueued %d packages, %d versions',
         versionsByPackageId.size,
-        expiredBlocks.length
+        expiredBlocks.length,
       );
     });
   }

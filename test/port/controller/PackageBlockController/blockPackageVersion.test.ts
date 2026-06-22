@@ -36,7 +36,7 @@ describe('test/port/controller/PackageBlockController/blockPackageVersion.test.t
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0`);
       assert.equal(res.status, 451);
       assert.ok(
-        res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: ')
+        res.body.error.startsWith('[UNAVAILABLE_FOR_LEGAL_REASONS] @cnpm/testmodule@1.0.0 was blocked, reason: '),
       );
 
       // the full manifest hides the blocked version + exposes blockVersions

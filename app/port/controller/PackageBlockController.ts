@@ -152,7 +152,11 @@ export class PackageBlockController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async unblockPackageVersion(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() version: string) {
+  async unblockPackageVersion(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() fullname: string,
+    @HTTPParam() version: string,
+  ) {
     // Check if feature is enabled
     if (!this.config.cnpmcore.enableBlockPackageVersion) {
       throw new ForbiddenError('Block package version feature is not enabled');

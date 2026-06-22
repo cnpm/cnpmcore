@@ -3,16 +3,16 @@ import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { getScopeAndName } from '../../../../app/common/PackageUtil.ts';
-import type { User } from '../../../../app/core/entity/User.ts';
 import {
   PackageVersionBlock,
   PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
 } from '../../../../app/core/entity/PackageVersionBlock.ts';
+import type { User } from '../../../../app/core/entity/User.ts';
 import { PackageManagerService } from '../../../../app/core/service/PackageManagerService.ts';
 import { UserService } from '../../../../app/core/service/UserService.ts';
+import { PackageVersion as PackageVersionModel } from '../../../../app/repository/model/PackageVersion.ts';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
 import { PackageVersionBlockRepository } from '../../../../app/repository/PackageVersionBlockRepository.ts';
-import { PackageVersion as PackageVersionModel } from '../../../../app/repository/model/PackageVersion.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', () => {
@@ -61,7 +61,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
         version,
         isPrivate,
       },
-      publisher
+      publisher,
     );
   }
 
@@ -125,7 +125,10 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
   describe('releaseBufferedVersions (C5)', () => {
     it('should release a buffer version and restore it to the manifest', async () => {
       const { packageId } = await publishVersion('foo', '1.0.0', false);
-      assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+      assert.equal(
+        (await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'],
+        undefined,
+      );
 
       const released = await packageManagerService.releaseBufferedVersions(packageId, ['1.0.0']);
       assert.deepEqual(released, ['1.0.0']);
@@ -146,7 +149,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
         pkg,
         '1.0.0',
         false,
-        '[security] malicious'
+        '[security] malicious',
       );
       assert.equal(res.changed, true);
       const block = await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0');
@@ -174,9 +177,13 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       mock((packageManagerService as unknown as { eventBus: { emit: unknown } }).eventBus, 'emit', (name: string) => {
         emitted.push(name);
       });
-      mock(PackageManagerService.prototype as unknown as Record<string, unknown>, '_refreshPackageManifestsToDists', async () => {
-        throw new Error('nfs down');
-      });
+      mock(
+        PackageManagerService.prototype as unknown as Record<string, unknown>,
+        '_refreshPackageManifestsToDists',
+        async () => {
+          throw new Error('nfs down');
+        },
+      );
 
       await assert.rejects(packageManagerService.releaseBufferedVersions(packageId, ['1.0.0']), /nfs down/);
       // no phantom publish event on failure
@@ -216,7 +223,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
           reason: '[buffer] x',
           type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
           expiredAt: past,
-        })
+        }),
       );
       await packageVersionBlockRepository.savePackageVersionBlock(
         PackageVersionBlock.create({
@@ -225,7 +232,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
           reason: '[buffer] y',
           type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
           expiredAt: future,
-        })
+        }),
       );
       // a permanent (non-buffer) block is never returned
       await packageVersionBlockRepository.savePackageVersionBlock(
@@ -233,11 +240,11 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
           packageId,
           version: '4.0.0',
           reason: 'manual',
-        })
+        }),
       );
 
       const expired = await packageVersionBlockRepository.findExpiredBufferedVersions(10);
-      const versions = expired.map(b => b.version);
+      const versions = expired.map((b) => b.version);
       assert(versions.includes('2.0.0'));
       assert(!versions.includes('3.0.0'));
       assert(!versions.includes('4.0.0'));
@@ -265,7 +272,10 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       const res = await packageManagerService.ensurePackageVersionAvailability(pkg, '1.0.0', true);
       assert.deepEqual(res, { changed: false });
       assert((await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'))?.isBuffer);
-      assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+      assert.equal(
+        (await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'],
+        undefined,
+      );
 
       // but an admin force-unblock (the explicit escape channel) still releases it
       await packageManagerService.unblockPackageVersion(pkg, '1.0.0');
@@ -284,7 +294,10 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       assert.deepEqual(await packageManagerService.ensurePackageVersionAvailability(pkg, '1.0.0', false, 'bad'), {
         changed: false,
       });
-      assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+      assert.equal(
+        (await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'],
+        undefined,
+      );
 
       assert.deepEqual(await packageManagerService.ensurePackageVersionAvailability(pkg, '1.0.0', true), {
         changed: true,
@@ -299,11 +312,17 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       const pkg = await packageRepository.findPackageByPackageId(packageId);
       assert(pkg);
       await packageManagerService.blockPackageVersion(pkg, '1.0.0', 'bad');
-      assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+      assert.equal(
+        (await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'],
+        undefined,
+      );
 
       // incremental refresh (as run by sync batch / re-publish) must not re-add the blocked version
       await packageManagerService.refreshPackageChangeVersionsToDists(pkg, ['1.0.0']);
-      assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
+      assert.equal(
+        (await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'],
+        undefined,
+      );
     });
   });
 

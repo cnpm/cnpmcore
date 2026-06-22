@@ -8,8 +8,8 @@ import { getScopeAndName } from '../../app/common/PackageUtil.ts';
 import type { User } from '../../app/core/entity/User.ts';
 import { PackageManagerService } from '../../app/core/service/PackageManagerService.ts';
 import { UserService } from '../../app/core/service/UserService.ts';
-import { PackageVersionBlockRepository } from '../../app/repository/PackageVersionBlockRepository.ts';
 import { PackageVersionBlock as PackageVersionBlockModel } from '../../app/repository/model/PackageVersionBlock.ts';
+import { PackageVersionBlockRepository } from '../../app/repository/PackageVersionBlockRepository.ts';
 import { TestUtil } from '../../test/TestUtil.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -60,7 +60,7 @@ describe('test/schedule/BufferRelease.test.ts', () => {
         version,
         isPrivate: false,
       },
-      publisher
+      publisher,
     );
   }
 
@@ -69,10 +69,7 @@ describe('test/schedule/BufferRelease.test.ts', () => {
     // hidden while buffered
     assert.equal((await packageManagerService.listPackageFullManifests('', 'foo')).data?.versions['1.0.0'], undefined);
     // backdate expiry so it is due
-    await PackageVersionBlockModel.update(
-      { packageId, version: '1.0.0' },
-      { expiredAt: new Date(Date.now() - 1000) }
-    );
+    await PackageVersionBlockModel.update({ packageId, version: '1.0.0' }, { expiredAt: new Date(Date.now() - 1000) });
 
     await app.runSchedule(DispatcherPath);
     await app.runSchedule(WorkerPath);
@@ -95,10 +92,7 @@ describe('test/schedule/BufferRelease.test.ts', () => {
 
   it('should still release already-buffered versions after the flag is turned off (rollback)', async () => {
     const { packageId } = await publishIsolated('foo', '1.0.0'); // buffered while flag on
-    await PackageVersionBlockModel.update(
-      { packageId, version: '1.0.0' },
-      { expiredAt: new Date(Date.now() - 1000) }
-    );
+    await PackageVersionBlockModel.update({ packageId, version: '1.0.0' }, { expiredAt: new Date(Date.now() - 1000) });
     // operator disables the feature (rollback) — existing buffer rows must still drain
     mock(app.config.cnpmcore, 'enableDependencyIsolation', false);
 

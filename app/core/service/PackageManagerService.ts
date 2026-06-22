@@ -393,7 +393,7 @@ export class PackageManagerService extends AbstractService {
     const list = this.config.cnpmcore.dependencyIsolationExclude;
     if (!list || list.length === 0) return false;
     const [scope] = getScopeAndName(fullname);
-    return list.some(rule => {
+    return list.some((rule) => {
       if (rule === fullname) return true;
       if (rule.endsWith('/*')) return scope !== '' && scope === rule.slice(0, -2);
       return false;
@@ -661,7 +661,7 @@ export class PackageManagerService extends AbstractService {
     for (const r of released) {
       this.eventBus.emit(PACKAGE_VERSION_ADDED, pkg.fullname, r.version, undefined);
     }
-    const releasedVersions = released.map(r => r.version);
+    const releasedVersions = released.map((r) => r.version);
     this.logger.info(
       '[packageManagerService.releaseBufferedVersions:success] packageId: %s, released: %j',
       packageId,
@@ -745,7 +745,10 @@ export class PackageManagerService extends AbstractService {
     }
     // version-level block (incl. dependency-isolation buffer)
     if (this.config.cnpmcore.enableBlockPackageVersion) {
-      const versionBlock = await this.packageVersionBlockRepository.findPackageVersionBlockExact(pkg.packageId, version);
+      const versionBlock = await this.packageVersionBlockRepository.findPackageVersionBlockExact(
+        pkg.packageId,
+        version,
+      );
       if (versionBlock) {
         return { blockReason: versionBlock.reason, pkg };
       }
@@ -1211,7 +1214,7 @@ export class PackageManagerService extends AbstractService {
     if (this.config.cnpmcore.enableBlockPackageVersion) {
       const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
       if (blockedVersions.length > 0) {
-        blockedVersionSet = new Set(blockedVersions.map(v => v.version));
+        blockedVersionSet = new Set(blockedVersions.map((v) => v.version));
       }
     }
 
@@ -1220,7 +1223,7 @@ export class PackageManagerService extends AbstractService {
         if (entity.tag === 'latest') {
           // find the latest non-blocked version; if all are blocked, omit `latest` entirely
           const allVersions = await this.packageRepository.listPackageVersions(pkg.packageId);
-          const nonBlockedVersion = allVersions.find(v => !blockedVersionSet?.has(v.version));
+          const nonBlockedVersion = allVersions.find((v) => !blockedVersionSet?.has(v.version));
           if (nonBlockedVersion) {
             distTags[entity.tag] = nonBlockedVersion.version;
           }
@@ -1674,7 +1677,7 @@ export class PackageManagerService extends AbstractService {
     if (!this.config.cnpmcore.enableBlockPackageVersion) return undefined;
     const blockedVersions = await this.packageVersionBlockRepository.listBlockedVersions(pkg.packageId);
     if (blockedVersions.length === 0) return undefined;
-    return new Map(blockedVersions.map(v => [v.version, v.reason]));
+    return new Map(blockedVersions.map((v) => [v.version, v.reason]));
   }
 
   private async _listPackageFullManifests(pkg: Package): Promise<PackageManifestType | null> {
@@ -1731,7 +1734,7 @@ export class PackageManagerService extends AbstractService {
     }
 
     let latestManifest: PackageJSONType | undefined;
-    let latestPackageVersion = packageVersions.find(v => !blockedVersionSet?.has(v.version)) ?? packageVersions[0];
+    let latestPackageVersion = packageVersions.find((v) => !blockedVersionSet?.has(v.version)) ?? packageVersions[0];
     // https://github.com/npm/registry/blob/master/docs/responses/package-metadata.md#package-metadata
     for (const packageVersion of packageVersions) {
       if (blockedVersionSet?.has(packageVersion.version)) continue;
