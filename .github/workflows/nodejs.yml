@@ -26,6 +26,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
+          package-manager-cache: false
 
       - name: setup utoo
         uses: utooland/setup-utoo@v1
@@ -44,37 +46,6 @@ jobs:
 
       - name: Build
         run: ut tsc && ut tsc:prod
-
-  dedupe-check:
-    runs-on: ubuntu-latest
-
-    concurrency:
-      group: dedupe-check-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
-      cancel-in-progress: true
-
-    steps:
-      - name: Checkout Git Source
-        uses: taiki-e/checkout-action@v1
-
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run vp dedupe
-        run: npx vp dedupe
-
-      - name: Ensure package-lock.json is unchanged after dedupe
-        run: |
-          if ! git diff --quiet -- package-lock.json; then
-            echo "::error::package-lock.json is not deduped. Run 'vp dedupe' locally and commit the result."
-            git --no-pager diff -- package-lock.json
-            exit 1
-          fi
-          echo "package-lock.json is already deduped"
 
   test-deployment:
     runs-on: ubuntu-latest
@@ -104,6 +75,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
+          package-manager-cache: false
 
       - name: setup utoo
         uses: utooland/setup-utoo@v1
@@ -416,6 +389,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+          # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
+          package-manager-cache: false
 
       - name: setup utoo
         uses: utooland/setup-utoo@v1
@@ -494,6 +469,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+          # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
+          package-manager-cache: false
 
       - name: setup utoo
         uses: utooland/setup-utoo@v1
@@ -543,6 +520,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+          # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
+          package-manager-cache: false
 
       - name: setup utoo
         uses: utooland/setup-utoo@v1
@@ -573,7 +552,6 @@ jobs:
       - test-postgresql-fs-nfs
       - test-mysql57-fs-nfs
       - typecheck
-      - dedupe-check
     steps:
       - run: exit 1
         if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}
