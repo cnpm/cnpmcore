@@ -204,6 +204,52 @@ export interface CnpmcoreConfig {
   strictValidatePackageDeps?: boolean;
 
   /**
+   * enable blocking a package on a specific version (not only the whole package).
+   * when enabled, blocked versions are filtered out of the public manifest / dist-tags
+   * and rejected on direct version access. default is false (behavior identical to today).
+   * see https://github.com/cnpm/cnpmcore/pull/906
+   *
+   * ⚠️ MIGRATION WARNING — read before enabling on an existing deployment:
+   * this flag RETROACTIVELY enforces every existing version-level row in `package_version_blocks`
+   * (rows whose `version` is a specific version, not `*`). Some deployments (e.g. npmmirror) have
+   * written single-version rows purely as AUDIT records while keeping the versions installable.
+   * Turning this flag on will immediately HIDE all those versions from the manifest and reject
+   * direct version access — a production-visible behavior change. Audit / migrate / clean those
+   * existing rows BEFORE enabling. (Buffer rows with `type='buffer'` are unaffected by this caveat;
+   * only legacy `type=NULL` version rows are.)
+   */
+  enableBlockPackageVersion?: boolean;
+
+  /**
+   * enable dependency isolation (buffer) zone.
+   * when enabled, a newly synced version is held invisible for `dependencyIsolationDuration`
+   * before being auto-released, giving deployments a window to run out-of-band validation.
+   * default is false (behavior identical to today).
+   * see RFC: https://github.com/cnpm/cnpmcore/issues/1057
+   *
+   * ⚠️ REQUIRES `enableBlockPackageVersion` (isolation hides versions via the version-level block
+   * mechanism). Because of that dependency, enabling isolation inherits the migration warning on
+   * `enableBlockPackageVersion` above: it also activates enforcement of all existing single-version
+   * audit rows. Clean up those rows before enabling isolation in production.
+   */
+  enableDependencyIsolation?: boolean;
+
+  /**
+   * dependency isolation buffer duration in milliseconds, analogous to pnpm `minimumReleaseAge`.
+   * a synced version stays invisible until `gmt_create + dependencyIsolationDuration`.
+   * default is 6 hours. only effective when `enableDependencyIsolation` is true.
+   */
+  dependencyIsolationDuration?: number;
+
+  /**
+   * dependency isolation allowlist, analogous to pnpm `minimumReleaseAgeExclude`.
+   * matched packages skip the buffer zone (released immediately).
+   * supports exact package name and scope wildcard, e.g. `lodash`, `@scope/*`, `@scope/pkg`.
+   * default is empty.
+   */
+  dependencyIsolationExclude?: string[];
+
+  /**
    * database config
    */
   database: {

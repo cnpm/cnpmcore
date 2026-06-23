@@ -126,6 +126,9 @@ export interface CnpmcorePatchInfo {
   publish_time?: number;
   _source_registry_name?: string;
   block?: string;
+  // map of blocked version -> block reason (incl. dependency-isolation buffer), only present
+  // when enableBlockPackageVersion is on and the package has version-level block records.
+  blockVersions?: Record<string, string>;
 }
 
 export type AbbreviatedKey =

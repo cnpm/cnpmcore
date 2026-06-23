@@ -219,11 +219,14 @@ CREATE TABLE package_version_blocks (
   package_version_block_id varchar(24) NOT NULL,
   package_id varchar(24) NOT NULL,
   version varchar(256) NOT NULL,
-  reason text NOT NULL
+  reason text NOT NULL,
+  type varchar(16) DEFAULT NULL,
+  expired_at timestamp(3) DEFAULT NULL
 );
 
 CREATE UNIQUE INDEX package_version_blocks_uk_package_version_block_id ON package_version_blocks (package_version_block_id);
 CREATE UNIQUE INDEX package_version_blocks_uk_name_version ON package_version_blocks (package_id, version);
+CREATE INDEX package_version_blocks_idx_type_expired_at ON package_version_blocks (type, expired_at);
 
 COMMENT ON TABLE package_version_blocks IS 'blocklist package versions';
 COMMENT ON COLUMN package_version_blocks.id IS 'primary key';
@@ -233,6 +236,8 @@ COMMENT ON COLUMN package_version_blocks.package_version_block_id IS 'package ve
 COMMENT ON COLUMN package_version_blocks.package_id IS 'package id';
 COMMENT ON COLUMN package_version_blocks.version IS 'package version, "*" meaning all versions';
 COMMENT ON COLUMN package_version_blocks.reason IS 'block reason';
+COMMENT ON COLUMN package_version_blocks.type IS 'block type: buffer = dependency isolation (auto-releasable), null = permanent';
+COMMENT ON COLUMN package_version_blocks.expired_at IS 'dependency isolation buffer expiration time';
 
 
 CREATE TABLE package_version_downloads (

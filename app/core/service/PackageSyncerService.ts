@@ -22,6 +22,7 @@ import type {
   PackageManifestType,
   PackageRepository,
 } from '../../repository/PackageRepository.ts';
+import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 import type { PackageVersionRepository } from '../../repository/PackageVersionRepository.ts';
 import type { TaskRepository } from '../../repository/TaskRepository.ts';
@@ -64,6 +65,8 @@ export class PackageSyncerService extends AbstractService {
   private readonly packageRepository: PackageRepository;
   @Inject()
   private readonly packageVersionDownloadRepository: PackageVersionDownloadRepository;
+  @Inject()
+  private readonly packageVersionBlockRepository: PackageVersionBlockRepository;
   @Inject()
   private readonly packageVersionRepository: PackageVersionRepository;
   @Inject()
@@ -814,6 +817,21 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       const version: string = item.version;
       // Skip empty versions, handle abnormal data
       if (!version) continue;
+
+      // version block (incl. dependency-isolation buffer): skip re-syncing a blocked version so a
+      // re-sync can't resurrect it into the manifest. removing the block (or buffer release) brings
+      // it back via the normal refresh path.
+      if (pkg && this.config.cnpmcore.enableBlockPackageVersion) {
+        const versionBlock = await this.packageVersionBlockRepository.findPackageVersionBlockExact(
+          pkg.packageId,
+          version,
+        );
+        if (versionBlock) {
+          logs.push(`[${isoNow()}] ⚠️ Skip blocked version ${version}: ${versionBlock.reason}`);
+          continue;
+        }
+      }
+
       let existsItem: (typeof existsVersionMap)[string] | undefined = existsVersionMap[version];
       let existsAbbreviatedItem: (typeof abbreviatedVersionMap)[string] | undefined = abbreviatedVersionMap[version];
       const shouldDeleteReadme = !!(existsItem && 'readme' in existsItem);

@@ -1,6 +1,9 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { PackageVersionBlock as PackageVersionBlockEntity } from '../core/entity/PackageVersionBlock.ts';
+import {
+  PackageVersionBlock as PackageVersionBlockEntity,
+  PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+} from '../core/entity/PackageVersionBlock.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
 import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.ts';
 import { ModelConvertor } from './util/ModelConvertor.ts';
@@ -42,6 +45,77 @@ export class PackageVersionBlockRepository extends AbstractRepository {
 
   async listPackageVersionBlocks(packageId: string) {
     return await this.PackageVersionBlock.find({ packageId });
+  }
+
+  // Find a specific version block (not '*')
+  async findPackageVersionBlockExact(packageId: string, version: string) {
+    const model = await this.PackageVersionBlock.findOne({ packageId, version });
+    if (model) return ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity);
+    return null;
+  }
+
+  // Check if a version is blocked (including package-level block)
+  async isVersionBlocked(
+    packageId: string,
+    version: string,
+  ): Promise<{
+    blocked: boolean;
+    reason?: string;
+    version?: string;
+  }> {
+    // First check package-level block (version='*')
+    const packageBlock = await this.findPackageBlock(packageId);
+    if (packageBlock) {
+      return {
+        blocked: true,
+        reason: packageBlock.reason,
+        version: '*',
+      };
+    }
+
+    // Then check version-level block
+    const versionBlock = await this.findPackageVersionBlockExact(packageId, version);
+    if (versionBlock) {
+      return {
+        blocked: true,
+        reason: versionBlock.reason,
+        version: versionBlock.version,
+      };
+    }
+
+    return { blocked: false };
+  }
+
+  // List all blocked versions (exclude '*')
+  async listBlockedVersions(packageId: string) {
+    const models = await this.PackageVersionBlock.find({
+      packageId,
+      version: { $ne: '*' },
+    });
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
+  }
+
+  // Atomically remove a row only while it is still a buffer record (type='buffer'). A concurrent
+  // permanent block sets type=null, so this single conditional delete won't clobber it. Returns
+  // true only when a buffer row was actually removed.
+  async removeBufferBlock(packageVersionBlockId: string): Promise<boolean> {
+    const removeCount = await this.PackageVersionBlock.remove({
+      packageVersionBlockId,
+      type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+    });
+    return removeCount > 0;
+  }
+
+  // Dependency isolation: list buffer records whose hold has expired (ready to release).
+  // Indexed by (type, expired_at); ordered oldest-first so the most overdue release first.
+  async findExpiredBufferedVersions(limit: number) {
+    const models = await this.PackageVersionBlock.find({
+      type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
+      expiredAt: { $lte: new Date() },
+    })
+      .order('expiredAt', 'asc')
+      .limit(limit);
+    return models.map((model) => ModelConvertor.convertModelToEntity(model, PackageVersionBlockEntity));
   }
 
   async removePackageVersionBlock(packageVersionBlockId: string) {

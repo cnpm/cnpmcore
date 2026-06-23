@@ -13,7 +13,6 @@ import { ForbiddenError } from 'egg/errors';
 
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
 import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
-import type { PackageVersionBlockRepository } from '../../repository/PackageVersionBlockRepository.ts';
 import { AdminAccess } from '../middleware/AdminAccess.ts';
 import { BlockPackageRule, type BlockPackageType } from '../typebox.ts';
 import { AbstractController } from './AbstractController.ts';
@@ -22,8 +21,6 @@ import { AbstractController } from './AbstractController.ts';
 export class PackageBlockController extends AbstractController {
   @Inject()
   private packageManagerService: PackageManagerService;
-  @Inject()
-  private packageVersionBlockRepository: PackageVersionBlockRepository;
 
   @HTTPMethod({
     // PUT /-/package/:fullname/blocks
@@ -95,10 +92,90 @@ export class PackageBlockController extends AbstractController {
           id: block.packageVersionBlockId,
           version: block.version,
           reason: block.reason,
+          scope: block.version === '*' ? 'package' : 'version',
           created: block.createdAt,
           modified: block.updatedAt,
         };
       }),
+    };
+  }
+
+  @HTTPMethod({
+    // PUT /-/package/:fullname/blocks/:version
+    path: `/-/package/:fullname(${FULLNAME_REG_STRING})/blocks/:version`,
+    method: HTTPMethodEnum.PUT,
+  })
+  @Middleware(AdminAccess)
+  async blockPackageVersion(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() fullname: string,
+    @HTTPParam() version: string,
+    @HTTPBody() data: BlockPackageType,
+  ) {
+    // Check if feature is enabled
+    if (!this.config.cnpmcore.enableBlockPackageVersion) {
+      throw new ForbiddenError('Block package version feature is not enabled');
+    }
+
+    const params = { fullname, reason: data.reason };
+    ctx.tValidate(BlockPackageRule, params);
+    const packageEntity = await this.getPackageEntityByFullname(params.fullname);
+    if (packageEntity.isPrivate) {
+      throw new ForbiddenError(`Can't block private package "${params.fullname}"`);
+    }
+
+    const authorized = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
+    const block = await this.packageManagerService.blockPackageVersion(
+      packageEntity,
+      version,
+      `${params.reason} (operator: ${authorized?.user.name}/${authorized?.user.userId})`,
+    );
+    ctx.logger.info(
+      '[PackageBlockController.blockPackageVersion:success] fullname: %s, version: %s, packageId: %s, packageVersionBlockId: %s',
+      fullname,
+      version,
+      packageEntity.packageId,
+      block.packageVersionBlockId,
+    );
+    ctx.status = 201;
+    return {
+      ok: true,
+      id: block.packageVersionBlockId,
+      package_id: packageEntity.packageId,
+      version,
+    };
+  }
+
+  @HTTPMethod({
+    // DELETE /-/package/:fullname/blocks/:version
+    path: `/-/package/:fullname(${FULLNAME_REG_STRING})/blocks/:version`,
+    method: HTTPMethodEnum.DELETE,
+  })
+  @Middleware(AdminAccess)
+  async unblockPackageVersion(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() fullname: string,
+    @HTTPParam() version: string,
+  ) {
+    // Check if feature is enabled
+    if (!this.config.cnpmcore.enableBlockPackageVersion) {
+      throw new ForbiddenError('Block package version feature is not enabled');
+    }
+
+    const packageEntity = await this.getPackageEntityByFullname(fullname);
+    if (packageEntity.isPrivate) {
+      throw new ForbiddenError(`Can't unblock private package "${fullname}"`);
+    }
+
+    await this.packageManagerService.unblockPackageVersion(packageEntity, version);
+    ctx.logger.info(
+      '[PackageBlockController.unblockPackageVersion:success] fullname: %s, version: %s, packageId: %s',
+      fullname,
+      version,
+      packageEntity.packageId,
+    );
+    return {
+      ok: true,
     };
   }
 }
