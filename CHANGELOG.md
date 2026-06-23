@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.34.0 (2026-06-23)
+
+* feat: dependency isolation (buffer) zone + version-level block (#1057) (#1095) ([9158571](https://github.com/cnpm/cnpmcore/commit/9158571)), closes [#1057](https://github.com/cnpm/cnpmcore/issues/1057) [#1095](https://github.com/cnpm/cnpmcore/issues/1095) [#1057](https://github.com/cnpm/cnpmcore/issues/1057) [906/#909](https://github.com/cnpm/cnpmcore/issues/909)
+
 ## <small>4.33.2 (2026-06-18)</small>
 
 * fix: make CacheAdapter lock token unique per acquisition (#1094) ([e8fea92](https://github.com/cnpm/cnpmcore/commit/e8fea92)), closes [#1094](https://github.com/cnpm/cnpmcore/issues/1094)
