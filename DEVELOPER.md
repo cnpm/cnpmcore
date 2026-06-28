@@ -119,6 +119,15 @@ PostgreSQL
 npm run test:postgresql
 ```
 
+### Snapshot 启动和 npm 客户端回归
+
+需要验证打包后的 snapshot 是否能作为真实 npm registry 工作时，先用 `egg-bin bundle`
+生成 `dist-bundle`，再启动 `dist-bundle/worker.js`，最后在临时目录中用 npm 客户端把
+registry 指向本地 snapshot 服务，完整跑发布、查看、安装、dist-tag、deprecate、owner/access
+和 unpublish 链路。
+
+详细步骤见 [docs/bundle.md](./docs/bundle.md)。
+
 ## 项目结构
 
 ```txt
