@@ -4,7 +4,7 @@ export default defineConfig({
   fmt: {
     printWidth: 120,
     singleQuote: true,
-    ignorePatterns: ['__snapshots__', 'test/fixtures', 'CHANGELOG.md'],
+    ignorePatterns: ['__snapshots__', 'test/fixtures', '**/*.md'],
     sortImports: {
       groups: [['type-import'], ['builtin'], ['external', 'internal'], ['parent', 'sibling', 'index'], ['unknown']],
       newlinesBetween: true,
