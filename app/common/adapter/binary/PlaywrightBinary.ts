@@ -7,7 +7,10 @@ import { BinaryType } from '../../enum/Binary.ts';
 import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
-const DOWNLOAD_HOST = 'https://playwright.azureedge.net/';
+// playwright.azureedge.net is deprecated and returns 400 for the new
+// `builds/cft/*` namespace; cdn.playwright.dev serves both the legacy
+// `builds/*` and the CFT paths. See https://github.com/cnpm/cnpmcore/issues/1033
+const DOWNLOAD_HOST = 'https://cdn.playwright.dev/';
 // https://github.com/playwright-community/playwright-go/blob/56e30d60f8b42785982469eaca6ad969bc2e1946/run.go#L341-L374
 const PLAYWRIGHT_DRIVER_ARCHS = ['win32_x64', 'mac-arm64', 'mac', 'linux-arm64', 'linux'];
 
@@ -480,11 +483,11 @@ export class PlaywrightBinary extends AbstractBinary {
         let browserDirname = browser.name;
         if (browser.name === 'chromium-headless-shell') {
           // chromium-headless-shell should be under chromium
-          // https://playwright.azureedge.net/builds/chromium/1155/chromium-headless-shell-mac-arm64.zip
+          // https://cdn.playwright.dev/builds/chromium/1155/chromium-headless-shell-mac-arm64.zip
           browserDirname = 'chromium';
         } else if (browser.name === 'chromium-tip-of-tree-headless-shell') {
           // chromium-tip-of-tree-headless-shell should be under chromium-tip-of-tree
-          // https://playwright.azureedge.net/builds/chromium-tip-of-tree/1293/chromium-tip-of-tree-headless-shell-mac-arm64.zip
+          // https://cdn.playwright.dev/builds/chromium-tip-of-tree/1293/chromium-tip-of-tree-headless-shell-mac-arm64.zip
           browserDirname = 'chromium-tip-of-tree';
         }
         for (const [platform, remotePath] of Object.entries(downloadPaths)) {
