@@ -100,7 +100,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         assert.equal(item.isDir, false);
         assert.match(
           item.url,
-          /https:\/\/playwright\.azureedge\.net\/builds\/cft\/133\.0\.6943\.16\/mac-arm64\/(chrome|chrome-headless-shell)-mac-arm64\.zip/,
+          /https:\/\/cdn\.playwright\.dev\/builds\/cft\/133\.0\.6943\.16\/mac-arm64\/(chrome|chrome-headless-shell)-mac-arm64\.zip/,
         );
       }
 
@@ -110,7 +110,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.ok(chromiumRevResult);
       const linuxArm64 = chromiumRevResult.items.find((item) => item.name === 'chromium-linux-arm64.zip');
       assert.ok(linuxArm64, 'chromium-linux-arm64.zip should still live at /builds/chromium/1155/');
-      assert.equal(linuxArm64.url, 'https://playwright.azureedge.net/builds/chromium/1155/chromium-linux-arm64.zip');
+      assert.equal(linuxArm64.url, 'https://cdn.playwright.dev/builds/chromium/1155/chromium-linux-arm64.zip');
     });
 
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
@@ -156,10 +156,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
             assert.ok(item.size === '-');
             assert.ok(item.url);
             assert.ok(item.date);
-            assert.match(
-              item.url,
-              /https:\/\/playwright\.azureedge\.net\/builds\/driver\/(?:next\/)?playwright-\S+-\S+.zip/,
-            );
+            assert.match(item.url, /https:\/\/cdn\.playwright\.dev\/builds\/driver\/(?:next\/)?playwright-\S+-\S+.zip/);
           }
         }
       }
@@ -193,7 +190,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           // {
           //   name: 'chromium-linux.zip',
           //   isDir: false,
-          //   url: 'https://playwright.azureedge.net/builds/chromium/1000/chromium-linux.zip',
+          //   url: 'https://cdn.playwright.dev/builds/chromium/1000/chromium-linux.zip',
           //   size: '-',
           //   date: '2022-04-18T20:51:53.788Z'
           // },
@@ -204,16 +201,13 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
           assert.ok(item.date);
           if (dirname === 'chromium' && item.name.startsWith('chromium-headless-shell')) {
             // chromium should include chromium-headless-shell
-            assert.match(
-              item.url,
-              /https:\/\/playwright\.azureedge\.net\/builds\/chromium\/\d+\/chromium-headless-shell/,
-            );
+            assert.match(item.url, /https:\/\/cdn\.playwright\.dev\/builds\/chromium\/\d+\/chromium-headless-shell/);
             shouldIncludeChromiumHeadlessShell = true;
           }
           if (dirname === 'chromium-tip-of-tree' && item.name.startsWith('chromium-tip-of-tree-headless-shell')) {
             assert.match(
               item.url,
-              /https:\/\/playwright\.azureedge\.net\/builds\/chromium-tip-of-tree\/\d+\/chromium-tip-of-tree-headless-shell/,
+              /https:\/\/cdn\.playwright\.dev\/builds\/chromium-tip-of-tree\/\d+\/chromium-tip-of-tree-headless-shell/,
             );
             shouldIncludeChromiumTipOfTreeHeadlessShell = true;
           }
