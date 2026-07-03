@@ -21,7 +21,7 @@ describe('test/core/service/PackageSearchService.test.ts', () => {
 
   afterEach(async () => {
     mockES.clearAll();
-    mock.restore();
+    await mock.restore();
   });
 
   it('should sync package', async () => {

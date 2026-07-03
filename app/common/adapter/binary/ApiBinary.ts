@@ -17,7 +17,7 @@ export class ApiBinary extends AbstractBinary {
   async fetch(dir: string, binaryName: string, lastData?: Record<string, unknown>): Promise<FetchResult | undefined> {
     const apiUrl = this.config.cnpmcore.syncBinaryFromAPISource || `${this.config.cnpmcore.sourceRegistry}/-/binary`;
     let url = `${apiUrl}/${binaryName}${dir}`;
-    if (lastData && lastData.lastSyncTime) {
+    if (lastData && typeof lastData.lastSyncTime === 'string' && lastData.lastSyncTime) {
       url += `?since=${lastData.lastSyncTime}&limit=100`;
     }
 

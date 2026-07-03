@@ -42,7 +42,7 @@ export class HookRepository {
    * only endpoint and secret can be updated
    */
   async updateHook(cmd: UpdateHookCommand) {
-    this.Hook.update(
+    await this.Hook.update(
       {
         hookId: cmd.hookId,
       },

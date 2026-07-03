@@ -42,7 +42,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
   });
 
   afterEach(async () => {
-    mock.restore();
+    await mock.restore();
     await TestUtil.truncateDatabase();
   });
 

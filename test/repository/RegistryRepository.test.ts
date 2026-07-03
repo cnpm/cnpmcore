@@ -40,16 +40,9 @@ describe('test/repository/RegistryRepository.test.ts', () => {
       assert.ok(newRegistry.type === 'cnpmcore');
     });
     it('update work', async () => {
-      const updatedRegistry = await registryRepository.saveRegistry({
-        ...registryModel,
-        registryId: registryModel.registryId,
-        id: registryModel.id,
-        name: 'banana',
-        userPrefix: 'cnpm:',
-        host: 'https://registry.npmjs.org',
-        type: 'cnpmcore' as RegistryType,
-        changeStream: 'https://replicate.npmjs.com/_changes',
-      });
+      registryModel.name = 'banana';
+      registryModel.changeStream = 'https://replicate.npmjs.com/_changes';
+      const updatedRegistry = await registryRepository.saveRegistry(registryModel);
       assert.ok(updatedRegistry);
       assert.ok(updatedRegistry.name === 'banana');
     });

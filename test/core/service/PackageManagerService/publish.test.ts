@@ -29,7 +29,7 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   });
 
   afterEach(async () => {
-    mock.restore();
+    await mock.restore();
     await TestUtil.truncateDatabase();
   });
 

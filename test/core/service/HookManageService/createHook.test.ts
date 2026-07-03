@@ -15,7 +15,7 @@ describe('test/core/service/HookManageService/createHook.test.ts', () => {
 
   afterEach(async () => {
     await TestUtil.truncateDatabase();
-    mock.restore();
+    await mock.restore();
   });
 
   describe('limit exceeded', () => {

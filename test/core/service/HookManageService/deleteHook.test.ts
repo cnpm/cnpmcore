@@ -24,7 +24,7 @@ describe('test/core/service/HookManageService/deleteHook.test.ts', () => {
 
   afterEach(async () => {
     await TestUtil.truncateDatabase();
-    mock.restore();
+    await mock.restore();
   });
 
   describe('hook not found', () => {

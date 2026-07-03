@@ -208,7 +208,7 @@ export class SavePackageVersionController extends AbstractController {
         return !isEqual(tarballPkg[key], versionManifest[targetKey]);
       });
       if (diffKeys.length > 0) {
-        throw new UnprocessableEntityError(`${diffKeys} mismatch between tarball and manifest`);
+        throw new UnprocessableEntityError(`${diffKeys.join(',')} mismatch between tarball and manifest`);
       }
     }
 

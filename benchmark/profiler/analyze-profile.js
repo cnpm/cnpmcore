@@ -95,9 +95,7 @@ profile.nodes.forEach((node) => {
     if (match) {
       url = 'node_modules/' + match[1];
     }
-  } else if (url.includes('node:')) {
-    url = url;
-  } else if (url) {
+  } else if (!url.includes('node:') && url) {
     // Application code - get relative path
     const appMatch = url.match(/application\/(.+)/);
     if (appMatch) {

@@ -42,6 +42,7 @@ export type AbbreviatedPackageManifestType = Pick<PackageManifestType, 'dist-tag
 export type PackageJSONType = CnpmcorePatchInfo & {
   name: string;
   version: string;
+  deprecated?: string;
   readme?: string;
   description?: string;
   keywords?: string[];

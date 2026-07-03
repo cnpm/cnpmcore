@@ -13,7 +13,7 @@ describe('test/core/service/PackageManagerService/block.test.ts', () => {
   });
 
   afterEach(async () => {
-    mock.restore();
+    await mock.restore();
     await TestUtil.truncateDatabase();
   });
 
@@ -24,7 +24,7 @@ describe('test/core/service/PackageManagerService/block.test.ts', () => {
       const blockRes = await packageManagerService.blockPackageByFullname(pkg.name, 'xxx');
       assert.ok(blockRes.packageVersionBlockId);
 
-      assert.doesNotReject(packageManagerService.unblockPackageByFullname(pkg.name || ''));
+      await assert.doesNotReject(packageManagerService.unblockPackageByFullname(pkg.name || ''));
     });
   });
 });

@@ -40,7 +40,7 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
       dataType: 'json',
       gzip: true,
     });
-    const { results = [] } = res.data;
+    const { results } = res.data;
     if (results?.length >= limit) {
       const [first] = results;
       const last = results[results.length - 1];
