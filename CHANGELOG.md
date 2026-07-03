@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.34.1 (2026-07-02)</small>
+
+* fix(playwright): sync from cdn.playwright.dev instead of deprecated azureedge (#1099) ([13b8f4e](https://github.com/cnpm/cnpmcore/commit/13b8f4e)), closes [#1099](https://github.com/cnpm/cnpmcore/issues/1099)
+* docs: add snapshot npm regression guide (#1096) ([ddef97e](https://github.com/cnpm/cnpmcore/commit/ddef97e)), closes [#1096](https://github.com/cnpm/cnpmcore/issues/1096)
+
 ## 4.34.0 (2026-06-23)
 
 * feat: dependency isolation (buffer) zone + version-level block (#1057) (#1095) ([9158571](https://github.com/cnpm/cnpmcore/commit/9158571)), closes [#1057](https://github.com/cnpm/cnpmcore/issues/1057) [#1095](https://github.com/cnpm/cnpmcore/issues/1095) [#1057](https://github.com/cnpm/cnpmcore/issues/1057) [906/#909](https://github.com/cnpm/cnpmcore/issues/909)
