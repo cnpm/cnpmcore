@@ -41,7 +41,7 @@ describe('test/schedule/BufferRelease.test.ts', () => {
   });
 
   afterEach(async () => {
-    mock.restore();
+    await mock.restore();
     await TestUtil.truncateDatabase();
   });
 

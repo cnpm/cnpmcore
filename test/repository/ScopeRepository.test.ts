@@ -44,13 +44,8 @@ describe('test/repository/ScopeRepository.test.ts', () => {
     });
 
     it('update work', async () => {
-      await scopeRepository.saveScope({
-        ...cnpmjsScope,
-        id: cnpmjsScope.id,
-        scopeId: cnpmjsScope.scopeId,
-        name: '@anpm',
-        registryId: '1',
-      });
+      cnpmjsScope.name = '@anpm';
+      await scopeRepository.saveScope(cnpmjsScope);
       const scopeRes = await scopeRepository.listScopes({});
       assert.ok(scopeRes.count === 1);
       assert.ok(scopeRes.data[0].name === '@anpm');

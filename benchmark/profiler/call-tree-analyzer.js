@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Analyze call relationships between application code and specific hotspots
- * Usage: node call-tree-analyzer.js <profile.cpuprofile> [--target=pattern] [--caller=pattern]
+ * Usage: node call-tree-analyzer.js <profile.cpuprofile> [--target=pattern]
  */
 
 import fs from 'node:fs';
@@ -9,20 +9,17 @@ import fs from 'node:fs';
 const args = process.argv.slice(2);
 let profilePath = null;
 let targetPattern = 'Bone';
-let callerPattern = 'application';
 
 for (const arg of args) {
   if (arg.startsWith('--target=')) {
     targetPattern = arg.substring(9);
-  } else if (arg.startsWith('--caller=')) {
-    callerPattern = arg.substring(9);
   } else if (!arg.startsWith('--')) {
     profilePath = arg;
   }
 }
 
 if (!profilePath) {
-  console.error('Usage: node call-tree-analyzer.js <profile.cpuprofile> [--target=pattern] [--caller=pattern]');
+  console.error('Usage: node call-tree-analyzer.js <profile.cpuprofile> [--target=pattern]');
   process.exit(1);
 }
 
@@ -47,7 +44,6 @@ profile.nodes.forEach((node) => {
 
 // Find all target nodes (hotspots)
 const targetRegex = new RegExp(targetPattern, 'i');
-const callerRegex = new RegExp(callerPattern, 'i');
 
 const targetNodes = profile.nodes.filter((n) => {
   const name = n.callFrame.functionName || '';
@@ -153,7 +149,7 @@ console.log(`\nFound ${targetNodes.length} hotspot nodes matching "${targetPatte
 console.log(`Grouped into ${sortedGroups.length} application entry points\n`);
 
 // Print each group
-sortedGroups.forEach(([key, group], idx) => {
+sortedGroups.forEach(([, group], idx) => {
   console.log(`\n${'─'.repeat(120)}`);
   console.log(`## Entry Point #${idx + 1}: ${group.entry.name}`);
   console.log(`   Location: ${group.entry.shortLocation}:${group.entry.line}`);
@@ -182,15 +178,13 @@ sortedGroups.forEach(([key, group], idx) => {
     .slice(0, 3);
 
   console.log('\n   Top Call Paths:');
-  sortedPaths.forEach(([pathKey, data], pathIdx) => {
+  sortedPaths.forEach(([, data], pathIdx) => {
     console.log(`\n   Path ${pathIdx + 1} (${data.hits} hits, ${data.count} occurrences):`);
 
     // Show detailed path with better formatting
     const detailedPath = data.examplePath;
-    let indent = '   ';
 
     detailedPath.forEach((node, i) => {
-      let prefix = i === 0 ? '   ' : '   │';
       let connector = i === detailedPath.length - 1 ? '└─▶' : '├─▶';
 
       let categoryTag = '';
@@ -236,7 +230,7 @@ const appNodes = new Set();
 const npmNodes = new Set();
 const edges = new Set();
 
-sortedGroups.slice(0, 10).forEach(([key, group]) => {
+sortedGroups.slice(0, 10).forEach(([, group]) => {
   const appNodeId = `app_${group.entry.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
   appNodes.add({ id: appNodeId, name: group.entry.name, location: group.entry.shortLocation, hits: group.totalHits });
 
@@ -244,7 +238,7 @@ sortedGroups.slice(0, 10).forEach(([key, group]) => {
   group.paths.slice(0, 5).forEach(({ path }) => {
     let lastAppNode = appNodeId;
 
-    path.forEach((node, i) => {
+    path.forEach((node) => {
       if (node.category === 'npm') {
         const npmNodeId = `npm_${node.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
         npmNodes.add({ id: npmNodeId, name: node.name, pkg: node.shortLocation });

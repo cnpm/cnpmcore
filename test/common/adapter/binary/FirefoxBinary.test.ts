@@ -25,7 +25,7 @@ describe('test/common/adapter/binary/FirefoxBinary.test.ts', () => {
       });
 
       const result = await binary.fetch('/', 'firefox');
-      assert.ok(result, `Result should not be null/undefined. Got: ${result}`);
+      assert.ok(result, `Result should not be null/undefined. Got: ${JSON.stringify(result)}`);
       assert.ok(result.items.length > 0, `Result.items should not be empty. Got: ${JSON.stringify(result)}`);
 
       const itemNames = result.items.map((item) => item.name);

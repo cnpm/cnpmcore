@@ -217,7 +217,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
 
       res = await app
         .httpRequest()
-        .delete(`${tarballUrl}/-rev/${pkg._rev}`)
+        .delete(`${tarballUrl}/-rev/${String(pkg._rev)}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')
@@ -271,7 +271,7 @@ describe('test/port/controller/package/RemovePackageVersionController.test.ts', 
 
       res = await app
         .httpRequest()
-        .delete(`${tarballUrl}/-rev/${pkg._rev}`)
+        .delete(`${tarballUrl}/-rev/${String(pkg._rev)}`)
         .set('authorization', publisher.authorization)
         .set('user-agent', publisher.ua)
         .set('npm-command', 'unpublish')

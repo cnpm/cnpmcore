@@ -30,7 +30,7 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
     queueAdapter = await app.getEggObject(RedisQueueAdapter);
     assert.ok(changesStreamService);
     task = Task.createChangesStream('GLOBAL_WORKER', '', '9527');
-    taskService.createTask(task, false);
+    await taskService.createTask(task, false);
 
     // create default registry
     await registryManagerService.createRegistry({

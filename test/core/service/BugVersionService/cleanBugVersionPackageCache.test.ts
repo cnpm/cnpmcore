@@ -45,7 +45,7 @@ describe('test/core/service/BugVersionService/cleanBugVersionPackageCache.test.t
   });
 
   afterEach(async () => {
-    mock.restore();
+    await mock.restore();
     await TestUtil.truncateDatabase();
   });
 

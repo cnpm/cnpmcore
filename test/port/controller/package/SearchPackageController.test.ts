@@ -16,7 +16,7 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
 
   afterEach(async () => {
     mockES.clearAll();
-    mock.restore();
+    await mock.restore();
   });
 
   describe('[GET /-/v1/search] search()', async () => {

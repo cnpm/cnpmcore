@@ -21,7 +21,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
 
   afterEach(async () => {
     mockES.clearAll();
-    mock.restore();
+    await mock.restore();
   });
 
   describe('SearchRepository', () => {
@@ -389,7 +389,7 @@ describe('test/repository/SearchRepository.test.ts', () => {
 
       for (const { duration, expectedMs } of cases) {
         mockES.clearAll();
-        mock.restore();
+        await mock.restore();
         mock(app.config.cnpmcore, 'enableElasticsearch', true);
         mock(app.config.cnpmcore, 'elasticsearchIndex', 'cnpmcore_packages');
         mock(app.config.cnpmcore, 'searchPublishMinDuration', duration);

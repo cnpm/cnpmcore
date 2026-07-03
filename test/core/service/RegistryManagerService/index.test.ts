@@ -81,8 +81,11 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       const [registry] = queryRes.data;
 
       await registryManagerService.updateRegistry(registry.registryId, {
-        ...registry,
         name: 'custom3',
+        changeStream: registry.changeStream,
+        host: registry.host,
+        type: registry.type,
+        authToken: registry.authToken,
       });
 
       queryRes = await registryManagerService.listRegistries({});
@@ -95,8 +98,11 @@ describe('test/core/service/RegistryManagerService/index.test.ts', () => {
       const [registry] = queryRes.data;
       await assert.rejects(
         registryManagerService.updateRegistry('not_exist', {
-          ...registry,
           name: 'boo',
+          changeStream: registry.changeStream,
+          host: registry.host,
+          type: registry.type,
+          authToken: registry.authToken,
         }),
         /not found/,
       );

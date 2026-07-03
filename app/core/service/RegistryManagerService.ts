@@ -66,7 +66,7 @@ export class RegistryManagerService extends AbstractService {
   }
 
   async createRegistry(createCmd: CreateRegistryCmd): Promise<Registry> {
-    const { name, changeStream = '', host, userPrefix = '', type, operatorId = '-', authToken } = createCmd;
+    const { name, changeStream, host, userPrefix, type, operatorId = '-', authToken } = createCmd;
     this.logger.info(
       '[RegistryManagerService.createRegistry:prepare] operatorId: %s, createCmd: %j',
       operatorId,

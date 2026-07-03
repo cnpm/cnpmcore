@@ -104,7 +104,7 @@ export class PackageSearchService extends AbstractService {
       // 最新版本发布信息
       publish_time: latestManifest?.publish_time,
       // deprecated message of the latest version
-      deprecated: latestManifest?.deprecated as string | undefined,
+      deprecated: latestManifest?.deprecated,
     };
 
     // http://npmmirror.com/package/npm/files/lib/utils/format-search-stream.js#L147-L148

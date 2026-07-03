@@ -1,6 +1,7 @@
 import { rm } from 'node:fs/promises';
 import os from 'node:os';
 import { setTimeout } from 'node:timers/promises';
+import util from 'node:util';
 
 import { Package as Packument } from '@cnpmjs/packument';
 import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
@@ -197,7 +198,7 @@ export class PackageSyncerService extends AbstractService {
       // 可能会抛出 AggregateError 异常
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/AggregateError
       logs.push(
-        `[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status} ${err instanceof AggregateError ? err.errors : ''}`,
+        `[${isoNow()}][UP] ❌ Sync ${fullname} fail, create sync task error: ${err}, status: ${status} ${err instanceof AggregateError ? util.inspect(err.errors) : ''}`,
       );
       logs.push(`[${isoNow()}][UP] ${failEnd}`);
       await this.taskService.appendTaskLog(task, logs.join('\n'));

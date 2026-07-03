@@ -59,9 +59,6 @@ describe('test/schedule/TaskTimeoutHandler.test.ts', () => {
     await packageSyncerService.createTask('boo');
     const task = await packageSyncerService.createTask('foo');
 
-    // mock task has been finished success
-    await ModelConvertor.convertEntityToModel({ ...task, state: TaskState.Success, id: 9527 }, HistoryTask);
-
     // mock timeout 10mins
     await TaskModel.update(
       { id: task.id },
@@ -69,6 +66,11 @@ describe('test/schedule/TaskTimeoutHandler.test.ts', () => {
         updatedAt: new Date(task.updatedAt.getTime() - 60_000 * 30 - 1),
       },
     );
+
+    // mock task has been finished success
+    // convertEntityToModel rewrites task.id/updatedAt, so it must run after the update above
+    task.state = TaskState.Success;
+    await ModelConvertor.convertEntityToModel(task, HistoryTask);
 
     app.mockLog();
     await app.runSchedule(TaskTimeoutHandlerPath);

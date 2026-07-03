@@ -42,7 +42,7 @@ export class TokenService extends AbstractService {
     }
 
     token.lastUsedAt = new Date();
-    this.userRepository.saveToken(token);
+    await this.userRepository.saveToken(token);
   }
 
   public async checkGranularTokenAccess(token: Token, fullname: string) {

@@ -35,7 +35,7 @@ export interface DeleteHookVo {
 }
 
 export class HookConvertor {
-  static convertToHookVo(hook: Hook, user: User, task?: TriggerHookTask | null | undefined): HookVo {
+  static convertToHookVo(hook: Hook, user: User, task?: TriggerHookTask | null): HookVo {
     return {
       id: hook.hookId,
       username: user.name,

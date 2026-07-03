@@ -806,7 +806,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const testToken = 'test-auth-token';
       const registry = await registryManagerService.ensureDefaultRegistry();
       await registryManagerService.updateRegistry(registry.registryId, {
-        ...registry,
+        name: registry.name,
+        changeStream: registry.changeStream,
+        host: registry.host,
+        type: registry.type,
         authToken: testToken,
       });
       const fullManifests = await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json');

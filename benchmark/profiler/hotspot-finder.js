@@ -91,23 +91,6 @@ function getCallerChain(nodeId, maxDepth = 5) {
   return chain;
 }
 
-// Calculate total time including children
-function calculateTotalTime(nodeId, visited = new Set()) {
-  if (visited.has(nodeId)) return 0;
-  visited.add(nodeId);
-
-  const node = nodeMap.get(nodeId);
-  if (!node) return 0;
-
-  let total = node.hitCount;
-  if (node.children) {
-    node.children.forEach((childId) => {
-      total += calculateTotalTime(childId, visited);
-    });
-  }
-  return total;
-}
-
 // Calculate total active time
 const excluded = ['(idle)', '(root)', '(program)', '(garbage collector)'];
 const totalActive = profile.nodes.reduce((sum, n) => {

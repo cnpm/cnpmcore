@@ -37,7 +37,7 @@ describe('test/core/service/BugVersionService/fixPackageBugVersions.test.ts', ()
   });
 
   afterEach(async () => {
-    mock.restore();
+    await mock.restore();
     await TestUtil.truncateDatabase();
   });
 

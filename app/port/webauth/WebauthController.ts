@@ -133,7 +133,7 @@ export class WebauthController extends MiddlewareController {
     }
 
     const { accData, wanCredentialRegiData, wanCredentialAuthData, needUnbindWan } = loginImplementRequest;
-    const { username, password = '' } = accData;
+    const { username, password } = accData;
     const enableWebAuthn = this.config.cnpmcore.enableWebAuthn;
     const isSupportWebAuthn = ctx.protocol === 'https' || ctx.hostname === 'localhost';
     let token = '';
@@ -276,7 +276,7 @@ export class WebauthController extends MiddlewareController {
           const base64CredentialPublicKey = base64url.encode(Buffer.from(new Uint8Array(credentialPublicKey)));
           // @ts-expect-error type error
           const base64CredentialID = base64url.encode(Buffer.from(new Uint8Array(credentialID)));
-          this.userService.createWebauthnCredential(user?.userId, {
+          await this.userService.createWebauthnCredential(user?.userId, {
             credentialId: base64CredentialID,
             publicKey: base64CredentialPublicKey,
             browserType,
