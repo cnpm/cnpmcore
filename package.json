@@ -144,7 +144,7 @@
     "@vitest/coverage-v8": "4.1.10",
     "coffee": "^5.5.1",
     "ioredis-mock": "^8.13.1",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.0",
     "vite-plus": "0.2.4",
     "vitest": "4.1.10"
   },
