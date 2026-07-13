@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.84.1 (2026-07-13)</small>
+
+* fix: retrigger 3.x release (#1108) ([d8a9049](https://github.com/cnpm/cnpmcore/commit/d8a9049)), closes [#1108](https://github.com/cnpm/cnpmcore/issues/1108)
+
 ## 3.84.0 (2026-07-13)
 
 * fix: retrigger 3.x release (#1107) ([194a59b](https://github.com/cnpm/cnpmcore/commit/194a59b)), closes [#1107](https://github.com/cnpm/cnpmcore/issues/1107)
