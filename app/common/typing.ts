@@ -71,6 +71,21 @@ export interface AuthClient {
   ensureCurrentUser(): Promise<userResult | null>;
 }
 
+export interface DependencyIsolationContext {
+  fullname: string;
+  version: string;
+  publishTime?: Date;
+}
+
+export interface DependencyIsolationPolicy {
+  expiredAt: Date;
+  reason: string;
+}
+
+export interface DependencyIsolationClient {
+  ensureDependencyIsolation(context: DependencyIsolationContext): Promise<DependencyIsolationPolicy | null>;
+}
+
 declare module 'egg' {
   // eslint-disable-next-line
   // @ts-ignore
