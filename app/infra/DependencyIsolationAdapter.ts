@@ -4,6 +4,7 @@ import {
   SingletonProto,
 } from '@eggjs/tegg';
 import { EggAppConfig } from 'egg';
+import { createDefaultDependencyIsolationPolicy } from '../common/DependencyIsolationUtil';
 import {
   DependencyIsolationClient,
   DependencyIsolationContext,
@@ -22,13 +23,6 @@ export class DependencyIsolationAdapter implements DependencyIsolationClient {
     context: DependencyIsolationContext,
   ): Promise<DependencyIsolationPolicy | null> {
     void context;
-    const duration = this.config.cnpmcore.dependencyIsolationDuration;
-    if (!duration || duration <= 0) return null;
-
-    const expiredAt = new Date(Date.now() + duration);
-    return {
-      expiredAt,
-      reason: `[buffer] in dependency isolation zone, release at ${expiredAt.toISOString()}`,
-    };
+    return createDefaultDependencyIsolationPolicy(this.config.cnpmcore.dependencyIsolationDuration);
   }
 }

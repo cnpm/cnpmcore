@@ -12,6 +12,7 @@ import npa from 'npm-package-arg';
 import semver from 'semver';
 import pMap from 'p-map';
 import { NPMRegistry } from '../../common/adapter/NPMRegistry';
+import { createDefaultDependencyIsolationPolicy } from '../../common/DependencyIsolationUtil';
 import { DependencyIsolationClient, DependencyIsolationPolicy } from '../../common/typing';
 import {
   calculateIntegrity,
@@ -103,8 +104,8 @@ export class PackageManagerService extends AbstractService {
   private readonly npmRegistry: NPMRegistry;
   @Inject()
   private readonly packageVersionService: PackageVersionService;
-  @Inject({ name: 'dependencyIsolationAdapter' })
-  private readonly dependencyIsolationAdapter: DependencyIsolationClient;
+  @Inject({ name: 'dependencyIsolationAdapter', optional: true })
+  private readonly dependencyIsolationAdapter?: DependencyIsolationClient;
 
   private static downloadCounters = {};
 
@@ -329,11 +330,14 @@ export class PackageManagerService extends AbstractService {
     if (cmd.isPrivate) return null;
     // allowlist: trusted packages skip the buffer (analogous to pnpm minimumReleaseAgeExclude)
     if (this._isDependencyIsolationExcluded(pkg.fullname)) return null;
-    return await this.dependencyIsolationAdapter.ensureDependencyIsolation({
-      fullname: pkg.fullname,
-      version: cmd.version,
-      publishTime: cmd.publishTime,
-    });
+    if (this.dependencyIsolationAdapter) {
+      return await this.dependencyIsolationAdapter.ensureDependencyIsolation({
+        fullname: pkg.fullname,
+        version: cmd.version,
+        publishTime: cmd.publishTime,
+      });
+    }
+    return createDefaultDependencyIsolationPolicy(config.dependencyIsolationDuration);
   }
 
   // Persist a buffer block record (type='buffer', expiredAt) and hide the version from the manifest.

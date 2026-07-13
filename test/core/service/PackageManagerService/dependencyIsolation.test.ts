@@ -159,6 +159,14 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
       assert.equal(await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'), null);
     });
 
+    it('should use the default GMT+8 policy when the integration adapter is not registered', async () => {
+      mock(packageManagerService as any, 'dependencyIsolationAdapter', null);
+      const { packageId } = await publishVersion('foo', '1.0.0', false);
+      const block = await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0');
+      assert(block);
+      assert.match(block.reason, /release at \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+08:00$/);
+    });
+
     it('should allow integration to customize expiredAt and reason', async () => {
       const expiredAt = new Date(Date.now() + 12 * 3600 * 1000);
       mock(dependencyIsolationAdapter, 'ensureDependencyIsolation', async context => {
