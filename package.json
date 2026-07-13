@@ -130,6 +130,7 @@
     "@simplewebauthn/typescript-types": "^7.0.0",
     "@types/lodash": "^4.14.196",
     "@types/mime-types": "^2.1.1",
+    "@types/minimatch": "^5",
     "@types/mocha": "^10.0.1",
     "@types/mysql": "^2.15.21",
     "@types/node-rsa": "^1.1.4",
