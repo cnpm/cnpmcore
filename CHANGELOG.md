@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>3.84.2 (2026-07-13)</small>
+
+* fix: allow Egg typings generation during install (#1109) ([f4d2f59](https://github.com/cnpm/cnpmcore/commit/f4d2f59)), closes [#1109](https://github.com/cnpm/cnpmcore/issues/1109)
+
 ## <small>3.84.1 (2026-07-13)</small>
 
 * fix: retrigger 3.x release (#1108) ([d8a9049](https://github.com/cnpm/cnpmcore/commit/d8a9049)), closes [#1108](https://github.com/cnpm/cnpmcore/issues/1108)
