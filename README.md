@@ -8,7 +8,7 @@ Reimplement based on [cnpmjs.org](https://github.com/cnpm/cnpmjs.org) with TypeS
 
 ## Registry HTTP API
 
-See the [registry-api.md](docs/registry-api.md) documentation.
+Refer to the [registry-api.md](docs/registry-api.md) documentation.
 
 ## How to contribute
 
