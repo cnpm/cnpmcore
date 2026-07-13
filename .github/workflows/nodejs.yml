@@ -54,11 +54,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Setup utoo
+      uses: utooland/setup-utoo@v1
+
     - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+      run: ut
 
     - name: Continuous Integration
-      run: npm run ci:postgresql
+      run: ut ci:postgresql
       env:
         # The hostname used to communicate with the PostgreSQL service container
         POSTGRES_HOST: localhost
@@ -106,11 +109,14 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - name: Setup utoo
+      uses: utooland/setup-utoo@v1
+
     - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+      run: ut
 
     - name: Continuous Integration
-      run: npm run ci
+      run: ut ci
 
     - name: Code Coverage
       uses: codecov/codecov-action@v3

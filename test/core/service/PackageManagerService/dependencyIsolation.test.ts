@@ -7,12 +7,14 @@ import { PackageVersionBlockRepository } from '../../../../app/repository/Packag
 import { PackageVersionBlock, PACKAGE_VERSION_BLOCK_TYPE_BUFFER } from '../../../../app/core/entity/PackageVersionBlock';
 import { UserService } from '../../../../app/core/service/UserService';
 import { getScopeAndName } from '../../../../app/common/PackageUtil';
+import { DependencyIsolationAdapter } from '../../../../app/infra/DependencyIsolationAdapter';
 
 describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', () => {
   let packageManagerService: PackageManagerService;
   let packageRepository: PackageRepository;
   let packageVersionBlockRepository: PackageVersionBlockRepository;
   let userService: UserService;
+  let dependencyIsolationAdapter: DependencyIsolationAdapter;
   let publisher;
 
   beforeEach(async () => {
@@ -20,6 +22,7 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
     packageRepository = await app.getEggObject(PackageRepository);
     packageVersionBlockRepository = await app.getEggObject(PackageVersionBlockRepository);
     userService = await app.getEggObject(UserService);
+    dependencyIsolationAdapter = await app.getEggObject(DependencyIsolationAdapter);
     const { user } = await userService.create({
       name: 'test-user',
       password: 'this-is-password',
@@ -152,6 +155,35 @@ describe('test/core/service/PackageManagerService/dependencyIsolation.test.ts', 
 
     it('should NOT isolate when duration <= 0', async () => {
       mock(app.config.cnpmcore, 'dependencyIsolationDuration', 0);
+      const { packageId } = await publishVersion('foo', '1.0.0', false);
+      assert.equal(await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'), null);
+    });
+
+    it('should use the default GMT+8 policy when the integration adapter is not registered', async () => {
+      mock(packageManagerService as any, 'dependencyIsolationAdapter', null);
+      const { packageId } = await publishVersion('foo', '1.0.0', false);
+      const block = await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0');
+      assert(block);
+      assert.match(block.reason, /release at \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}\+08:00$/);
+    });
+
+    it('should allow integration to customize expiredAt and reason', async () => {
+      const expiredAt = new Date(Date.now() + 12 * 3600 * 1000);
+      mock(dependencyIsolationAdapter, 'ensureDependencyIsolation', async context => {
+        assert.equal(context.fullname, 'foo');
+        assert.equal(context.version, '1.0.0');
+        return { expiredAt, reason: '[custom] waiting for security scan' };
+      });
+
+      const { packageId } = await publishVersion('foo', '1.0.0', false);
+      const block = await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0');
+      assert(block);
+      assert.equal(block.expiredAt?.getTime(), expiredAt.getTime());
+      assert.equal(block.reason, '[custom] waiting for security scan');
+    });
+
+    it('should allow integration to skip dependency isolation', async () => {
+      mock(dependencyIsolationAdapter, 'ensureDependencyIsolation', async () => null);
       const { packageId } = await publishVersion('foo', '1.0.0', false);
       assert.equal(await packageVersionBlockRepository.findPackageVersionBlockExact(packageId, '1.0.0'), null);
     });

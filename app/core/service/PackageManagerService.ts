@@ -12,6 +12,8 @@ import npa from 'npm-package-arg';
 import semver from 'semver';
 import pMap from 'p-map';
 import { NPMRegistry } from '../../common/adapter/NPMRegistry';
+import { createDefaultDependencyIsolationPolicy } from '../../common/DependencyIsolationUtil';
+import { DependencyIsolationClient, DependencyIsolationPolicy } from '../../common/typing';
 import {
   calculateIntegrity,
   detectInstallScript,
@@ -102,6 +104,8 @@ export class PackageManagerService extends AbstractService {
   private readonly npmRegistry: NPMRegistry;
   @Inject()
   private readonly packageVersionService: PackageVersionService;
+  @Inject({ name: 'dependencyIsolationAdapter', optional: true })
+  private readonly dependencyIsolationAdapter?: DependencyIsolationClient;
 
   private static downloadCounters = {};
 
@@ -281,10 +285,11 @@ export class PackageManagerService extends AbstractService {
       throw e;
     }
     // dependency isolation (buffer) zone: hold a newly synced version invisible for a while
-    // before it is auto-released. Decide first (pure), so PACKAGE_VERSION_ADDED is suppressed
+    // before it is auto-released. Resolve the policy first, so PACKAGE_VERSION_ADDED is suppressed
     // — the event (and thus search index / changes stream / file sync) fires only when the
     // version is released. see RFC: https://github.com/cnpm/cnpmcore/issues/1057
-    const shouldIsolate = this._shouldIsolateNewVersion(pkg, cmd);
+    const dependencyIsolationPolicy = await this._ensureDependencyIsolation(pkg, cmd);
+    const shouldIsolate = dependencyIsolationPolicy !== null;
 
     if (cmd.skipRefreshPackageManifests !== true) {
       await this.refreshPackageChangeVersionsToDists(pkg, [ pkgVersion.version ]);
@@ -306,35 +311,47 @@ export class PackageManagerService extends AbstractService {
     // before the refresh — avoids the new-package case where the only version is isolated and
     // manifestsDist is never created (which crashes savePackageTag).
     if (shouldIsolate) {
-      await this._isolateNewVersion(pkg, cmd, pkgVersion.version);
+      await this._isolateNewVersion(pkg, cmd, pkgVersion.version, dependencyIsolationPolicy);
     }
 
     return pkgVersion;
   }
 
   // Decide whether a newly published/synced version should enter the dependency isolation buffer.
-  private _shouldIsolateNewVersion(pkg: Package, cmd: PublishPackageCmd): boolean {
+  private async _ensureDependencyIsolation(
+    pkg: Package,
+    cmd: PublishPackageCmd,
+  ): Promise<DependencyIsolationPolicy | null> {
     const config = this.config.cnpmcore;
-    if (!config.enableDependencyIsolation) return false;
+    if (!config.enableDependencyIsolation) return null;
     // buffer enforcement reuses version-level block; without it the version can't be hidden
-    if (!config.enableBlockPackageVersion) return false;
-    const duration = config.dependencyIsolationDuration;
-    if (!duration || duration <= 0) return false;
+    if (!config.enableBlockPackageVersion) return null;
     // only isolate external/synced (public) versions, never user-published private packages
-    if (cmd.isPrivate) return false;
+    if (cmd.isPrivate) return null;
     // allowlist: trusted packages skip the buffer (analogous to pnpm minimumReleaseAgeExclude)
-    if (this._isDependencyIsolationExcluded(pkg.fullname)) return false;
-    return true;
+    if (this._isDependencyIsolationExcluded(pkg.fullname)) return null;
+    if (this.dependencyIsolationAdapter) {
+      return await this.dependencyIsolationAdapter.ensureDependencyIsolation({
+        fullname: pkg.fullname,
+        version: cmd.version,
+        publishTime: cmd.publishTime,
+      });
+    }
+    return createDefaultDependencyIsolationPolicy(config.dependencyIsolationDuration);
   }
 
   // Persist a buffer block record (type='buffer', expiredAt) and hide the version from the manifest.
-  private async _isolateNewVersion(pkg: Package, cmd: PublishPackageCmd, version: string): Promise<void> {
-    const duration = this.config.cnpmcore.dependencyIsolationDuration as number;
-    const expiredAt = new Date(Date.now() + duration);
+  private async _isolateNewVersion(
+    pkg: Package,
+    cmd: PublishPackageCmd,
+    version: string,
+    policy: DependencyIsolationPolicy,
+  ): Promise<void> {
+    const { expiredAt, reason } = policy;
     const block = PackageVersionBlock.create({
       packageId: pkg.packageId,
       version,
-      reason: `[buffer] in dependency isolation zone, release at ${expiredAt.toISOString()}`,
+      reason,
       type: PACKAGE_VERSION_BLOCK_TYPE_BUFFER,
       expiredAt,
     });

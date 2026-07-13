@@ -207,6 +207,38 @@ export class MyAuthAdapter extends AuthAdapter {
 
 ```
 
+### 自定义依赖冷静期
+
+开启 `enableDependencyIsolation` 后，集成侧可以重载 `DependencyIsolationAdapter`，为不同包版本返回自定义的冷静期截止时间和拦截文案。返回 `null` 表示该版本不进入冷静期。
+集成侧未提供 `dependencyIsolationAdapter` 时会自动使用默认策略，默认 reason 中的释放时间使用 GMT+8（`+08:00`）。
+
+```typescript
+import { AccessLevel, SingletonProto } from '@eggjs/tegg';
+import {
+  DependencyIsolationAdapter,
+} from 'cnpmcore/infra/DependencyIsolationAdapter';
+import {
+  DependencyIsolationContext,
+  DependencyIsolationPolicy,
+} from 'cnpmcore/common/typing';
+
+@SingletonProto({
+  name: 'dependencyIsolationAdapter',
+  accessLevel: AccessLevel.PUBLIC,
+})
+export class MyDependencyIsolationAdapter extends DependencyIsolationAdapter {
+  async ensureDependencyIsolation(
+    context: DependencyIsolationContext,
+  ): Promise<DependencyIsolationPolicy | null> {
+    const expiredAt = new Date(Date.now() + 12 * 60 * 60 * 1000);
+    return {
+      expiredAt,
+      reason: `${context.fullname}@${context.version} is waiting for security review`,
+    };
+  }
+}
+```
+
 修改 HelloController 的实现，实际也可以通过登录中心回调、页面确认等方式实现
 
 ```typescript
