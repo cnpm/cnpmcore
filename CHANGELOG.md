@@ -2,6 +2,12 @@
 
 ## 3.84.0 (2026-07-13)
 
+* fix: retrigger 3.x release (#1107) ([194a59b](https://github.com/cnpm/cnpmcore/commit/194a59b)), closes [#1107](https://github.com/cnpm/cnpmcore/issues/1107)
+* Release 3.84.0 ([4c7775b](https://github.com/cnpm/cnpmcore/commit/4c7775b))
+* feat: support custom dependency isolation policy (#1106) ([9e616c5](https://github.com/cnpm/cnpmcore/commit/9e616c5)), closes [#1106](https://github.com/cnpm/cnpmcore/issues/1106)
+
+## 3.84.0 (2026-07-13)
+
 * feat: support custom dependency isolation policy (#1106) ([9e616c5](https://github.com/cnpm/cnpmcore/commit/9e616c5)), closes [#1106](https://github.com/cnpm/cnpmcore/issues/1106)
 
 ## <small>3.83.3 (2026-06-05)</small>
