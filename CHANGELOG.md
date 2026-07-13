@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.84.0 (2026-07-13)
+
+* feat: support custom dependency isolation policy (#1106) ([9e616c5](https://github.com/cnpm/cnpmcore/commit/9e616c5)), closes [#1106](https://github.com/cnpm/cnpmcore/issues/1106)
+
 ## <small>3.83.3 (2026-06-05)</small>
 
 * fix(TaskService): only retry changes_stream task on changesStream-enabled machine (#1080) ([909a1ed](https://github.com/cnpm/cnpmcore/commit/909a1ed)), closes [#1080](https://github.com/cnpm/cnpmcore/issues/1080)
