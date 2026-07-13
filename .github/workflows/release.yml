@@ -15,8 +15,8 @@ jobs:
     name: NPM
     uses: node-modules/github-actions/.github/workflows/npm-release.yml@master
     with:
-      # Keep the release dependency tree consistent with CI, and fail before
-      # semantic-release creates the release commit and tag if compilation fails.
-      install: npx --yes utoo@1.1.3 && npx --yes utoo@1.1.3 run prepublishOnly
+      # Fail before semantic-release creates the release commit and tag if
+      # compilation fails. Keep this in sync with the reusable workflow default.
+      install: npm i --no-package-lock --no-fund --force && rm -rf package-lock.json && npm run prepublishOnly
     secrets:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
