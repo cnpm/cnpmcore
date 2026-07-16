@@ -18,7 +18,7 @@ Report security vulnerabilities by emailing the cnpmcore security team at:
 
 ```
 fengmk2+cnpmcoresecurity@gmail.com
-killa123@126.com
+killa07071201@gmail.com
 ```
 
 The lead maintainer will acknowledge your email within 48 hours,
