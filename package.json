@@ -145,7 +145,7 @@
     "coffee": "^5.5.1",
     "ioredis-mock": "^8.13.1",
     "typescript": "^7.0.0",
-    "vite-plus": "0.2.4",
+    "vite-plus": "0.2.6",
     "vitest": "4.1.10"
   },
   "optionalDependencies": {
@@ -155,7 +155,7 @@
     "@aws-sdk/xml-builder": {
       "fast-xml-parser": "$fast-xml-parser"
     },
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.4",
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.6",
     "vitest": "4.1.10"
   },
   "engines": {
