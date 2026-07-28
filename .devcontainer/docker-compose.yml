@@ -34,7 +34,7 @@ services:
       - redis
 
   mysql:
-    image: mysql:9
+    image: mysql:26
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     restart: unless-stopped
     environment:
