@@ -9,23 +9,39 @@ info:
     name: MIT
     url: https://github.com/cnpm/cnpmcore/blob/master/LICENSE
 servers:
+  - url: https://registry.npmmirror.com
+    description: Public registry
   - url: http://localhost:7001
     description: Local development server
 tags:
   - name: Registry
+    description: Registry metadata and package registry compatibility APIs.
   - name: Packages
+    description: Package manifests, versions, tarballs, and package files.
   - name: Search
+    description: Package search endpoints.
   - name: Authentication
+    description: User authentication endpoints.
   - name: Organization
+    description: Organization and membership management.
   - name: Team
+    description: Team and team membership management.
   - name: Token
+    description: Access token management.
   - name: Hook
+    description: Webhook management.
   - name: Synchronization
+    description: Package and registry synchronization tasks.
   - name: Binary
+    description: Binary distribution endpoints.
   - name: Download
+    description: Package download statistics.
   - name: Administration
+    description: Administrative operations.
   - name: Proxy cache
+    description: Proxy cache management.
   - name: WebAuthn
+    description: WebAuthn authentication flows.
 security: []
 paths:
   /:
@@ -34,6 +50,8 @@ paths:
       summary: Show registry information
       operationId: showRegistryInfo
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/ping:
     get:
@@ -41,6 +59,8 @@ paths:
       summary: Check registry availability
       operationId: ping
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /binary.html:
     get:
@@ -48,6 +68,8 @@ paths:
       summary: Show the binary browser page
       operationId: showBinaryHtml
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200':
           description: HTML page.
           content: { text/html: { schema: { type: string } } }
@@ -57,6 +79,8 @@ paths:
       summary: List binary distributions
       operationId: listBinaries
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/binary/{binaryName}:
     parameters:
@@ -69,6 +93,8 @@ paths:
         - { $ref: '#/components/parameters/Since' }
         - { $ref: '#/components/parameters/Limit' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/binary/{binaryName}/{subpath}:
     parameters:
@@ -82,6 +108,8 @@ paths:
         - { $ref: '#/components/parameters/Since' }
         - { $ref: '#/components/parameters/Limit' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/binary/{binaryName}/sync:
     parameters:
@@ -93,6 +121,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /_changes:
     get:
@@ -102,6 +132,8 @@ paths:
       parameters:
         - { $ref: '#/components/parameters/Since' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /downloads/point/{range}/{fullname}:
     parameters:
@@ -112,6 +144,8 @@ paths:
       summary: Get package download point data
       operationId: showPackageDownloadPoint
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /downloads/total/point/{range}:
     parameters:
@@ -121,6 +155,8 @@ paths:
       summary: Get total download point data
       operationId: showTotalDownloadPoint
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /downloads/range/{range}/{fullname}:
     parameters:
@@ -131,6 +167,8 @@ paths:
       summary: Get package download range data
       operationId: showPackageDownloads
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /downloads/{scope}/{range}:
     parameters:
@@ -141,6 +179,8 @@ paths:
       summary: Get scoped download data
       operationId: showTotalDownloads
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /{fullname}:
     parameters:
@@ -150,7 +190,10 @@ paths:
       summary: Show a package
       operationId: showPackageByFullname
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Package' }
+        '304': { $ref: '#/components/responses/Empty' }
     put:
       tags: [Packages]
       summary: Publish or replace a package manifest
@@ -158,7 +201,9 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Package' }
       responses:
-        '200': { $ref: '#/components/responses/Json' }
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
+        '201': { $ref: '#/components/responses/Json' }
   /{fullname}/{versionSpec}:
     parameters:
       - { $ref: '#/components/parameters/Fullname' }
@@ -168,6 +213,8 @@ paths:
       summary: Show a package version or tag
       operationId: showPackageVersion
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /{fullname}/-rev/{rev}:
     parameters:
@@ -180,6 +227,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Packages]
@@ -187,6 +236,8 @@ paths:
       operationId: removePackageVersion
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /{fullname}/-/{filenameWithVersion}.tgz:
     parameters:
@@ -197,12 +248,16 @@ paths:
       summary: Preflight package tarball download
       operationId: packageTarballOptions
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '204': { $ref: '#/components/responses/Empty' }
     get:
       tags: [Packages]
       summary: Download a package tarball
       operationId: downloadPackageTarball
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Tarball' }
   /{fullname}/download/{fullnameWithVersion}.tgz:
     parameters:
@@ -213,6 +268,8 @@ paths:
       summary: Download a package tarball using the legacy path
       operationId: deprecatedDownloadPackageTarball
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Tarball' }
   /{fullname}/-/{scope}/{filenameWithVersion}.tgz:
     parameters:
@@ -224,12 +281,16 @@ paths:
       summary: Preflight Verdaccio-compatible tarball download
       operationId: verdaccioTarballOptions
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '204': { $ref: '#/components/responses/Empty' }
     get:
       tags: [Packages]
       summary: Download a package tarball using the Verdaccio path
       operationId: downloadVerdaccioTarball
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Tarball' }
   /{fullname}/-/{filenameWithVersion}.tgz/-rev/{rev}:
     parameters:
@@ -242,6 +303,8 @@ paths:
       operationId: removePackageVersionByTarball
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/package/{fullname}/dist-tags:
     parameters:
@@ -251,6 +314,8 @@ paths:
       summary: List package distribution tags
       operationId: listPackageTags
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/package/{fullname}/dist-tags/{tag}:
     parameters:
@@ -263,6 +328,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Packages]
@@ -270,6 +337,8 @@ paths:
       operationId: removePackageTag
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/package/{fullname}/blocks:
     parameters:
@@ -281,6 +350,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/BlockPackage' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Administration]
@@ -288,6 +359,8 @@ paths:
       operationId: unblockPackage
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     get:
       tags: [Administration]
@@ -295,6 +368,8 @@ paths:
       operationId: listPackageBlocks
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/package/{fullname}/blocks/{version}:
     parameters:
@@ -307,6 +382,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/BlockPackage' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Administration]
@@ -314,6 +391,8 @@ paths:
       operationId: unblockPackageVersion
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/package/{fullname}/collaborators:
     parameters:
@@ -324,6 +403,8 @@ paths:
       operationId: listCollaborators
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/package/{fullname}/syncs:
     parameters:
@@ -335,6 +416,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/SyncPackage' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '201': { $ref: '#/components/responses/Task' }
   /-/package/{fullname}/syncs/{taskId}:
     parameters:
@@ -346,6 +429,8 @@ paths:
       operationId: showSyncTask
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Task' }
   /-/package/{fullname}/syncs/{taskId}/log:
     parameters:
@@ -357,6 +442,8 @@ paths:
       operationId: showSyncTaskLog
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Text' }
   /{fullname}/sync:
     parameters:
@@ -369,6 +456,8 @@ paths:
       parameters:
         - { $ref: '#/components/parameters/Nodeps' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /{fullname}/sync/log/{taskId}:
     parameters:
@@ -380,6 +469,8 @@ paths:
       operationId: deprecatedShowSyncTask
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/search:
     get:
@@ -391,6 +482,8 @@ paths:
         - { $ref: '#/components/parameters/From' }
         - { $ref: '#/components/parameters/Size' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/search/sync/{fullname}:
     parameters:
@@ -401,6 +494,8 @@ paths:
       operationId: syncSearchPackage
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Search]
@@ -408,6 +503,8 @@ paths:
       operationId: deleteSearchPackage
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /{fullname}/{versionSpec}/files:
     parameters:
@@ -419,6 +516,8 @@ paths:
       operationId: syncPackageVersionFiles
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
     get:
       tags: [Packages]
@@ -427,6 +526,8 @@ paths:
       parameters:
         - { $ref: '#/components/parameters/Meta' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
         '302': { $ref: '#/components/responses/Redirect' }
   /{fullname}/{versionSpec}/files/{path}:
@@ -441,6 +542,8 @@ paths:
       parameters:
         - { $ref: '#/components/parameters/Meta' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/AnyFile' }
         '302': { $ref: '#/components/responses/Redirect' }
   /-/proxy-cache:
@@ -452,6 +555,8 @@ paths:
         - { $ref: '#/components/parameters/PageSize' }
         - { $ref: '#/components/parameters/PageIndex' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Proxy cache]
@@ -459,6 +564,8 @@ paths:
       operationId: truncateProxyCaches
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/proxy-cache/{fullname}:
     parameters:
@@ -472,6 +579,8 @@ paths:
         - { $ref: '#/components/parameters/PageSize' }
         - { $ref: '#/components/parameters/PageIndex' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     patch:
       tags: [Proxy cache]
@@ -479,6 +588,8 @@ paths:
       operationId: refreshProxyCaches
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Proxy cache]
@@ -486,6 +597,8 @@ paths:
       operationId: removeProxyCaches
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/registry:
     get:
@@ -496,6 +609,8 @@ paths:
         - { $ref: '#/components/parameters/PageSize' }
         - { $ref: '#/components/parameters/PageIndex' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     post:
       tags: [Registry, Administration]
@@ -504,6 +619,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Registry' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/registry/{id}:
     parameters:
@@ -513,14 +630,18 @@ paths:
       summary: Show registry details
       operationId: showRegistry
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     patch:
       tags: [Registry, Administration]
       summary: Update a registry
       operationId: updateRegistry
       security: [{ bearerAuth: [] }]
-      requestBody: { $ref: '#/components/requestBodies/Json' }
+      requestBody: { $ref: '#/components/requestBodies/RegistryUpdate' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Registry, Administration]
@@ -528,6 +649,8 @@ paths:
       operationId: removeRegistry
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/registry/{id}/scopes:
     parameters:
@@ -540,6 +663,8 @@ paths:
         - { $ref: '#/components/parameters/PageSize' }
         - { $ref: '#/components/parameters/PageIndex' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/registry/{id}/sync:
     parameters:
@@ -549,8 +674,10 @@ paths:
       summary: Create a registry synchronization task
       operationId: createRegistrySyncTask
       security: [{ bearerAuth: [] }]
-      requestBody: { $ref: '#/components/requestBodies/Json' }
+      requestBody: { $ref: '#/components/requestBodies/RegistryCreateSync' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/scope:
     post:
@@ -560,6 +687,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Scope' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/scope/{id}:
     parameters:
@@ -570,6 +699,8 @@ paths:
       operationId: removeScope
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/org:
     put:
@@ -579,6 +710,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/org/{orgName}:
     parameters:
@@ -589,6 +722,8 @@ paths:
       operationId: showOrg
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Organization]
@@ -596,6 +731,8 @@ paths:
       operationId: removeOrg
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/org/{orgName}/member:
     parameters:
@@ -606,6 +743,8 @@ paths:
       operationId: listMembers
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
     put:
       tags: [Organization]
@@ -614,6 +753,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/org/{orgName}/member/{username}:
     parameters:
@@ -625,6 +766,8 @@ paths:
       operationId: removeMember
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/org/{orgName}/member/{username}/team:
     parameters:
@@ -636,6 +779,8 @@ paths:
       operationId: listUserTeams
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/org/{username}/package:
     parameters:
@@ -646,6 +791,8 @@ paths:
       operationId: listPackagesByUser
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/org/{orgName}/team:
     parameters:
@@ -657,6 +804,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     get:
       tags: [Team]
@@ -664,6 +813,8 @@ paths:
       operationId: listTeams
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/team/{orgName}/{teamName}:
     parameters:
@@ -675,6 +826,8 @@ paths:
       operationId: showTeam
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Team]
@@ -682,6 +835,8 @@ paths:
       operationId: removeTeam
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/team/{orgName}/{teamName}/user:
     parameters:
@@ -693,6 +848,8 @@ paths:
       operationId: listTeamMembers
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
     put:
       tags: [Team]
@@ -701,6 +858,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Team]
@@ -709,6 +868,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/team/{orgName}/{teamName}/member:
     parameters:
@@ -720,6 +881,8 @@ paths:
       operationId: listTeamMembersWithRole
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/team/{orgName}/{teamName}/member/{username}:
     parameters:
@@ -733,6 +896,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/team/{orgName}/{teamName}/package:
     parameters:
@@ -744,6 +909,8 @@ paths:
       operationId: listTeamPackages
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
     put:
       tags: [Team, Packages]
@@ -752,6 +919,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Team, Packages]
@@ -760,6 +929,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /v1/hooks:
     get:
@@ -772,6 +943,8 @@ paths:
         - { $ref: '#/components/parameters/Offset' }
         - { $ref: '#/components/parameters/Limit' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/HookList' }
   /v1/hooks/hook:
     post:
@@ -781,6 +954,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Hook' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /v1/hooks/hook/{id}:
     parameters:
@@ -791,6 +966,8 @@ paths:
       operationId: getHook
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     put:
       tags: [Hook]
@@ -799,6 +976,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/HookUpdate' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     delete:
       tags: [Hook]
@@ -806,6 +985,8 @@ paths:
       operationId: deleteHook
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/npm/v1/tokens:
     post:
@@ -815,6 +996,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     get:
       tags: [Token]
@@ -822,6 +1005,8 @@ paths:
       operationId: listTokens
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/npm/v1/tokens/token/{tokenKey}:
     parameters:
@@ -832,6 +1017,8 @@ paths:
       operationId: removeToken
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/npm/v1/tokens/gat:
     post:
@@ -841,6 +1028,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     get:
       tags: [Token]
@@ -848,6 +1037,8 @@ paths:
       operationId: listGranularTokens
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/JsonArray' }
   /-/npm/v1/tokens/gat/{tokenKey}:
     parameters:
@@ -858,6 +1049,8 @@ paths:
       operationId: removeGranularToken
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/user/org.couchdb.user:{username}:
     parameters:
@@ -868,6 +1061,8 @@ paths:
       operationId: loginOrCreateUser
       requestBody: { $ref: '#/components/requestBodies/User' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     get:
       tags: [Authentication]
@@ -875,6 +1070,8 @@ paths:
       operationId: showUser
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/user/token/{token}:
     parameters:
@@ -885,6 +1082,8 @@ paths:
       operationId: logout
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/whoami:
     get:
@@ -893,6 +1092,8 @@ paths:
       operationId: whoami
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/npm/v1/user:
     get:
@@ -901,6 +1102,8 @@ paths:
       operationId: showProfile
       security: [{ bearerAuth: [] }]
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     post:
       tags: [Authentication]
@@ -909,6 +1112,8 @@ paths:
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/_view/starredByUser:
     get:
@@ -916,6 +1121,8 @@ paths:
       summary: Npm stars compatibility endpoint
       operationId: starredByUser
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
         '403': { $ref: '#/components/responses/Error' }
   /-/admin/npm/fixPaddingVersion:
@@ -929,6 +1136,8 @@ paths:
           in: query
           schema: { type: integer, minimum: 0 }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/login:
     post:
@@ -937,6 +1146,8 @@ paths:
       operationId: webauthLogin
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/login/request/session/{sessionId}:
     parameters:
@@ -946,6 +1157,8 @@ paths:
       summary: Get WebAuthn login request status
       operationId: webauthGetLoginSession
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
     post:
       tags: [WebAuthn]
@@ -953,6 +1166,8 @@ paths:
       operationId: webauthCompleteLoginSession
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/login/request/prepare/{sessionId}:
     parameters:
@@ -962,6 +1177,8 @@ paths:
       summary: Prepare a WebAuthn login request
       operationId: webauthPrepareLogin
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/login/sso/{sessionId}:
     parameters:
@@ -972,6 +1189,8 @@ paths:
       operationId: webauthSsoLogin
       requestBody: { $ref: '#/components/requestBodies/Json' }
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/login/request/success:
     get:
@@ -979,6 +1198,8 @@ paths:
       summary: Show successful WebAuthn login result
       operationId: webauthLoginSuccess
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
   /-/v1/login/done/session/{sessionId}:
     parameters:
@@ -988,6 +1209,8 @@ paths:
       summary: Finish a WebAuthn login session
       operationId: webauthLoginDone
       responses:
+        default: { $ref: '#/components/responses/Error' }
+        '4XX': { $ref: '#/components/responses/Error' }
         '200': { $ref: '#/components/responses/Json' }
 components:
   securitySchemes:
@@ -997,13 +1220,35 @@ components:
       bearerFormat: token
       description: Npm/cnpmcore token sent in the Authorization header.
   parameters:
-    Fullname: { name: fullname, in: path, required: true, schema: { $ref: '#/components/schemas/PackageName' } }
+    Fullname:
+      name: fullname
+      in: path
+      required: true
+      description: >-
+        Package full name. Scoped names contain a literal slash, for example
+        `@scope/pkg`. Send the slash literally; do not percent-encode it.
+        For GET `/foo/sync`, the package-version route is selected with
+        `versionSpec=sync`; the legacy synchronization endpoint only handles
+        PUT `/foo/sync`.
+      example: '@scope/pkg'
+      allowReserved: true
+      schema: { $ref: '#/components/schemas/PackageName' }
     FullnameWithVersion: { name: fullnameWithVersion, in: path, required: true, schema: { type: string } }
     Version: { name: version, in: path, required: true, schema: { type: string } }
     VersionSpec: { name: versionSpec, in: path, required: true, schema: { type: string } }
     FilenameWithVersion: { name: filenameWithVersion, in: path, required: true, schema: { type: string } }
     Revision: { name: rev, in: path, required: true, schema: { type: string } }
-    FilePath: { name: path, in: path, required: true, schema: { type: string } }
+    FilePath:
+      name: path
+      in: path
+      required: true
+      description: >-
+        File path inside the package, including literal slash separators, for
+        example `lib/index.js`. Send the slashes literally; do not
+        percent-encode them.
+      example: lib/index.js
+      allowReserved: true
+      schema: { type: string }
     BinaryName: { name: binaryName, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 220 } }
     Subpath: { name: subpath, in: path, required: true, schema: { type: string, maxLength: 1024 } }
     Scope: { name: scope, in: path, required: true, schema: { type: string } }
@@ -1037,6 +1282,13 @@ components:
     SyncPackage:
       { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/SyncPackage' } } } }
     Registry: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Registry' } } } }
+    RegistryUpdate:
+      { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/RegistryUpdate' } } } }
+    RegistryCreateSync:
+      {
+        required: false,
+        content: { application/json: { schema: { $ref: '#/components/schemas/RegistryCreateSync' } } },
+      }
     Scope: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Scope' } } } }
     Hook: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Hook' } } } }
     HookUpdate:
@@ -1115,6 +1367,19 @@ components:
         userPrefix: { type: string }
         type: { type: string }
         authToken: { type: string, writeOnly: true }
+    RegistryUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 256 }
+        host: { type: string, format: uri }
+        changeStream: { type: string, format: uri }
+        userPrefix: { type: string }
+        type: { type: string }
+        authToken: { type: string, writeOnly: true }
+    RegistryCreateSync:
+      type: object
+      properties:
+        since: { type: string }
     Scope:
       type: object
       required: [name, registryId]

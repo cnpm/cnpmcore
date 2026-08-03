@@ -11,6 +11,10 @@
   },
   "servers": [
     {
+      "url": "https://registry.npmmirror.com",
+      "description": "Public registry"
+    },
+    {
       "url": "http://localhost:7001",
       "description": "Local development server"
     }
@@ -18,46 +22,60 @@
   "security": [],
   "tags": [
     {
-      "name": "Registry"
+      "name": "Registry",
+      "description": "Registry metadata and package registry compatibility APIs."
     },
     {
-      "name": "Packages"
+      "name": "Packages",
+      "description": "Package manifests, versions, tarballs, and package files."
     },
     {
-      "name": "Search"
+      "name": "Search",
+      "description": "Package search endpoints."
     },
     {
-      "name": "Authentication"
+      "name": "Authentication",
+      "description": "User authentication endpoints."
     },
     {
-      "name": "Organization"
+      "name": "Organization",
+      "description": "Organization and membership management."
     },
     {
-      "name": "Team"
+      "name": "Team",
+      "description": "Team and team membership management."
     },
     {
-      "name": "Token"
+      "name": "Token",
+      "description": "Access token management."
     },
     {
-      "name": "Hook"
+      "name": "Hook",
+      "description": "Webhook management."
     },
     {
-      "name": "Synchronization"
+      "name": "Synchronization",
+      "description": "Package and registry synchronization tasks."
     },
     {
-      "name": "Binary"
+      "name": "Binary",
+      "description": "Binary distribution endpoints."
     },
     {
-      "name": "Download"
+      "name": "Download",
+      "description": "Package download statistics."
     },
     {
-      "name": "Administration"
+      "name": "Administration",
+      "description": "Administrative operations."
     },
     {
-      "name": "Proxy cache"
+      "name": "Proxy cache",
+      "description": "Proxy cache management."
     },
     {
-      "name": "WebAuthn"
+      "name": "WebAuthn",
+      "description": "WebAuthn authentication flows."
     }
   ],
   "paths": {
@@ -69,6 +87,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -81,6 +105,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -100,6 +130,12 @@
                 }
               }
             }
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -112,6 +148,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -137,6 +179,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -165,6 +213,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -190,6 +244,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -207,6 +267,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -227,6 +293,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -244,6 +316,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -264,6 +342,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -284,6 +368,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -301,6 +391,15 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Package"
+          },
+          "304": {
+            "$ref": "#/components/responses/Empty"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -317,8 +416,14 @@
           "$ref": "#/components/requestBodies/Package"
         },
         "responses": {
-          "200": {
+          "201": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -339,6 +444,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -367,6 +478,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -382,6 +499,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -402,6 +525,12 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/Empty"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -412,6 +541,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Tarball"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -432,6 +567,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Tarball"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -455,6 +596,12 @@
         "responses": {
           "204": {
             "$ref": "#/components/responses/Empty"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -465,6 +612,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Tarball"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -493,6 +646,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -510,6 +669,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -538,6 +703,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -553,6 +724,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -578,6 +755,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -593,6 +776,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -608,6 +797,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -636,6 +831,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -651,6 +852,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -673,6 +880,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -698,6 +911,12 @@
         "responses": {
           "201": {
             "$ref": "#/components/responses/Task"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -723,6 +942,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Task"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -748,6 +973,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Text"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -775,6 +1006,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -800,6 +1037,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -823,6 +1066,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -845,6 +1094,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -860,6 +1115,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -885,6 +1146,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -903,6 +1170,12 @@
           },
           "302": {
             "$ref": "#/components/responses/Redirect"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -934,6 +1207,12 @@
           },
           "302": {
             "$ref": "#/components/responses/Redirect"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -954,6 +1233,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -969,6 +1254,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -999,6 +1290,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1014,6 +1311,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1029,6 +1332,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1049,6 +1358,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1067,6 +1382,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1084,6 +1405,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1097,11 +1424,17 @@
           }
         ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/Json"
+          "$ref": "#/components/requestBodies/RegistryUpdate"
         },
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1117,6 +1450,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1142,6 +1481,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1162,11 +1507,17 @@
           }
         ],
         "requestBody": {
-          "$ref": "#/components/requestBodies/Json"
+          "$ref": "#/components/requestBodies/RegistryCreateSync"
         },
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1187,6 +1538,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1209,6 +1566,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1229,6 +1592,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1251,6 +1620,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1266,6 +1641,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1288,6 +1669,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1306,6 +1693,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1331,6 +1724,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1356,6 +1755,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1378,6 +1783,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1403,6 +1814,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1418,6 +1835,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1443,6 +1866,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1458,6 +1887,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1483,6 +1918,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1501,6 +1942,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1519,6 +1966,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1544,6 +1997,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1575,6 +2034,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1600,6 +2065,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1618,6 +2089,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1636,6 +2113,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1664,6 +2147,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/HookList"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1684,6 +2173,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1706,6 +2201,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1724,6 +2225,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1739,6 +2246,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1759,6 +2272,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1774,6 +2293,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1796,6 +2321,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1816,6 +2347,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1831,6 +2368,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/JsonArray"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1853,6 +2396,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1873,6 +2422,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1888,6 +2443,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1910,6 +2471,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1927,6 +2494,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1944,6 +2517,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -1962,6 +2541,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -1976,6 +2561,12 @@
             "$ref": "#/components/responses/Json"
           },
           "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
             "$ref": "#/components/responses/Error"
           }
         }
@@ -2004,6 +2595,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2019,6 +2616,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2036,6 +2639,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       },
@@ -2049,6 +2658,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2066,6 +2681,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2086,6 +2707,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2098,6 +2725,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2115,6 +2748,12 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/Json"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          },
+          "4XX": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -2134,6 +2773,9 @@
         "name": "fullname",
         "in": "path",
         "required": true,
+        "description": "Package full name. Scoped names contain a literal slash, for example `@scope/pkg`. Send the slash literally; do not percent-encode it. For GET `/foo/sync`, the package-version route is selected with `versionSpec=sync`; the legacy synchronization endpoint only handles PUT `/foo/sync`.",
+        "example": "@scope/pkg",
+        "allowReserved": true,
         "schema": {
           "$ref": "#/components/schemas/PackageName"
         }
@@ -2182,6 +2824,9 @@
         "name": "path",
         "in": "path",
         "required": true,
+        "description": "File path inside the package, including literal slash separators, for example `lib/index.js`. Send the slashes literally; do not percent-encode them.",
+        "example": "lib/index.js",
+        "allowReserved": true,
         "schema": {
           "type": "string"
         }
@@ -2443,6 +3088,26 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Registry"
+            }
+          }
+        }
+      },
+      "RegistryUpdate": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RegistryUpdate"
+            }
+          }
+        }
+      },
+      "RegistryCreateSync": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RegistryCreateSync"
             }
           }
         }
@@ -2709,6 +3374,42 @@
           "authToken": {
             "type": "string",
             "writeOnly": true
+          }
+        }
+      },
+      "RegistryUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "host": {
+            "type": "string",
+            "format": "uri"
+          },
+          "changeStream": {
+            "type": "string",
+            "format": "uri"
+          },
+          "userPrefix": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "authToken": {
+            "type": "string",
+            "writeOnly": true
+          }
+        }
+      },
+      "RegistryCreateSync": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "string"
           }
         }
       },
