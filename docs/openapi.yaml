@@ -1,0 +1,1165 @@
+openapi: 3.1.1
+info:
+  title: cnpmcore HTTP API
+  version: 4.34.1
+  description: |
+    The complete HTTP API exposed by cnpmcore, including npm registry
+    compatibility endpoints and cnpmcore administration APIs.
+  license:
+    name: MIT
+    url: https://github.com/cnpm/cnpmcore/blob/master/LICENSE
+servers:
+  - url: http://localhost:7001
+    description: Local development server
+tags:
+  - name: Registry
+  - name: Packages
+  - name: Search
+  - name: Authentication
+  - name: Organization
+  - name: Team
+  - name: Token
+  - name: Hook
+  - name: Synchronization
+  - name: Binary
+  - name: Download
+  - name: Administration
+  - name: Proxy cache
+  - name: WebAuthn
+security: []
+paths:
+  /:
+    get:
+      tags: [Registry]
+      summary: Show registry information
+      operationId: showRegistryInfo
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/ping:
+    get:
+      tags: [Registry]
+      summary: Check registry availability
+      operationId: ping
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /binary.html:
+    get:
+      tags: [Binary]
+      summary: Show the binary browser page
+      operationId: showBinaryHtml
+      responses:
+        '200':
+          description: HTML page.
+          content: { text/html: { schema: { type: string } } }
+  /-/binary:
+    get:
+      tags: [Binary]
+      summary: List binary distributions
+      operationId: listBinaries
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/binary/{binaryName}:
+    parameters:
+      - { $ref: '#/components/parameters/BinaryName' }
+    get:
+      tags: [Binary]
+      summary: Show a binary distribution index
+      operationId: showBinaryIndex
+      parameters:
+        - { $ref: '#/components/parameters/Since' }
+        - { $ref: '#/components/parameters/Limit' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/binary/{binaryName}/{subpath}:
+    parameters:
+      - { $ref: '#/components/parameters/BinaryName' }
+      - { $ref: '#/components/parameters/Subpath' }
+    get:
+      tags: [Binary]
+      summary: Browse a binary distribution path
+      operationId: showBinary
+      parameters:
+        - { $ref: '#/components/parameters/Since' }
+        - { $ref: '#/components/parameters/Limit' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/binary/{binaryName}/sync:
+    parameters:
+      - { $ref: '#/components/parameters/BinaryName' }
+    post:
+      tags: [Binary, Synchronization]
+      summary: Synchronize a binary distribution
+      operationId: syncBinary
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /_changes:
+    get:
+      tags: [Registry]
+      summary: Read registry changes
+      operationId: listChanges
+      parameters:
+        - { $ref: '#/components/parameters/Since' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /downloads/point/{range}/{fullname}:
+    parameters:
+      - { $ref: '#/components/parameters/Range' }
+      - { $ref: '#/components/parameters/Fullname' }
+    get:
+      tags: [Download]
+      summary: Get package download point data
+      operationId: showPackageDownloadPoint
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /downloads/total/point/{range}:
+    parameters:
+      - { $ref: '#/components/parameters/Range' }
+    get:
+      tags: [Download]
+      summary: Get total download point data
+      operationId: showTotalDownloadPoint
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /downloads/range/{range}/{fullname}:
+    parameters:
+      - { $ref: '#/components/parameters/Range' }
+      - { $ref: '#/components/parameters/Fullname' }
+    get:
+      tags: [Download]
+      summary: Get package download range data
+      operationId: showPackageDownloads
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /downloads/{scope}/{range}:
+    parameters:
+      - { $ref: '#/components/parameters/Scope' }
+      - { $ref: '#/components/parameters/Range' }
+    get:
+      tags: [Download]
+      summary: Get scoped download data
+      operationId: showTotalDownloads
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /{fullname}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    get:
+      tags: [Packages]
+      summary: Show a package
+      operationId: showPackageByFullname
+      responses:
+        '200': { $ref: '#/components/responses/Package' }
+    put:
+      tags: [Packages]
+      summary: Publish or replace a package manifest
+      operationId: publishPackage
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Package' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /{fullname}/{versionSpec}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/VersionSpec' }
+    get:
+      tags: [Packages]
+      summary: Show a package version or tag
+      operationId: showPackageVersion
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /{fullname}/-rev/{rev}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/Revision' }
+    put:
+      tags: [Packages]
+      summary: Update package maintainers
+      operationId: updatePackage
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Packages]
+      summary: Remove a package version
+      operationId: removePackageVersion
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /{fullname}/-/{filenameWithVersion}.tgz:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/FilenameWithVersion' }
+    options:
+      tags: [Packages]
+      summary: Preflight package tarball download
+      operationId: packageTarballOptions
+      responses:
+        '204': { $ref: '#/components/responses/Empty' }
+    get:
+      tags: [Packages]
+      summary: Download a package tarball
+      operationId: downloadPackageTarball
+      responses:
+        '200': { $ref: '#/components/responses/Tarball' }
+  /{fullname}/download/{fullnameWithVersion}.tgz:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/FullnameWithVersion' }
+    get:
+      tags: [Packages]
+      summary: Download a package tarball using the legacy path
+      operationId: deprecatedDownloadPackageTarball
+      responses:
+        '200': { $ref: '#/components/responses/Tarball' }
+  /{fullname}/-/{scope}/{filenameWithVersion}.tgz:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/Scope' }
+      - { $ref: '#/components/parameters/FilenameWithVersion' }
+    options:
+      tags: [Packages]
+      summary: Preflight Verdaccio-compatible tarball download
+      operationId: verdaccioTarballOptions
+      responses:
+        '204': { $ref: '#/components/responses/Empty' }
+    get:
+      tags: [Packages]
+      summary: Download a package tarball using the Verdaccio path
+      operationId: downloadVerdaccioTarball
+      responses:
+        '200': { $ref: '#/components/responses/Tarball' }
+  /{fullname}/-/{filenameWithVersion}.tgz/-rev/{rev}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/FilenameWithVersion' }
+      - { $ref: '#/components/parameters/Revision' }
+    delete:
+      tags: [Packages]
+      summary: Remove a package version using a tarball URL
+      operationId: removePackageVersionByTarball
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/package/{fullname}/dist-tags:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    get:
+      tags: [Packages]
+      summary: List package distribution tags
+      operationId: listPackageTags
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/package/{fullname}/dist-tags/{tag}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/Tag' }
+    put:
+      tags: [Packages]
+      summary: Set a package distribution tag
+      operationId: savePackageTag
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Packages]
+      summary: Remove a package distribution tag
+      operationId: removePackageTag
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/package/{fullname}/blocks:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    put:
+      tags: [Administration]
+      summary: Block a package
+      operationId: blockPackage
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/BlockPackage' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Administration]
+      summary: Unblock a package
+      operationId: unblockPackage
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    get:
+      tags: [Administration]
+      summary: List package blocks
+      operationId: listPackageBlocks
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/package/{fullname}/blocks/{version}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/Version' }
+    put:
+      tags: [Administration]
+      summary: Block a package version
+      operationId: blockPackageVersion
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/BlockPackage' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Administration]
+      summary: Unblock a package version
+      operationId: unblockPackageVersion
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/package/{fullname}/collaborators:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    get:
+      tags: [Packages]
+      summary: List package collaborators
+      operationId: listCollaborators
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/package/{fullname}/syncs:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    put:
+      tags: [Synchronization]
+      summary: Create a package synchronization task
+      operationId: createSyncTask
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/SyncPackage' }
+      responses:
+        '201': { $ref: '#/components/responses/Task' }
+  /-/package/{fullname}/syncs/{taskId}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/TaskId' }
+    get:
+      tags: [Synchronization]
+      summary: Show a package synchronization task
+      operationId: showSyncTask
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Task' }
+  /-/package/{fullname}/syncs/{taskId}/log:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/TaskId' }
+    get:
+      tags: [Synchronization]
+      summary: Show a package synchronization task log
+      operationId: showSyncTaskLog
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Text' }
+  /{fullname}/sync:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    put:
+      tags: [Synchronization]
+      summary: Create a legacy package synchronization task
+      operationId: deprecatedCreateSyncTask
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/Nodeps' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /{fullname}/sync/log/{taskId}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/TaskId' }
+    get:
+      tags: [Synchronization]
+      summary: Show a legacy synchronization task log
+      operationId: deprecatedShowSyncTask
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/search:
+    get:
+      tags: [Search]
+      summary: Search packages
+      operationId: searchPackages
+      parameters:
+        - { $ref: '#/components/parameters/Text' }
+        - { $ref: '#/components/parameters/From' }
+        - { $ref: '#/components/parameters/Size' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/search/sync/{fullname}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    put:
+      tags: [Search]
+      summary: Synchronize a package into search
+      operationId: syncSearchPackage
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Search]
+      summary: Delete a package from search
+      operationId: deleteSearchPackage
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /{fullname}/{versionSpec}/files:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/VersionSpec' }
+    put:
+      tags: [Packages, Administration]
+      summary: Synchronize package version files
+      operationId: syncPackageVersionFiles
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+    get:
+      tags: [Packages]
+      summary: List package version files
+      operationId: listPackageVersionFiles
+      parameters:
+        - { $ref: '#/components/parameters/Meta' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+        '302': { $ref: '#/components/responses/Redirect' }
+  /{fullname}/{versionSpec}/files/{path}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+      - { $ref: '#/components/parameters/VersionSpec' }
+      - { $ref: '#/components/parameters/FilePath' }
+    get:
+      tags: [Packages]
+      summary: Read a package version file
+      operationId: readPackageVersionFile
+      parameters:
+        - { $ref: '#/components/parameters/Meta' }
+      responses:
+        '200': { $ref: '#/components/responses/AnyFile' }
+        '302': { $ref: '#/components/responses/Redirect' }
+  /-/proxy-cache:
+    get:
+      tags: [Proxy cache]
+      summary: List proxy cache packages
+      operationId: listProxyCache
+      parameters:
+        - { $ref: '#/components/parameters/PageSize' }
+        - { $ref: '#/components/parameters/PageIndex' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Proxy cache]
+      summary: Truncate proxy cache
+      operationId: truncateProxyCaches
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/proxy-cache/{fullname}:
+    parameters:
+      - { $ref: '#/components/parameters/Fullname' }
+    get:
+      tags: [Proxy cache]
+      summary: Show proxy cache entries
+      operationId: showProxyCaches
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/PageSize' }
+        - { $ref: '#/components/parameters/PageIndex' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    patch:
+      tags: [Proxy cache]
+      summary: Refresh proxy cache
+      operationId: refreshProxyCaches
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Proxy cache]
+      summary: Remove proxy cache
+      operationId: removeProxyCaches
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/registry:
+    get:
+      tags: [Registry]
+      summary: List registries
+      operationId: listRegistries
+      parameters:
+        - { $ref: '#/components/parameters/PageSize' }
+        - { $ref: '#/components/parameters/PageIndex' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    post:
+      tags: [Registry, Administration]
+      summary: Create a registry
+      operationId: createRegistry
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Registry' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/registry/{id}:
+    parameters:
+      - { $ref: '#/components/parameters/Id' }
+    get:
+      tags: [Registry]
+      summary: Show registry details
+      operationId: showRegistry
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    patch:
+      tags: [Registry, Administration]
+      summary: Update a registry
+      operationId: updateRegistry
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Registry, Administration]
+      summary: Remove a registry
+      operationId: removeRegistry
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/registry/{id}/scopes:
+    parameters:
+      - { $ref: '#/components/parameters/Id' }
+    get:
+      tags: [Registry]
+      summary: List registry scopes
+      operationId: showRegistryScopes
+      parameters:
+        - { $ref: '#/components/parameters/PageSize' }
+        - { $ref: '#/components/parameters/PageIndex' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/registry/{id}/sync:
+    parameters:
+      - { $ref: '#/components/parameters/Id' }
+    post:
+      tags: [Registry, Synchronization]
+      summary: Create a registry synchronization task
+      operationId: createRegistrySyncTask
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/scope:
+    post:
+      tags: [Registry, Administration]
+      summary: Create a scope
+      operationId: createScope
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Scope' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/scope/{id}:
+    parameters:
+      - { $ref: '#/components/parameters/Id' }
+    delete:
+      tags: [Registry, Administration]
+      summary: Remove a scope
+      operationId: removeScope
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/org:
+    put:
+      tags: [Organization]
+      summary: Create an organization
+      operationId: createOrg
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/org/{orgName}:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+    get:
+      tags: [Organization]
+      summary: Show an organization
+      operationId: showOrg
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Organization]
+      summary: Remove an organization
+      operationId: removeOrg
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/org/{orgName}/member:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+    get:
+      tags: [Organization]
+      summary: List organization members
+      operationId: listMembers
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+    put:
+      tags: [Organization]
+      summary: Add an organization member
+      operationId: addMember
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/org/{orgName}/member/{username}:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/Username' }
+    delete:
+      tags: [Organization]
+      summary: Remove an organization member
+      operationId: removeMember
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/org/{orgName}/member/{username}/team:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/Username' }
+    get:
+      tags: [Organization, Team]
+      summary: List teams for an organization member
+      operationId: listUserTeams
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/org/{username}/package:
+    parameters:
+      - { $ref: '#/components/parameters/Username' }
+    get:
+      tags: [Organization, Packages]
+      summary: List packages owned by a user
+      operationId: listPackagesByUser
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/org/{orgName}/team:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+    put:
+      tags: [Team]
+      summary: Create a team
+      operationId: createTeam
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    get:
+      tags: [Team]
+      summary: List organization teams
+      operationId: listTeams
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/team/{orgName}/{teamName}:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/TeamName' }
+    get:
+      tags: [Team]
+      summary: Show a team
+      operationId: showTeam
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Team]
+      summary: Remove a team
+      operationId: removeTeam
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/team/{orgName}/{teamName}/user:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/TeamName' }
+    get:
+      tags: [Team]
+      summary: List team users
+      operationId: listTeamMembers
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+    put:
+      tags: [Team]
+      summary: Add a team user
+      operationId: addTeamMember
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Team]
+      summary: Remove a team user
+      operationId: removeTeamMember
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/team/{orgName}/{teamName}/member:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/TeamName' }
+    get:
+      tags: [Team]
+      summary: List team users with roles
+      operationId: listTeamMembersWithRole
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/team/{orgName}/{teamName}/member/{username}:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/TeamName' }
+      - { $ref: '#/components/parameters/Username' }
+    patch:
+      tags: [Team]
+      summary: Update a team member role
+      operationId: updateTeamMemberRole
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/team/{orgName}/{teamName}/package:
+    parameters:
+      - { $ref: '#/components/parameters/OrgName' }
+      - { $ref: '#/components/parameters/TeamName' }
+    get:
+      tags: [Team, Packages]
+      summary: List packages accessible to a team
+      operationId: listTeamPackages
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+    put:
+      tags: [Team, Packages]
+      summary: Grant team package access
+      operationId: grantPackageAccess
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Team, Packages]
+      summary: Revoke team package access
+      operationId: revokePackageAccess
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /v1/hooks:
+    get:
+      tags: [Hook]
+      summary: List hooks
+      operationId: listHooks
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { $ref: '#/components/parameters/PackageFilter' }
+        - { $ref: '#/components/parameters/Offset' }
+        - { $ref: '#/components/parameters/Limit' }
+      responses:
+        '200': { $ref: '#/components/responses/HookList' }
+  /v1/hooks/hook:
+    post:
+      tags: [Hook]
+      summary: Create a hook
+      operationId: createHook
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Hook' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /v1/hooks/hook/{id}:
+    parameters:
+      - { $ref: '#/components/parameters/Id' }
+    get:
+      tags: [Hook]
+      summary: Get hook details
+      operationId: getHook
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    put:
+      tags: [Hook]
+      summary: Update a hook
+      operationId: updateHook
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/HookUpdate' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    delete:
+      tags: [Hook]
+      summary: Delete a hook
+      operationId: deleteHook
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/npm/v1/tokens:
+    post:
+      tags: [Token]
+      summary: Create a classic npm token
+      operationId: createToken
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    get:
+      tags: [Token]
+      summary: List classic npm tokens
+      operationId: listTokens
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/npm/v1/tokens/token/{tokenKey}:
+    parameters:
+      - { $ref: '#/components/parameters/TokenKey' }
+    delete:
+      tags: [Token]
+      summary: Delete a classic npm token
+      operationId: removeToken
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/npm/v1/tokens/gat:
+    post:
+      tags: [Token]
+      summary: Create a granular access token
+      operationId: createGranularToken
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    get:
+      tags: [Token]
+      summary: List granular access tokens
+      operationId: listGranularTokens
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JsonArray' }
+  /-/npm/v1/tokens/gat/{tokenKey}:
+    parameters:
+      - { $ref: '#/components/parameters/TokenKey' }
+    delete:
+      tags: [Token]
+      summary: Delete a granular access token
+      operationId: removeGranularToken
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/user/org.couchdb.user:{username}:
+    parameters:
+      - { $ref: '#/components/parameters/Username' }
+    put:
+      tags: [Authentication]
+      summary: Create a user or log in
+      operationId: loginOrCreateUser
+      requestBody: { $ref: '#/components/requestBodies/User' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    get:
+      tags: [Authentication]
+      summary: Show a user
+      operationId: showUser
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/user/token/{token}:
+    parameters:
+      - { $ref: '#/components/parameters/Token' }
+    delete:
+      tags: [Authentication]
+      summary: Log out and revoke a token
+      operationId: logout
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/whoami:
+    get:
+      tags: [Authentication]
+      summary: Show the authenticated user name
+      operationId: whoami
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/npm/v1/user:
+    get:
+      tags: [Authentication]
+      summary: Show the authenticated npm profile
+      operationId: showProfile
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    post:
+      tags: [Authentication]
+      summary: Update the authenticated npm profile
+      operationId: saveProfile
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/_view/starredByUser:
+    get:
+      tags: [Authentication]
+      summary: Npm stars compatibility endpoint
+      operationId: starredByUser
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+        '403': { $ref: '#/components/responses/Error' }
+  /-/admin/npm/fixPaddingVersion:
+    put:
+      tags: [Administration]
+      summary: Fix package versions without padding
+      operationId: fixNoPaddingVersion
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: query
+          schema: { type: integer, minimum: 0 }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/login:
+    post:
+      tags: [WebAuthn]
+      summary: Start WebAuthn login
+      operationId: webauthLogin
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/login/request/session/{sessionId}:
+    parameters:
+      - { $ref: '#/components/parameters/SessionId' }
+    get:
+      tags: [WebAuthn]
+      summary: Get WebAuthn login request status
+      operationId: webauthGetLoginSession
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+    post:
+      tags: [WebAuthn]
+      summary: Complete WebAuthn login request
+      operationId: webauthCompleteLoginSession
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/login/request/prepare/{sessionId}:
+    parameters:
+      - { $ref: '#/components/parameters/SessionId' }
+    get:
+      tags: [WebAuthn]
+      summary: Prepare a WebAuthn login request
+      operationId: webauthPrepareLogin
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/login/sso/{sessionId}:
+    parameters:
+      - { $ref: '#/components/parameters/SessionId' }
+    post:
+      tags: [WebAuthn]
+      summary: Complete SSO login
+      operationId: webauthSsoLogin
+      requestBody: { $ref: '#/components/requestBodies/Json' }
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/login/request/success:
+    get:
+      tags: [WebAuthn]
+      summary: Show successful WebAuthn login result
+      operationId: webauthLoginSuccess
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+  /-/v1/login/done/session/{sessionId}:
+    parameters:
+      - { $ref: '#/components/parameters/SessionId' }
+    get:
+      tags: [WebAuthn]
+      summary: Finish a WebAuthn login session
+      operationId: webauthLoginDone
+      responses:
+        '200': { $ref: '#/components/responses/Json' }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
+      description: Npm/cnpmcore token sent in the Authorization header.
+  parameters:
+    Fullname: { name: fullname, in: path, required: true, schema: { $ref: '#/components/schemas/PackageName' } }
+    FullnameWithVersion: { name: fullnameWithVersion, in: path, required: true, schema: { type: string } }
+    Version: { name: version, in: path, required: true, schema: { type: string } }
+    VersionSpec: { name: versionSpec, in: path, required: true, schema: { type: string } }
+    FilenameWithVersion: { name: filenameWithVersion, in: path, required: true, schema: { type: string } }
+    Revision: { name: rev, in: path, required: true, schema: { type: string } }
+    FilePath: { name: path, in: path, required: true, schema: { type: string } }
+    BinaryName: { name: binaryName, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 220 } }
+    Subpath: { name: subpath, in: path, required: true, schema: { type: string, maxLength: 1024 } }
+    Scope: { name: scope, in: path, required: true, schema: { type: string } }
+    Range: { name: range, in: path, required: true, schema: { type: string } }
+    OrgName: { name: orgName, in: path, required: true, schema: { type: string } }
+    TeamName: { name: teamName, in: path, required: true, schema: { type: string } }
+    Username: { name: username, in: path, required: true, schema: { type: string } }
+    Id: { name: id, in: path, required: true, schema: { type: string } }
+    Token: { name: token, in: path, required: true, schema: { type: string } }
+    TokenKey: { name: tokenKey, in: path, required: true, schema: { type: string } }
+    TaskId: { name: taskId, in: path, required: true, schema: { type: string } }
+    SessionId: { name: sessionId, in: path, required: true, schema: { type: string, minLength: 36, maxLength: 36 } }
+    Tag: { name: tag, in: path, required: true, schema: { type: string } }
+    Since: { name: since, in: query, required: false, schema: { type: string } }
+    Limit: { name: limit, in: query, required: false, schema: { type: integer, minimum: 1 } }
+    PageSize: { name: pageSize, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 100 } }
+    PageIndex: { name: pageIndex, in: query, required: false, schema: { type: integer, minimum: 0 } }
+    Offset: { name: offset, in: query, required: false, schema: { type: integer, minimum: 0, default: 0 } }
+    From: { name: from, in: query, required: false, schema: { type: integer, minimum: 0, default: 0 } }
+    Size: { name: size, in: query, required: false, schema: { type: integer, minimum: 1, default: 20 } }
+    Text: { name: text, in: query, required: true, schema: { type: string, minLength: 1, maxLength: 256 } }
+    Nodeps: { name: nodeps, in: query, required: false, schema: { type: boolean } }
+    Meta: { name: meta, in: query, required: false, schema: { type: boolean } }
+    PackageFilter: { name: package, in: query, required: false, schema: { type: string } }
+  requestBodies:
+    Json: { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/JsonObject' } } } }
+    Package:
+      { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PackageManifest' } } } }
+    BlockPackage:
+      { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/BlockPackage' } } } }
+    SyncPackage:
+      { required: false, content: { application/json: { schema: { $ref: '#/components/schemas/SyncPackage' } } } }
+    Registry: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Registry' } } } }
+    Scope: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Scope' } } } }
+    Hook: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/Hook' } } } }
+    HookUpdate:
+      { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/HookUpdate' } } } }
+    User: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
+  responses:
+    Json:
+      description: JSON response. The exact shape depends on the operation.
+      content: { application/json: { schema: { $ref: '#/components/schemas/JsonValue' } } }
+    JsonArray:
+      description: JSON array response.
+      content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/JsonValue' } } } }
+    HookList:
+      description: Hook list response.
+      content: { application/json: { schema: { $ref: '#/components/schemas/HookList' } } }
+    Package:
+      description: Npm package manifest.
+      content: { application/json: { schema: { $ref: '#/components/schemas/PackageManifest' } } }
+    Task:
+      description: Synchronization task.
+      content: { application/json: { schema: { $ref: '#/components/schemas/Task' } } }
+    Text:
+      description: Plain-text response.
+      content: { text/plain: { schema: { type: string } } }
+    Tarball:
+      description: Gzip-compressed npm package tarball.
+      content: { application/octet-stream: { schema: { type: string, format: binary } } }
+    AnyFile:
+      description: Package file content or metadata.
+      content: { '*/*': { schema: { type: string, format: binary } } }
+    Redirect:
+      description: Redirect to the package file or resource.
+      headers: { Location: { schema: { type: string, format: uri } } }
+    Empty: { description: No content. }
+    Error:
+      description: Error response.
+      content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } }
+  schemas:
+    JsonValue: {}
+    JsonObject: { type: object, additionalProperties: true }
+    PackageName: { type: string, minLength: 1, maxLength: 428 }
+    PackageManifest:
+      type: object
+      description: Npm package manifest. Additional npm manifest fields are preserved.
+      required: [name]
+      properties:
+        name: { type: string }
+        version: { type: string }
+        description: { type: string }
+        dist-tags: { type: object, additionalProperties: { type: string } }
+        versions: { type: object, additionalProperties: { $ref: '#/components/schemas/JsonObject' } }
+        _attachments: { type: object, additionalProperties: { $ref: '#/components/schemas/JsonObject' } }
+      additionalProperties: true
+    BlockPackage:
+      type: object
+      required: [reason]
+      properties:
+        reason: { type: string, maxLength: 10240 }
+    SyncPackage:
+      type: object
+      properties:
+        tips: { type: string, maxLength: 1024 }
+        skipDependencies: { type: boolean }
+        specificVersions: { type: string, description: JSON encoded unique semver array }
+        syncDownloadData: { type: boolean }
+        force: { type: boolean }
+        forceSyncHistory: { type: boolean }
+        registryName: { type: string }
+    Registry:
+      type: object
+      required: [name, host, changeStream, type]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 256 }
+        host: { type: string, format: uri }
+        changeStream: { type: string, format: uri }
+        userPrefix: { type: string }
+        type: { type: string }
+        authToken: { type: string, writeOnly: true }
+    Scope:
+      type: object
+      required: [name, registryId]
+      properties:
+        name: { type: string }
+        registryId: { type: string }
+    Hook:
+      type: object
+      required: [endpoint, secret, name, type]
+      properties:
+        endpoint: { type: string, format: uri }
+        secret: { type: string, writeOnly: true }
+        name: { type: string, maxLength: 428 }
+        type: { type: string, enum: [package, scope, owner] }
+    HookUpdate:
+      type: object
+      required: [endpoint, secret]
+      properties:
+        endpoint: { type: string, format: uri }
+        secret: { type: string, writeOnly: true }
+    HookList:
+      type: object
+      required: [objects]
+      properties:
+        objects:
+          type: array
+          items: { $ref: '#/components/schemas/JsonObject' }
+    User:
+      type: object
+      required: [name, password]
+      properties:
+        type: { type: string, enum: [user] }
+        name: { type: string, minLength: 1, maxLength: 100 }
+        password: { type: string, format: password, minLength: 8, maxLength: 100, writeOnly: true }
+        email: { type: string, format: email }
+    Task:
+      type: object
+      properties:
+        ok: { type: boolean }
+        id: { type: string }
+        type: { type: string }
+        state: { type: string, enum: [waiting, processing, success, error] }
+        logUrl: { type: string, format: uri }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        reason: { type: string }

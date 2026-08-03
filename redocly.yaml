@@ -1,0 +1,7 @@
+extends:
+  - recommended
+rules:
+  no-ambiguous-paths: off
+  no-server-example.com: off
+  operation-4xx-response: off
+  tag-description: off
