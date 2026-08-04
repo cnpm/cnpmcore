@@ -3,6 +3,12 @@
   "extends": ["config:recommended"],
   "packageRules": [
     {
+      "description": "Keep MySQL versions pinned for compatibility validation on legacy versions",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["mysql"],
+      "enabled": false
+    },
+    {
       "matchManagers": ["npm"],
       "matchPackageNames": ["vite-plus", "@voidzero-dev/vite-plus-core", "vitest", "@vitest/coverage-v8"],
       "groupName": "vite-plus related packages",
