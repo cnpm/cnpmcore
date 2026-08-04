@@ -59,6 +59,8 @@
     "typecheck": "tsc --noEmit",
     "fmt": "vp fmt",
     "fmtcheck": "vp fmt --check",
+    "api-docs:lint": "redocly lint docs/openapi.yaml",
+    "api-docs:build": "redocly bundle docs/openapi.yaml --output docs/openapi.json && vp fmt docs/openapi.json",
     "test:postgresql": "npm run test:local:postgresql",
     "pretest:local:postgresql": "bash prepare-database-postgresql.sh",
     "test:local:postgresql": "CNPMCORE_DATABASE_TYPE=PostgreSQL egg-bin test",
@@ -129,6 +131,7 @@
     "@eggjs/mock": "^7.0.2-beta.2",
     "@eggjs/tsconfig": "^3.1.2-beta.2",
     "@elastic/elasticsearch-mock": "^2.1.0",
+    "@redocly/cli": "^2.43.2",
     "@simplewebauthn/typescript-types": "^7.4.0",
     "@types/ioredis-mock": "^8.2.6",
     "@types/lodash-es": "^4.17.12",
@@ -146,7 +149,8 @@
     "ioredis-mock": "^8.13.1",
     "typescript": "^7.0.0",
     "vite-plus": "0.2.4",
-    "vitest": "4.1.10"
+    "vitest": "4.1.10",
+    "yaml": "^2.9.0"
   },
   "optionalDependencies": {
     "s3-cnpmcore": "^1.1.2"
