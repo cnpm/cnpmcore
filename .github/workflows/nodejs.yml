@@ -23,7 +23,7 @@ jobs:
         uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
@@ -72,7 +72,7 @@ jobs:
         uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
@@ -386,7 +386,7 @@ jobs:
         uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
@@ -466,7 +466,7 @@ jobs:
         uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
@@ -517,7 +517,7 @@ jobs:
         uses: taiki-e/checkout-action@v1
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
