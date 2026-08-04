@@ -2775,7 +2775,6 @@
         "required": true,
         "description": "Package full name. Scoped names contain a literal slash, for example `@scope/pkg`. Send the slash literally; do not percent-encode it. For GET `/foo/sync`, the package-version route is selected with `versionSpec=sync`; the legacy synchronization endpoint only handles PUT `/foo/sync`.",
         "example": "@scope/pkg",
-        "allowReserved": true,
         "schema": {
           "$ref": "#/components/schemas/PackageName"
         }
@@ -2826,7 +2825,6 @@
         "required": true,
         "description": "File path inside the package, including literal slash separators, for example `lib/index.js`. Send the slashes literally; do not percent-encode them.",
         "example": "lib/index.js",
-        "allowReserved": true,
         "schema": {
           "type": "string"
         }

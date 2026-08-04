@@ -1231,7 +1231,6 @@ components:
         `versionSpec=sync`; the legacy synchronization endpoint only handles
         PUT `/foo/sync`.
       example: '@scope/pkg'
-      allowReserved: true
       schema: { $ref: '#/components/schemas/PackageName' }
     FullnameWithVersion: { name: fullnameWithVersion, in: path, required: true, schema: { type: string } }
     Version: { name: version, in: path, required: true, schema: { type: string } }
@@ -1247,7 +1246,6 @@ components:
         example `lib/index.js`. Send the slashes literally; do not
         percent-encode them.
       example: lib/index.js
-      allowReserved: true
       schema: { type: string }
     BinaryName: { name: binaryName, in: path, required: true, schema: { type: string, minLength: 1, maxLength: 220 } }
     Subpath: { name: subpath, in: path, required: true, schema: { type: string, maxLength: 1024 } }
