@@ -43,6 +43,14 @@ export interface CnpmcoreConfig {
    */
   syncMode: SyncMode;
   syncDeleteMode: SyncDeleteMode;
+  /**
+   * when the upstream registry responds 404 for a package, treat it as removed in remote
+   * and process by `syncDeleteMode`, default is true.
+   * Set false to ignore 404 responses (the behavior before this option, see
+   * https://github.com/cnpm/cnpmcore/issues/739), useful when the upstream registry
+   * may return transient 404s.
+   */
+  syncDeleteOnNotFound: boolean;
   syncPackageWorkerMaxConcurrentTasks: number;
   triggerHookWorkerMaxConcurrentTasks: number;
   createTriggerHookWorkerMaxConcurrentTasks: number;

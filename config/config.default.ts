@@ -23,6 +23,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   taskQueueHighWaterSize: 100,
   syncMode: env('CNPMCORE_CONFIG_SYNC_MODE', 'string', SyncMode.none) as SyncMode,
   syncDeleteMode: SyncDeleteMode.delete,
+  syncDeleteOnNotFound: env('CNPMCORE_CONFIG_SYNC_DELETE_ON_NOT_FOUND', 'boolean', true),
   syncPackageWorkerMaxConcurrentTasks: 10,
   triggerHookWorkerMaxConcurrentTasks: 10,
   createTriggerHookWorkerMaxConcurrentTasks: 10,
