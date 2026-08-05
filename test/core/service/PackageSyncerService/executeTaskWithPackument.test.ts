@@ -596,6 +596,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       app.mockAgent().assertNoPendingInterceptors();
 
       // mock 404 and no unpublished
+      mock(app.config.cnpmcore, 'syncDeleteOnNotFound', false);
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
         status: 404,
         data: '{"error":"Not found"}',
@@ -629,7 +630,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(log.includes('Package not found, status 404'));
+      assert.ok(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
+      assert.ok(log.includes('Package not exists, response data:'));
       app.mockAgent().assertNoPendingInterceptors();
     });
 

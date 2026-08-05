@@ -326,6 +326,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
 
       // mock 404 and no unpublished
+      mock(app.config.cnpmcore, 'syncDeleteOnNotFound', false);
       app.mockHttpclient('https://registry.npmjs.org/cnpmcore-test-sync-deprecated', 'GET', {
         status: 404,
         data: '{"error":"Not found"}',
@@ -359,8 +360,117 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.ok(stream);
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
-      assert.ok(log.includes('Package not found, status 404'));
+      assert.ok(log.includes(`] 🟢 Package "${name}" was removed in remote registry`));
+      assert.ok(log.includes('Package not exists, response data:'));
       app.mockAgent().assertNoPendingInterceptors();
+    });
+
+    describe('upstream response 404, https://github.com/cnpm/cnpmcore/issues/1115', () => {
+      // sync foobar success first
+      beforeEach(async () => {
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),
+          persist: false,
+          repeats: 1,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.0.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+          persist: false,
+        });
+        app.mockHttpclient('https://registry.npmjs.org/foobar/-/foobar-1.1.0.tgz', 'GET', {
+          data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.1.0.tgz'),
+          persist: false,
+        });
+        await packageSyncerService.createTask('foobar', {
+          skipDependencies: true,
+        });
+        const task = await packageSyncerService.findExecuteTask();
+        assert.ok(task);
+        await packageSyncerService.executeTask(task);
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert.ok(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert.equal(versions.length, 2);
+      });
+
+      it('should treat 404 as deleted and remove all versions by default', async () => {
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          status: 404,
+          data: '{"error":"Not found"}',
+          persist: false,
+        });
+        await packageSyncerService.createTask('foobar', {
+          skipDependencies: true,
+        });
+        const task = await packageSyncerService.findExecuteTask();
+        assert.ok(task);
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert.ok(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        // console.log(log);
+        assert.ok(log.includes('] 🟢 Package "foobar" was removed in remote registry'));
+        assert.ok(log.includes('] 🟢 Delete the package since config.syncDeleteMode = delete'));
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert.ok(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert.equal(versions.length, 0);
+        const { data } = await packageManagerService.listPackageFullManifests('', 'foobar');
+        assert.ok(data?.time.unpublished);
+        app.mockAgent().assertNoPendingInterceptors();
+      });
+
+      it('should block the package on 404 when syncDeleteMode = block', async () => {
+        mock(app.config.cnpmcore, 'syncDeleteMode', 'block');
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          status: 404,
+          data: '{"error":"Not found"}',
+          persist: false,
+        });
+        await packageSyncerService.createTask('foobar', {
+          skipDependencies: true,
+        });
+        const task = await packageSyncerService.findExecuteTask();
+        assert.ok(task);
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert.ok(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert.ok(log.includes('] 🟢 Package "foobar" was removed in remote registry'));
+        assert.ok(log.includes('] 🟢 Block the package since config.syncDeleteMode = block'));
+        const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
+        assert.equal(manifests.blockReason, 'Removed in remote registry');
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert.ok(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert.equal(versions.length, 2);
+        app.mockAgent().assertNoPendingInterceptors();
+      });
+
+      it('should ignore 404 when syncDeleteOnNotFound is disabled', async () => {
+        mock(app.config.cnpmcore, 'syncDeleteOnNotFound', false);
+        app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
+          status: 404,
+          data: '{"error":"Not found"}',
+          persist: false,
+        });
+        await packageSyncerService.createTask('foobar', {
+          skipDependencies: true,
+        });
+        const task = await packageSyncerService.findExecuteTask();
+        assert.ok(task);
+        await packageSyncerService.executeTask(task);
+        const stream = await packageSyncerService.findTaskLog(task);
+        assert.ok(stream);
+        const log = await TestUtil.readStreamToLog(stream);
+        assert.ok(log.includes('Package not found, status 404'));
+        assert.ok(!log.includes('was removed in remote registry'));
+        const model = await PackageModel.findOne({ scope: '', name: 'foobar' });
+        assert.ok(model);
+        const versions = await PackageVersion.find({ packageId: model.packageId });
+        assert.equal(versions.length, 2);
+        app.mockAgent().assertNoPendingInterceptors();
+      });
     });
 
     it('should ignore PositionNotEqualToLength error', async () => {

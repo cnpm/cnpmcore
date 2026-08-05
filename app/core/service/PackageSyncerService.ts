@@ -592,6 +592,12 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     }
 
     if (status === 404) {
+      // treat 404 as removed in remote registry, process by syncDeleteMode
+      // https://github.com/cnpm/cnpmcore/issues/1115
+      if (this.config.cnpmcore.syncDeleteOnNotFound) {
+        await this.syncDeletePkg({ task, pkg, logs, logUrl, url: remoteUrl, data: remoteData });
+        return;
+      }
       // ignore 404 status
       // https://github.com/cnpm/cnpmcore/issues/739
       task.error = `Package not found, status 404, data size: ${remoteData.length}, data sample: ${remoteData.subarray(0, 200).toString()}`;
