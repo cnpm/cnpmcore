@@ -1,5 +1,21 @@
 # Changelog
 
+## <small>4.34.2 (2026-08-05)</small>
+
+* fix: treat upstream 404 as package deleted when syncing (#1119) ([ae57494](https://github.com/cnpm/cnpmcore/commit/ae57494)), closes [#1119](https://github.com/cnpm/cnpmcore/issues/1119) [#739](https://github.com/cnpm/cnpmcore/issues/739) [#1115](https://github.com/cnpm/cnpmcore/issues/1115)
+* chore: disable mysql docker updates in renovate (#1116) ([b25d672](https://github.com/cnpm/cnpmcore/commit/b25d672)), closes [#1116](https://github.com/cnpm/cnpmcore/issues/1116)
+* chore(deps): update actions/setup-node action to v7 (#1110) ([1e55d2b](https://github.com/cnpm/cnpmcore/commit/1e55d2b)), closes [#1110](https://github.com/cnpm/cnpmcore/issues/1110)
+* chore(deps): update dependency typescript to v7 (#1103) ([2c8df6d](https://github.com/cnpm/cnpmcore/commit/2c8df6d)), closes [#1103](https://github.com/cnpm/cnpmcore/issues/1103)
+* chore(deps): update mcr.microsoft.com/devcontainers/typescript-node docker tag to v5 (#1098) ([ba36699](https://github.com/cnpm/cnpmcore/commit/ba36699)), closes [#1098](https://github.com/cnpm/cnpmcore/issues/1098)
+* chore(deps): update npm to v11.18.0 (#1097) ([c29aad3](https://github.com/cnpm/cnpmcore/commit/c29aad3)), closes [#1097](https://github.com/cnpm/cnpmcore/issues/1097)
+* chore(deps): update npm to v12 (#1104) ([33d87c3](https://github.com/cnpm/cnpmcore/commit/33d87c3)), closes [#1104](https://github.com/cnpm/cnpmcore/issues/1104)
+* chore(deps): update npm to v12.0.2 (#1105) ([d8d4cd9](https://github.com/cnpm/cnpmcore/commit/d8d4cd9)), closes [#1105](https://github.com/cnpm/cnpmcore/issues/1105)
+* chore(deps): update vite-plus related packages (#1101) ([7e4f92d](https://github.com/cnpm/cnpmcore/commit/7e4f92d)), closes [#1101](https://github.com/cnpm/cnpmcore/issues/1101)
+* chore(deps): update vite-plus related packages to v0.2.2 (#1100) ([72961a4](https://github.com/cnpm/cnpmcore/commit/72961a4)), closes [#1100](https://github.com/cnpm/cnpmcore/issues/1100)
+* chore(deps): update vite-plus related packages to v0.2.7 (#1113) ([8e93ae3](https://github.com/cnpm/cnpmcore/commit/8e93ae3)), closes [#1113](https://github.com/cnpm/cnpmcore/issues/1113)
+* chore(docs): add swagger api docs. (#1118) ([e79483c](https://github.com/cnpm/cnpmcore/commit/e79483c)), closes [#1118](https://github.com/cnpm/cnpmcore/issues/1118)
+* docs: update killa contact email (#1111) ([39c881b](https://github.com/cnpm/cnpmcore/commit/39c881b)), closes [#1111](https://github.com/cnpm/cnpmcore/issues/1111)
+
 ## <small>4.34.1 (2026-07-02)</small>
 
 * fix(playwright): sync from cdn.playwright.dev instead of deprecated azureedge (#1099) ([13b8f4e](https://github.com/cnpm/cnpmcore/commit/13b8f4e)), closes [#1099](https://github.com/cnpm/cnpmcore/issues/1099)
