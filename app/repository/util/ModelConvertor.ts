@@ -15,6 +15,7 @@ interface BonePatchInfo {
   createdAt?: Date;
 }
 type PatchedBone = LeoricBone & BonePatchInfo;
+type LeoricUpdateChanges = Parameters<LeoricBone['update']>[0];
 
 export class ModelConvertor {
   static async convertEntityToModel<T extends PatchedBone>(
@@ -44,7 +45,7 @@ export class ModelConvertor {
   }
 
   static convertEntityToChanges<T extends LeoricBone>(entity: object, ModelClazz: EggProtoImplClass<T>) {
-    const changes: Record<string, unknown> = {};
+    const changes: LeoricUpdateChanges = {};
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);

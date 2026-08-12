@@ -18,6 +18,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   let binary: PlaywrightBinary;
   beforeEach(async () => {
     binary = await app.getEggObject(PlaywrightBinary);
+    await binary.initFetch();
   });
 
   describe('fetch()', () => {
