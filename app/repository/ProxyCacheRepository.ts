@@ -48,7 +48,7 @@ export class ProxyCacheRepository extends AbstractRepository {
   }
 
   // used by update & delete all cache
-  async findProxyCaches(fullname: string, version?: string) {
+  async findProxyCaches(fullname: string, version?: string): Promise<ProxyModeCachedFilesModel[]> {
     const models = version
       ? await this.ProxyCache.find({ fullname, version })
       : await this.ProxyCache.find({ fullname });

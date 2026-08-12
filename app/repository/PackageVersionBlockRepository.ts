@@ -43,7 +43,7 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     return null;
   }
 
-  async listPackageVersionBlocks(packageId: string) {
+  async listPackageVersionBlocks(packageId: string): Promise<PackageVersionBlockModel[]> {
     return await this.PackageVersionBlock.find({ packageId });
   }
 
