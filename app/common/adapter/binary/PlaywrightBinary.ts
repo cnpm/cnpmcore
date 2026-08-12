@@ -7,6 +7,7 @@ import { BinaryType } from '../../enum/Binary.ts';
 import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
+const PLAYWRIGHT_CLI_PACKAGE_URL = 'https://registry.npmjs.com/@playwright%2fcli/latest';
 // playwright.azureedge.net is deprecated and returns 400 for the new
 // `builds/cft/*` namespace; cdn.playwright.dev serves both the legacy
 // `builds/*` and the CFT paths. See https://github.com/cnpm/cnpmcore/issues/1033
@@ -330,7 +331,12 @@ export class PlaywrightBinary extends AbstractBinary {
 
   async fetch(dir: string): Promise<FetchResult | undefined> {
     if (!this.dirItems) {
-      const packageData = await this.requestJSON(PACKAGE_URL);
+      const [packageData, playwrightCliPackageData] = await Promise.all([
+        this.requestJSON(PACKAGE_URL),
+        this.requestJSON(PLAYWRIGHT_CLI_PACKAGE_URL).catch((err) => {
+          this.logger.warn('[PlaywrightBinary.fetch:error] @playwright/cli package data request failed: %s', err);
+        }),
+      ]);
       const nowDateISO = new Date().toISOString();
       const buildDirs: BinaryItem[] = [];
       for (const browserName of Object.keys(DOWNLOAD_PATHS)) {
@@ -386,6 +392,14 @@ export class PlaywrightBinary extends AbstractBinary {
         .filter((version) => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
         // select recently update 20 items
         .slice(-20);
+      // @playwright/cli can pin an alpha playwright-core release. Include that
+      // exact version when discovering browser revisions without mirroring all
+      // daily alpha driver archives.
+      const browserPackageVersions = new Set(packageVersions);
+      const cliPlaywrightCoreVersion = playwrightCliPackageData?.dependencies?.['playwright-core'];
+      if (typeof cliPlaywrightCoreVersion === 'string') {
+        browserPackageVersions.add(cliPlaywrightCoreVersion);
+      }
       // Add driver to dirItems
       this.dirItems['/builds/driver/'] = [];
       const hasBetaVersions = packageVersions.some((version) => version.includes('-beta-'));
@@ -425,7 +439,7 @@ export class PlaywrightBinary extends AbstractBinary {
         revisionOverrides?: Record<string, string>;
       }[] = [];
       await Promise.all(
-        packageVersions.map((version) =>
+        Array.from(browserPackageVersions, (version) =>
           this.requestJSON(`https://unpkg.com/playwright-core@${version}/browsers.json`)
             .then((data) => {
               // browsers: [

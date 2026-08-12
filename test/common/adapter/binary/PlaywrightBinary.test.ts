@@ -5,6 +5,15 @@ import { app } from '@eggjs/mock/bootstrap';
 import { PlaywrightBinary } from '../../../../app/common/adapter/binary/PlaywrightBinary.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 
+const PLAYWRIGHT_CLI_PACKAGE_URL = 'https://registry.npmjs.com/@playwright%2fcli/latest';
+
+function mockPlaywrightCli(data: Record<string, unknown> = {}) {
+  app.mockHttpclient(PLAYWRIGHT_CLI_PACKAGE_URL, 'GET', {
+    data,
+    persist: false,
+  });
+}
+
 describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
   let binary: PlaywrightBinary;
   beforeEach(async () => {
@@ -17,6 +26,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
         persist: false,
       });
+      mockPlaywrightCli();
       app
         .mockAgent()
         .get('https://unpkg.com')
@@ -48,6 +58,7 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
         persist: false,
       });
+      mockPlaywrightCli();
       app
         .mockAgent()
         .get('https://unpkg.com')
@@ -113,11 +124,88 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       assert.equal(linuxArm64.url, 'https://cdn.playwright.dev/builds/chromium/1155/chromium-linux-arm64.zip');
     });
 
+    // https://github.com/cnpm/cnpmcore/issues/1123
+    it('should mirror the alpha browser version required by @playwright/cli', async () => {
+      const cliPlaywrightVersion = '1.63.0-alpha-2026-08-05';
+      app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
+        data: {
+          versions: {
+            '1.62.1': {},
+            [cliPlaywrightVersion]: {},
+          },
+        },
+        persist: false,
+      });
+      mockPlaywrightCli({
+        dependencies: {
+          'playwright-core': cliPlaywrightVersion,
+        },
+      });
+
+      const mockAgent = app.mockAgent().get('https://unpkg.com');
+      mockAgent
+        .intercept({
+          method: 'GET',
+          path: '/playwright-core@1.62.1/browsers.json',
+        })
+        .reply(200, {
+          browsers: [
+            {
+              name: 'chromium',
+              revision: '1234',
+              browserVersion: '151.0.7922.34',
+            },
+            {
+              name: 'chromium-headless-shell',
+              revision: '1234',
+              browserVersion: '151.0.7922.34',
+            },
+          ],
+        });
+      mockAgent
+        .intercept({
+          method: 'GET',
+          path: `/playwright-core@${cliPlaywrightVersion}/browsers.json`,
+        })
+        .reply(200, {
+          browsers: [
+            {
+              name: 'chromium',
+              revision: '1237',
+              browserVersion: '152.0.7977.8',
+            },
+            {
+              name: 'chromium-headless-shell',
+              revision: '1237',
+              browserVersion: '152.0.7977.8',
+            },
+          ],
+        });
+
+      const cftResult = await binary.fetch('/builds/cft/');
+      assert.ok(cftResult);
+      assert.ok(
+        cftResult.items.some((item) => item.name === '152.0.7977.8/'),
+        'cft/ should include the browser version pinned by @playwright/cli',
+      );
+
+      const linuxResult = await binary.fetch('/builds/cft/152.0.7977.8/linux64/');
+      assert.ok(linuxResult);
+      assert.deepEqual(linuxResult.items.map((item) => item.name).sort(), [
+        'chrome-headless-shell-linux64.zip',
+        'chrome-linux64.zip',
+      ]);
+      for (const item of linuxResult.items) {
+        assert.match(item.url, /^https:\/\/cdn\.playwright\.dev\/builds\/cft\/152\.0\.7977\.8\/linux64\//);
+      }
+    });
+
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
         persist: false,
       });
+      mockPlaywrightCli();
       app
         .mockAgent()
         .get('https://unpkg.com')
