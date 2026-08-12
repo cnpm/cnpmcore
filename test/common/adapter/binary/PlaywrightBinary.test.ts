@@ -201,6 +201,29 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       }
     });
 
+    it('should fall back to stable versions when @playwright/cli metadata is unavailable', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
+        persist: false,
+      });
+      app.mockHttpclient(PLAYWRIGHT_CLI_PACKAGE_URL, () => {
+        throw new Error('mock @playwright/cli metadata request error');
+      });
+      app
+        .mockAgent()
+        .get('https://unpkg.com')
+        .intercept({
+          method: 'GET',
+          path: /browsers\.json/,
+        })
+        .reply(200, await TestUtil.readFixturesFile('unpkg.com/playwright-core-browsers.json'))
+        .persist();
+
+      const result = await binary.fetch('/builds/cft/');
+      assert.ok(result);
+      assert.ok(result.items.some((item) => item.name === '133.0.6943.16/'));
+    });
+
     it('should fetch subdir: /builds/, /builds/chromium/ work', async () => {
       app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.com/playwright-core.json'),
