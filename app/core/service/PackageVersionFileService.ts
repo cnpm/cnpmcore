@@ -24,6 +24,11 @@ import type { PackageManagerService } from './PackageManagerService.ts';
 export const UNPKG_WHITE_LIST_URL = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60_000;
 
+interface ExtractedPackageFile {
+  filename: string;
+  localFile: string;
+}
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -223,18 +228,19 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: (entry: tar.ReadEntry) => {
-          const filename = this.#formatTarEntryFilename(entry);
-          if (!filename) return;
-          if (this.#matchReadmeFilename(filename)) {
-            readmeFilenames.push(filename);
-          }
-        },
       });
+      const extractedFiles = await this.#listExtractedPackageFiles(tmpdir);
+      for (const file of extractedFiles) {
+        if (this.#matchReadmeFilename(file.filename)) {
+          readmeFilenames.push(file.filename);
+        }
+      }
       if (readmeFilenames.length > 0) {
         const readmeFilename = this.#preferMarkdownReadme(readmeFilenames);
-        const readmeFile = join(tmpdir, readmeFilename);
-        await this.packageManagerService.savePackageReadme(pkg, readmeFile);
+        const readmeFile = extractedFiles.find((file) => file.filename === readmeFilename);
+        if (readmeFile) {
+          await this.packageManagerService.savePackageReadme(pkg, readmeFile.localFile);
+        }
       }
     } catch (err) {
       this.logger.warn(
@@ -292,18 +298,15 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
-        onentry: (entry: tar.ReadEntry) => {
-          const filename = this.#formatTarEntryFilename(entry);
-          if (!filename) return;
-          paths.push(`/${filename}`);
-          if (this.#matchReadmeFilename(filename)) {
-            readmeFilenames.push(filename);
-          }
-        },
       });
-      for (const path of paths) {
-        const localFile = join(tmpdir, path);
-        const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, localFile);
+      const extractedFiles = await this.#listExtractedPackageFiles(tmpdir);
+      for (const extractedFile of extractedFiles) {
+        const path = `/${extractedFile.filename}`;
+        paths.push(path);
+        if (this.#matchReadmeFilename(extractedFile.filename)) {
+          readmeFilenames.push(extractedFile.filename);
+        }
+        const file = await this.#savePackageVersionFile(pkg, pkgVersion, path, extractedFile.localFile);
         files.push(file);
       }
       this.logger.info(
@@ -315,8 +318,10 @@ export class PackageVersionFileService extends AbstractService {
       );
       if (readmeFilenames.length > 0) {
         const readmeFilename = this.#preferMarkdownReadme(readmeFilenames);
-        const readmeFile = join(tmpdir, readmeFilename);
-        await this.packageManagerService.savePackageVersionReadme(pkgVersion, readmeFile);
+        const readmeFile = extractedFiles.find((file) => file.filename === readmeFilename);
+        if (readmeFile) {
+          await this.packageManagerService.savePackageVersionReadme(pkgVersion, readmeFile.localFile);
+        }
       }
       return files;
     } catch (err) {
@@ -396,20 +401,32 @@ export class PackageVersionFileService extends AbstractService {
     };
   }
 
-  #formatTarEntryFilename(entry: tar.ReadEntry) {
-    if (entry.type !== 'File') return;
-    // ignore hidden dir
-    if (entry.path.includes('/./')) return;
-    // https://github.com/cnpm/cnpmcore/issues/452#issuecomment-1570077310
-    // strip first dir, e.g.: 'package/', 'lodash-es/'
-    const filename = entry.path.split('/').slice(1).join('/');
-    return filename;
+  async #listExtractedPackageFiles(rootDir: string, pathSegments: string[] = []): Promise<ExtractedPackageFile[]> {
+    const currentDir = join(rootDir, ...pathSegments);
+    const entries = await fs.readdir(currentDir, { withFileTypes: true });
+    entries.sort((a, b) => a.name.localeCompare(b.name));
+
+    const files: ExtractedPackageFile[] = [];
+    for (const entry of entries) {
+      const entryPathSegments = [...pathSegments, entry.name];
+      const localFile = join(rootDir, ...entryPathSegments);
+      const stat = await fs.lstat(localFile);
+      if (stat.isDirectory()) {
+        files.push(...(await this.#listExtractedPackageFiles(rootDir, entryPathSegments)));
+      } else if (stat.isFile()) {
+        files.push({
+          filename: entryPathSegments.join('/'),
+          localFile,
+        });
+      }
+    }
+    return files;
   }
 
   #matchReadmeFilename(filename: string) {
     // support README,README.*
     // https://github.com/npm/read-package-json/blob/main/lib/read-json.js#L280
-    return /^README(\.\w{1,20}|$)/i.test(filename);
+    return /^README(\.\w{1,20})?$/i.test(filename);
   }
 
   // https://github.com/npm/read-package-json/blob/main/lib/read-json.js#L280

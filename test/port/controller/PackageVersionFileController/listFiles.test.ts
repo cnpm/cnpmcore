@@ -8,6 +8,20 @@ import { PackageVersionFileService } from '../../../../app/core/service/PackageV
 import { DATABASE_TYPE, database } from '../../../../config/database.ts';
 import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
+interface DirectoryListing {
+  path: string;
+  type: string;
+  files: Array<{ path: string; [key: string]: unknown }>;
+}
+
+function assertDirectoryListing(actual: DirectoryListing, expected: DirectoryListing) {
+  const sortByPath = (listing: DirectoryListing) => ({
+    ...listing,
+    files: [...listing.files].sort((a, b) => a.path.localeCompare(b.path)),
+  });
+  assert.deepEqual(sortByPath(actual), sortByPath(expected));
+}
+
 describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', () => {
   let publisher: TestUser;
   let adminUser: TestUser;
@@ -115,7 +129,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
-      assert.deepEqual(res.body, {
+      assertDirectoryListing(res.body, {
         path: '/',
         type: 'directory',
         files: [
@@ -144,7 +158,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
-      assert.deepEqual(res.body, {
+      assertDirectoryListing(res.body, {
         path: '/',
         type: 'directory',
         files: [
@@ -197,7 +211,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       if (database.type === DATABASE_TYPE.PostgreSQL) {
         assert.equal(res.body.files.length, 20);
       } else {
-        assert.deepEqual(res.body, {
+        assertDirectoryListing(res.body, {
           path: '/',
           type: 'directory',
           files: [
@@ -351,7 +365,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       if (database.type === DATABASE_TYPE.PostgreSQL) {
         assert.equal(res.body.files.length, 10);
       } else {
-        assert.deepEqual(res.body, {
+        assertDirectoryListing(res.body, {
           path: '/id',
           type: 'directory',
           files: [
@@ -440,7 +454,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       res = await app.httpRequest().get(`/${pkg.name}/1.0.0/files/id/legalPerson/?meta`);
       assert.equal(res.status, 200);
       // console.log(JSON.stringify(res.body, null, 2));
-      assert.deepEqual(res.body, {
+      assertDirectoryListing(res.body, {
         path: '/id/legalPerson',
         type: 'directory',
         files: [
@@ -459,7 +473,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
         file.lastModified = '2024-05-18T16:00:18.307Z';
       }
       // console.log(JSON.stringify(res.body, null, 2));
-      assert.deepEqual(res.body, {
+      assertDirectoryListing(res.body, {
         path: '/id/legalPerson/be',
         type: 'directory',
         files: [
@@ -542,7 +556,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
-      assert.deepEqual(res.body, {
+      assertDirectoryListing(res.body, {
         path: '/',
         type: 'directory',
         files: [
@@ -561,7 +575,7 @@ describe('test/port/controller/PackageVersionFileController/listFiles.test.ts', 
       assert.equal(res.headers['cache-control'], 'public, s-maxage=600, max-age=60');
       assert.equal(res.headers.vary, 'Origin, Accept, Accept-Encoding');
       assert.equal(res.headers['cross-origin-resource-policy'], 'cross-origin');
-      assert.deepEqual(res.body, {
+      assertDirectoryListing(res.body, {
         path: '/',
         type: 'directory',
         files: [
