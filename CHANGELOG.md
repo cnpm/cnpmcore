@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.34.3 (2026-08-16)</small>
+
+* fix(playwright): mirror browsers required by @playwright/cli (#1125) ([60ae121](https://github.com/cnpm/cnpmcore/commit/60ae121)), closes [#1125](https://github.com/cnpm/cnpmcore/issues/1125) [#1123](https://github.com/cnpm/cnpmcore/issues/1123)
+* chore(deps): update vite-plus related packages to v0.2.8 (#1120) ([d8b68d9](https://github.com/cnpm/cnpmcore/commit/d8b68d9)), closes [#1120](https://github.com/cnpm/cnpmcore/issues/1120)
+
 ## <small>4.34.2 (2026-08-05)</small>
 
 * fix: treat upstream 404 as package deleted when syncing (#1119) ([ae57494](https://github.com/cnpm/cnpmcore/commit/ae57494)), closes [#1119](https://github.com/cnpm/cnpmcore/issues/1119) [#739](https://github.com/cnpm/cnpmcore/issues/739) [#1115](https://github.com/cnpm/cnpmcore/issues/1115)
