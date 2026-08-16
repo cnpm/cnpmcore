@@ -48,7 +48,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
     );
   }
 
-  async query(packageId: string, start: Date, end: Date) {
+  async query(packageId: string, start: Date, end: Date): Promise<PackageVersionDownloadModel[]> {
     const startYearMonth = start.getFullYear() * 100 + start.getMonth() + 1;
     const endYearMonth = end.getFullYear() * 100 + end.getMonth() + 1;
     const models = await this.PackageVersionDownload.find({

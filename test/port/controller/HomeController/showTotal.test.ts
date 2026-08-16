@@ -133,8 +133,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: yesterdayYearMonthInt,
         });
       }
-      // @ts-expect-error dynamic key
-      row[`d${yesterdayDate}`] = 1;
+      Reflect.set(row, `d${yesterdayDate}`, 1);
       await row.save();
 
       row = await PackageVersionDownload.findOne({
@@ -148,8 +147,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: lastWeekYearMonthInt,
         });
       }
-      // @ts-expect-error dynamic key
-      row[`d${lastWeekDate}`] = 1;
+      Reflect.set(row, `d${lastWeekDate}`, 1);
       await row.save();
 
       row = await PackageVersionDownload.findOne({
@@ -163,8 +161,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: lastMonthYearMonthInt,
         });
       }
-      // @ts-expect-error dynamic key
-      row[`d${lastMonthDate}`] = 1;
+      Reflect.set(row, `d${lastMonthDate}`, 1);
       await row.save();
 
       row = await PackageVersionDownload.findOne({
@@ -178,8 +175,7 @@ describe('test/port/controller/HomeController/showTotal.test.ts', () => {
           yearMonth: lastYearYearMonthInt,
         });
       }
-      // @ts-expect-error dynamic key
-      row[`d${lastYearDate}`] = 1;
+      Reflect.set(row, `d${lastYearDate}`, 1);
       await row.save();
 
       await app.runSchedule(UpdateTotalDataPath);
