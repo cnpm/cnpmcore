@@ -43,8 +43,8 @@ smith3816@gmail.com
 elrrrrrrr@gmail.com
 ```
 
-We will acknowledge your report within 48 hours,
-and will send a more detailed response within 72 hours indicating the next steps in handling it.
+We will acknowledge your report and process it as soon as possible,
+then reply with the next steps in handling it.
 After that first reply,
 the security team will keep you informed of the progress towards a fix and full announcement,
 and may ask for additional information or guidance.
