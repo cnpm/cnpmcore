@@ -8,7 +8,7 @@ We give security updates to these versions:
 | -------- | ------------------ |
 | >= 3.0.0 | :white_check_mark: |
 
-## Reporting a Vulnerability
+## Report a Vulnerability
 
 The cnpmcore team and the community give full attention to all security vulnerabilities.
 Thank you for your work to make our open source software more secure.
@@ -40,7 +40,7 @@ Give as much of this information as you can:
 - The impact of the issue.
 - The method that an attacker can use to exploit the issue.
 
-### Alternative: email
+### Alternative: Email
 
 If you cannot use GitHub Security Advisories, send an email to the cnpmcore security team:
 
