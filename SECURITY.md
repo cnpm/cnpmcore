@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Currently being supported with security updates.
+We give security updates to these versions:
 
 | Version  | Supported          |
 | -------- | ------------------ |
@@ -10,9 +10,10 @@ Currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-The cnpmcore OSS team and community take all security vulnerabilities seriously.
-Thank you for improving the security of our open source software.
-We appreciate your efforts and responsible disclosure and will make every effort to acknowledge your contributions.
+The cnpmcore team and the community give full attention to all security vulnerabilities.
+Thank you for your work to make our open source software more secure.
+We value your effort and your responsible disclosure.
+We will give you credit for your contribution.
 
 **Do not report security vulnerabilities in public GitHub issues, discussions, or pull requests.**
 
@@ -56,17 +57,18 @@ We will then tell you the next steps.
 The security team will tell you about the progress of the fix and the announcement.
 The team can also ask you for more information.
 
-Report security vulnerabilities in third-party modules to the person or team maintaining the module.
+Report a vulnerability in a third-party module to the person or the team that maintains the module.
 
 ## Disclosure Policy
 
-When the security team receives a security bug report, they will assign it
-to a primary handler. This person will coordinate the fix and release
-process, involving the following steps:
+The security team assigns each report to a primary handler.
+The primary handler controls the fix and the release.
+The handler does these steps:
 
-- Confirm the problem and determine the affected versions.
-- Audit code to find any potential similar problems.
-- Prepare fixes for all releases still under maintenance. These fixes
-  will be released as fast as possible to NPM.
+- Confirm the problem.
+- Find the versions that have the problem.
+- Examine the code to find related problems.
+- Prepare a fix for each release that we maintain.
+- Release the fixes to NPM as soon as possible.
 - Publish a GitHub Security Advisory after we release the fix.
   Give credit to the reporter, unless the reporter asks to stay anonymous.
