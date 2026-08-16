@@ -14,27 +14,34 @@ The cnpmcore OSS team and community take all security vulnerabilities seriously.
 Thank you for improving the security of our open source software.
 We appreciate your efforts and responsible disclosure and will make every effort to acknowledge your contributions.
 
-**Please do not report security vulnerabilities through public GitHub issues, discussions, or pull requests.**
+**Do not report security vulnerabilities in public GitHub issues, discussions, or pull requests.**
 
 ### Preferred: GitHub Security Advisories
 
-Report vulnerabilities through GitHub's private vulnerability reporting:
+Send your report with GitHub private vulnerability reporting:
 
 https://github.com/cnpm/cnpmcore/security/advisories/new
 
-The report stays private between you and the maintainers, keeps the whole discussion in one place,
-and lets us credit you on the published advisory and request a CVE when the fix ships.
+A private report has these advantages:
 
-Include as much of the following as you can:
+- Only you and the maintainers can read the report.
+- All of the discussion stays in one place.
+- We can give you credit in the advisory when we publish it.
+- We can request a CVE when we release the fix.
 
-- The type of issue, and the affected version or commit.
-- Full paths of the source files related to the issue.
-- Step-by-step instructions to reproduce it, including any proof-of-concept or exploit code.
-- The impact of the issue, and how an attacker might exploit it.
+Give as much of this information as you can:
+
+- The type of the issue.
+- The version or the commit that has the issue.
+- The full path of each source file that relates to the issue.
+- The steps to reproduce the issue.
+- The proof-of-concept code or the exploit code, if you have it.
+- The impact of the issue.
+- The method that an attacker can use to exploit the issue.
 
 ### Alternative: email
 
-If you cannot use GitHub Security Advisories, email the cnpmcore security team at:
+If you cannot use GitHub Security Advisories, send an email to the cnpmcore security team:
 
 ```
 fengmk2+cnpmcoresecurity@gmail.com
@@ -43,11 +50,11 @@ smith3816@gmail.com
 elrrrrrrr@gmail.com
 ```
 
-We will acknowledge your report and process it as soon as possible,
-then reply with the next steps in handling it.
-After that first reply,
-the security team will keep you informed of the progress towards a fix and full announcement,
-and may ask for additional information or guidance.
+We will confirm that we received your report.
+We will process the report as soon as possible.
+We will then tell you the next steps.
+The security team will tell you about the progress of the fix and the announcement.
+The team can also ask you for more information.
 
 Report security vulnerabilities in third-party modules to the person or team maintaining the module.
 
@@ -61,5 +68,5 @@ process, involving the following steps:
 - Audit code to find any potential similar problems.
 - Prepare fixes for all releases still under maintenance. These fixes
   will be released as fast as possible to NPM.
-- Publish a GitHub Security Advisory once the fix is out, crediting the reporter
-  unless they ask to stay anonymous.
+- Publish a GitHub Security Advisory after we release the fix.
+  Give credit to the reporter, unless the reporter asks to stay anonymous.
