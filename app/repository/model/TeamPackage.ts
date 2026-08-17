@@ -8,20 +8,20 @@ export class TeamPackage extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  teamPackageId: string;
+  declare teamPackageId: string;
 
   @Attribute(DataTypes.STRING(24))
-  teamId: string;
+  declare teamId: string;
 
   @Attribute(DataTypes.STRING(24))
-  packageId: string;
+  declare packageId: string;
 }

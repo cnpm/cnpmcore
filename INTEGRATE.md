@@ -45,7 +45,7 @@ npm i cnpmcore
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
     "baseUrl": "./",
-    "target": "ES2021"
+    "target": "ES2022"
   }
 }
 ```

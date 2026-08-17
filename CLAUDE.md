@@ -162,6 +162,7 @@ Key `AbstractController` methods:
 - ORM definitions using Leoric
 - Database schema mapping
 - No business logic
+- Every `@Attribute` property must be declared with `declare` (e.g. `declare packageId: string;`). The build targets ES2022, so a plain declaration emits a real class field that shadows Leoric's attribute accessor and makes the model throw `LeoricClassFieldError` at runtime. `declare` erases the field while keeping the decorator metadata.
 
 **Model-Entity Bridge** (`app/repository/util/`):
 
@@ -386,7 +387,7 @@ test/                # Test files (mirrors app/ structure)
 - `config/database.ts` - Database connection settings
 - `config/binaries.ts` - Binary package mirror configurations
 - `.env` - Environment-specific variables (copy from `.env.example`)
-- `tsconfig.json` - TypeScript settings (target: ES2021 for Leoric compatibility)
+- `tsconfig.json` - TypeScript settings (target: ES2022, which turns on `useDefineForClassFields`; see the Model Layer note on `declare`)
 
 ## Development Workflow
 

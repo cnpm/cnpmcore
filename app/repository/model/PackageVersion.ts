@@ -10,51 +10,51 @@ export class PackageVersion extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  packageId: string;
+  declare packageId: string;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageVersionId: string;
+  declare packageVersionId: string;
 
   // https://docs.npmjs.com/cli/v6/using-npm/semver#coercion
   // up to the max permitted length (256 characters)
   @Attribute(DataTypes.STRING(256))
-  version: string;
+  declare version: string;
 
   @EntityProperty('abbreviatedDist.distId')
   @Attribute(DataTypes.STRING(24))
-  abbreviatedDistId: string;
+  declare abbreviatedDistId: string;
 
   @EntityProperty('manifestDist.distId')
   @Attribute(DataTypes.STRING(24))
-  manifestDistId: string;
+  declare manifestDistId: string;
 
   @EntityProperty('tarDist.distId')
   @Attribute(DataTypes.STRING(24))
-  tarDistId: string;
+  declare tarDistId: string;
 
   @EntityProperty('readmeDist.distId')
   @Attribute(DataTypes.STRING(24))
-  readmeDistId: string;
+  declare readmeDistId: string;
 
   @Attribute(DataTypes.DATE)
-  publishTime: Date;
+  declare publishTime: Date;
 
   @Attribute(DataTypes.STRING)
-  paddingVersion: string;
+  declare paddingVersion: string;
 
   @Attribute(DataTypes.BOOLEAN)
-  isPreRelease: boolean;
+  declare isPreRelease: boolean;
 
   static beforeCreate(instance: { version: string; paddingVersion: string; isPreRelease: boolean }) {
     if (!instance.paddingVersion) {

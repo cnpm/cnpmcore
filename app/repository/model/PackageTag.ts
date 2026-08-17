@@ -8,27 +8,27 @@ export class PackageTag extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  packageId: string;
+  declare packageId: string;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageTagId: string;
+  declare packageTagId: string;
 
   @Attribute(DataTypes.STRING(214))
-  tag: string;
+  declare tag: string;
 
   // https://docs.npmjs.com/cli/v6/using-npm/semver#coercion
   // up to the max permitted length (256 characters)
   @Attribute(DataTypes.STRING(256))
-  version: string;
+  declare version: string;
 }

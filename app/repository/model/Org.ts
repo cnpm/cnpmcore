@@ -8,20 +8,20 @@ export class Org extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  orgId: string;
+  declare orgId: string;
 
   @Attribute(DataTypes.STRING(214))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(10240), { allowNull: true })
-  description: string;
+  declare description: string;
 }

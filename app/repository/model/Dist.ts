@@ -8,31 +8,31 @@ export class Dist extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  distId: string;
+  declare distId: string;
 
   @Attribute(DataTypes.STRING(100))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(512))
-  path: string;
+  declare path: string;
 
   @Attribute(DataTypes.INTEGER(11).UNSIGNED)
-  size: number;
+  declare size: number;
 
   @Attribute(DataTypes.STRING(512))
-  shasum: string;
+  declare shasum: string;
 
   @Attribute(DataTypes.STRING(512))
-  integrity: string;
+  declare integrity: string;
 }

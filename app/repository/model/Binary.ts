@@ -8,34 +8,34 @@ export class Binary extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  binaryId: string;
+  declare binaryId: string;
 
   @Attribute(DataTypes.STRING(50))
-  category: string;
+  declare category: string;
 
   @Attribute(DataTypes.STRING(700))
-  parent: string;
+  declare parent: string;
 
   @Attribute(DataTypes.STRING(200))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.BOOLEAN)
-  isDir: boolean;
+  declare isDir: boolean;
 
   @Attribute(DataTypes.INTEGER(11).UNSIGNED)
-  size: number;
+  declare size: number;
 
   @Attribute(DataTypes.STRING(100))
-  date: string;
+  declare date: string;
 }

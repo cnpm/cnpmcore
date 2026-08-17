@@ -8,28 +8,28 @@ export class PackageDep extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  packageVersionId: string;
+  declare packageVersionId: string;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageDepId: string;
+  declare packageDepId: string;
 
   @Attribute(DataTypes.STRING(214))
-  scope: string;
+  declare scope: string;
 
   @Attribute(DataTypes.STRING(214))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(100))
-  spec: string;
+  declare spec: string;
 }
