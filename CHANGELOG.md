@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.35.0 (2026-08-18)
+
+* feat: build ES2022 artifacts (#1128) ([c0b81ef](https://github.com/cnpm/cnpmcore/commit/c0b81ef)), closes [#1128](https://github.com/cnpm/cnpmcore/issues/1128)
+* chore(deps): update vite-plus related packages to v0.2.9 (#1122) ([8e48d0a](https://github.com/cnpm/cnpmcore/commit/8e48d0a)), closes [#1122](https://github.com/cnpm/cnpmcore/issues/1122)
+* docs: guide security reports to GitHub advisories (#1127) ([b99bf2d](https://github.com/cnpm/cnpmcore/commit/b99bf2d)), closes [#1127](https://github.com/cnpm/cnpmcore/issues/1127)
+* Merge commit from fork ([d98e316](https://github.com/cnpm/cnpmcore/commit/d98e316))
+
 ## <small>4.34.3 (2026-08-16)</small>
 
 * fix(playwright): mirror browsers required by @playwright/cli (#1125) ([60ae121](https://github.com/cnpm/cnpmcore/commit/60ae121)), closes [#1125](https://github.com/cnpm/cnpmcore/issues/1125) [#1123](https://github.com/cnpm/cnpmcore/issues/1123)
