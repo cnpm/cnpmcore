@@ -8,38 +8,38 @@ export class User extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  userId: string;
+  declare userId: string;
 
   @Attribute(DataTypes.STRING(100))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(400))
-  email: string;
+  declare email: string;
 
   @Attribute(DataTypes.STRING(100))
-  passwordSalt: string;
+  declare passwordSalt: string;
 
   @Attribute(DataTypes.STRING(512))
-  passwordIntegrity: string;
+  declare passwordIntegrity: string;
 
   @Attribute(DataTypes.STRING(100))
-  ip: string;
+  declare ip: string;
 
   // cnpm private user or not, `false` meaning is the npm public registry user
   @Attribute(DataTypes.BOOLEAN)
-  isPrivate: boolean;
+  declare isPrivate: boolean;
 
   @Attribute(DataTypes.JSONB, { allowNull: true })
-  scopes: string[];
+  declare scopes: string[];
 }

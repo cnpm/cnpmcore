@@ -1,8 +1,9 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    // leoric only supports ES2021
-    "target": "ES2021",
+    // ES2022 turns on `useDefineForClassFields`, so leoric model attributes must be declared
+    // with `declare` (leoric >= 2.15.0 throws LeoricClassFieldError otherwise)
+    "target": "ES2022",
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
     "declaration": false,

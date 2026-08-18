@@ -9,34 +9,34 @@ export class Registry extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  registryId: string;
+  declare registryId: string;
 
   @Attribute(DataTypes.STRING(256))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(4096))
-  host: string;
+  declare host: string;
 
   @Attribute(DataTypes.STRING(4096), { name: 'change_stream' })
-  changeStream: string;
+  declare changeStream: string;
 
   @Attribute(DataTypes.STRING(4096), { name: 'user_prefix' })
-  userPrefix: string;
+  declare userPrefix: string;
 
   @Attribute(DataTypes.STRING(256))
-  type: RegistryType;
+  declare type: RegistryType;
 
   @Attribute(DataTypes.STRING(256), { name: 'auth_token' })
-  authToken?: string;
+  declare authToken?: string;
 }

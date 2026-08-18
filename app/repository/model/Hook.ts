@@ -9,39 +9,39 @@ export class Hook extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  hookId: string;
+  declare hookId: string;
 
   @Attribute(DataTypes.STRING(20))
-  type: HookType;
+  declare type: HookType;
 
   @Attribute(DataTypes.STRING(24))
-  ownerId: string;
+  declare ownerId: string;
 
   @Attribute(DataTypes.STRING(428))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(2048))
-  endpoint: string;
+  declare endpoint: string;
 
   @Attribute(DataTypes.STRING(200))
-  secret: string;
+  declare secret: string;
 
   @Attribute(DataTypes.STRING(24), {
     allowNull: true,
   })
-  latestTaskId: string;
+  declare latestTaskId: string;
 
   @Attribute(DataTypes.BOOLEAN)
-  enable: boolean;
+  declare enable: boolean;
 }

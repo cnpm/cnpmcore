@@ -8,34 +8,34 @@ export class PackageVersionBlock extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  packageId: string;
+  declare packageId: string;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageVersionBlockId: string;
+  declare packageVersionBlockId: string;
 
   @Attribute(DataTypes.STRING(256))
-  version: string;
+  declare version: string;
 
   @Attribute(DataTypes.TEXT(LENGTH_VARIANTS.long))
-  reason: string;
+  declare reason: string;
 
   // dependency isolation: 'buffer' = isolation buffer record (auto-releasable),
   // null = permanent block (existing semantics: security / manual / blacklist)
   @Attribute(DataTypes.STRING(16), { allowNull: true })
-  type: string | null;
+  declare type: string | null;
 
   // dependency isolation: buffer expiration time; auto-released after this when type='buffer'
   @Attribute(DataTypes.DATE, { allowNull: true })
-  expiredAt: Date | null;
+  declare expiredAt: Date | null;
 }

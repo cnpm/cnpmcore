@@ -8,28 +8,28 @@ export class PackageVersionManifest extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24))
-  packageId: string;
+  declare packageId: string;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageVersionId: string;
+  declare packageVersionId: string;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageVersionManifestId: string;
+  declare packageVersionManifestId: string;
 
   @Attribute(DataTypes.JSONB)
   // oxlint-disable-next-line typescript-eslint/no-explicit-any
-  manifest: any;
+  declare manifest: any;
 }

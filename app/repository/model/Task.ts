@@ -9,52 +9,52 @@ export class Task extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  taskId: string;
+  declare taskId: string;
 
   @Attribute(DataTypes.STRING(20))
-  type: TaskType;
+  declare type: TaskType;
 
   @Attribute(DataTypes.STRING(20))
-  state: TaskState;
+  declare state: TaskState;
 
   @Attribute(DataTypes.STRING(214))
-  targetName: string;
+  declare targetName: string;
 
   @Attribute(DataTypes.STRING(24))
-  authorId: string;
+  declare authorId: string;
 
   @Attribute(DataTypes.STRING(100))
-  authorIp: string;
+  declare authorIp: string;
 
   @Attribute(DataTypes.JSONB)
   // oxlint-disable-next-line typescript-eslint/no-explicit-any
-  data: any;
+  declare data: any;
 
   @Attribute(DataTypes.STRING(512))
-  logPath: string;
+  declare logPath: string;
 
   @Attribute(DataTypes.STRING(10))
-  logStorePosition: string;
+  declare logStorePosition: string;
 
   @Attribute(DataTypes.INTEGER)
-  attempts: number;
+  declare attempts: number;
 
   @Attribute(DataTypes.TEXT(LENGTH_VARIANTS.long))
-  error: string;
+  declare error: string;
 
   @Attribute(DataTypes.STRING(48), {
     unique: true,
   })
-  bizId: string;
+  declare bizId: string;
 }

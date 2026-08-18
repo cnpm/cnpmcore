@@ -8,54 +8,54 @@ export class Token extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  tokenId: string;
+  declare tokenId: string;
 
   @Attribute(DataTypes.STRING(20))
-  tokenMark: string;
+  declare tokenMark: string;
 
   @Attribute(DataTypes.STRING(200), {
     unique: true,
   })
-  tokenKey: string;
+  declare tokenKey: string;
 
   @Attribute(DataTypes.STRING(24))
-  userId: string;
+  declare userId: string;
 
   @Attribute(DataTypes.JSONB)
-  cidrWhitelist: string[];
+  declare cidrWhitelist: string[];
 
   @Attribute(DataTypes.BOOLEAN)
-  isReadonly: boolean;
+  declare isReadonly: boolean;
 
   @Attribute(DataTypes.BOOLEAN)
-  isAutomation: boolean;
+  declare isAutomation: boolean;
 
   @Attribute(DataTypes.STRING(255))
-  type: string;
+  declare type: string;
 
   @Attribute(DataTypes.STRING(255))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(255))
-  description: string;
+  declare description: string;
 
   @Attribute(DataTypes.JSONB)
-  allowedScopes: string[];
+  declare allowedScopes: string[];
 
   @Attribute(DataTypes.DATE)
-  expiredAt: Date;
+  declare expiredAt: Date;
 
   @Attribute(DataTypes.DATE)
-  lastUsedAt: Date;
+  declare lastUsedAt: Date;
 }

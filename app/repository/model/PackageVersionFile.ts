@@ -9,35 +9,35 @@ export class PackageVersionFile extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(24), {
     unique: true,
   })
-  packageVersionFileId: string;
+  declare packageVersionFileId: string;
 
   @Attribute(DataTypes.STRING(24))
-  packageVersionId: string;
+  declare packageVersionId: string;
 
   @Attribute(DataTypes.STRING(500))
-  directory: string;
+  declare directory: string;
 
   @Attribute(DataTypes.STRING(200))
-  name: string;
+  declare name: string;
 
   @Attribute(DataTypes.STRING(200))
-  contentType: string;
+  declare contentType: string;
 
   @EntityProperty('dist.distId')
   @Attribute(DataTypes.STRING(24))
-  distId: string;
+  declare distId: string;
 
   @Attribute(DataTypes.DATE)
-  mtime: Date;
+  declare mtime: Date;
 }

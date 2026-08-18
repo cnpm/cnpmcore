@@ -9,25 +9,25 @@ export class ProxyCache extends Bone {
     primary: true,
     autoIncrement: true,
   })
-  id: bigint;
+  declare id: bigint;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_create' })
-  createdAt: Date;
+  declare createdAt: Date;
 
   @Attribute(DataTypes.DATE, { name: 'gmt_modified' })
-  updatedAt: Date;
+  declare updatedAt: Date;
 
   @Attribute(DataTypes.STRING(214))
-  fullname: string;
+  declare fullname: string;
 
   @Attribute(DataTypes.STRING(30))
-  fileType: DIST_NAMES;
+  declare fileType: DIST_NAMES;
 
   @Attribute(DataTypes.STRING(512), {
     unique: true,
   })
-  filePath: string;
+  declare filePath: string;
 
   @Attribute(DataTypes.STRING(214))
-  version?: string;
+  declare version?: string;
 }
