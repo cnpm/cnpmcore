@@ -2415,11 +2415,51 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.match(
         log,
-        /Synced version 2.0.0 skipped, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+        /Synced version 2.0.0 skipped, large package version tgz size: 104857601, maximum tgz size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
       );
     });
 
-    it('should mock large package version size skip by unpackedSize when under threshold', async () => {
+    it('should use the greater limit for unpacked size', async () => {
+      app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+        persist: false,
+      });
+      mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
+        data: Buffer.from(
+          JSON.stringify({
+            maintainers: [{ name: 'fengmk2', email: 'fengmk2@gmai.com' }],
+            versions: {
+              '2.0.0': {
+                version: '2.0.0',
+                dist: {
+                  tarball: 'https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz',
+                  unpackedSize: 100 * 1024 * 1024 + 1,
+                },
+              },
+            },
+          }),
+        ),
+        res: {},
+        headers: {},
+      });
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 256 * 1024 * 1024);
+      mock(app.config.cnpmcore, 'largePackageVersionUnpackedSize', 80 * 1024 * 1024);
+      mock.error(PackageVersionFileService.prototype, 'isLargePackageVersionAllowed');
+      const name = 'cnpmcore-test-sync-deprecated';
+      await packageSyncerService.createTask(name);
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      assert.equal(task.targetName, name);
+      await packageSyncerService.executeTask(task);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      assert.match(log, /🟢 Synced updated 1 versions, removed 0 versions/);
+      assert.doesNotMatch(log, /Synced version 2.0.0 skipped/);
+      app.mockAgent().assertNoPendingInterceptors();
+    });
+
+    it('should skip package when unpacked size exceeds its limit', async () => {
       mock.error(NPMRegistry.prototype, 'downloadTarball');
       mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
         data: Buffer.from(
@@ -2437,7 +2477,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         headers: {},
       });
       mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
-      mock(app.config.cnpmcore, 'largePackageVersionSize', 100 * 1024 * 1024);
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 80 * 1024 * 1024);
+      mock(app.config.cnpmcore, 'largePackageVersionUnpackedSize', 100 * 1024 * 1024);
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
       const task = await packageSyncerService.findExecuteTask();
@@ -2450,7 +2491,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       // console.log(log);
       assert.match(
         log,
-        /Synced version 2.0.0 skipped, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+        /Synced version 2.0.0 skipped, large package version unpacked size: 104857601, maximum unpacked size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
       );
     });
 
@@ -2534,7 +2575,10 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.match(log, /🟢 Synced updated 1 versions, removed 0 versions/);
-      assert.match(log, /Synced version 2.0.0 size: 104857601 too large, it is allowed to sync by unpkg white list/);
+      assert.match(
+        log,
+        /Synced version 2.0.0 tgz size: 104857601 too large, it is allowed to sync by unpkg white list/,
+      );
       app.mockAgent().assertNoPendingInterceptors();
     });
 
@@ -2629,7 +2673,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       // large version should be skipped, not fail the task
-      assert.match(log, /Synced version 99.0.0-beta.0 skipped, large package version size: 104857601/);
+      assert.match(log, /Synced version 99.0.0-beta.0 skipped, large package version tgz size: 104857601/);
       // other versions should be synced successfully
       data = await packageManagerService.listPackageFullManifests('', name);
       assert(data.data?.versions['0.0.0']);

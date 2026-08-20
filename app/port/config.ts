@@ -163,9 +163,16 @@ export interface CnpmcoreConfig {
    */
   enableSyncUnpkgFilesWhiteList: boolean;
   /**
-   * allow large package version size, default is MAX_SAFE_INTEGER
+   * This value sets the maximum tgz file size for one package version.
+   * The default is Number.MAX_SAFE_INTEGER.
    */
   largePackageVersionSize: number;
+  /**
+   * This value sets the maximum unpacked size for one package version.
+   * The default is 256 MiB.
+   * The service uses the greater of the two size limits as the unpacked size limit.
+   */
+  largePackageVersionUnpackedSize: number;
   /**
    * When the number of oversized versions exceeds this threshold, the sync task will fail.
    * Oversized versions within the threshold will be skipped and the rest will still be synced.

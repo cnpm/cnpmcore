@@ -159,7 +159,8 @@ export type AbbreviatedKey =
 
 export interface DistType {
   tarball: string;
-  size: number;
+  size?: number;
+  unpackedSize?: number;
   shasum: string;
   integrity: string;
   [key: string]: unknown;
