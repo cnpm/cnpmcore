@@ -985,7 +985,12 @@ export class PackageManagerService extends AbstractService {
     );
   }
 
-  public async removePackageVersion(pkg: Package, pkgVersion: PackageVersion, skipRefreshPackageManifests = false) {
+  public async removePackageVersion(
+    pkg: Package,
+    pkgVersion: PackageVersion,
+    skipRefreshPackageManifests = false,
+    skipChangeEvent = false,
+  ) {
     const currentVersions = await this.packageRepository.listPackageVersionNames(pkg.packageId);
     // only one version, unpublish the package
     if (currentVersions.length === 1 && currentVersions[0] === pkgVersion.version) {
@@ -1010,6 +1015,8 @@ export class PackageManagerService extends AbstractService {
       }
       if (skipRefreshPackageManifests !== true) {
         await this.refreshPackageChangeVersionsToDists(pkg, undefined, [pkgVersion.version]);
+      }
+      if (skipChangeEvent !== true) {
         this.eventBus.emit(PACKAGE_VERSION_REMOVED, pkg.fullname, pkgVersion.version, updateTag);
       }
       return;
