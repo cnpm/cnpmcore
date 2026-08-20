@@ -167,7 +167,8 @@ export interface CnpmcoreConfig {
    */
   largePackageVersionSize: number;
   /**
-   * maximum unpacked size for a package version, default is 256MB
+   * maximum unpacked size for a package version, default is 256MB.
+   * largePackageVersionSize is used when it is greater than this value.
    */
   largePackageVersionUnpackedSize: number;
   /**

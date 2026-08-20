@@ -61,9 +61,10 @@ function getPackageVersionSizeLimitsExceeded(
   sizeLimit: number,
   unpackedSizeLimit: number,
 ) {
+  const effectiveUnpackedSizeLimit = Math.max(sizeLimit, unpackedSizeLimit);
   const sizes: PackageVersionSizeLimitExceeded[] = [
     { name: 'size', value: dist.size ?? 0, limit: sizeLimit },
-    { name: 'unpacked size', value: dist.unpackedSize ?? 0, limit: unpackedSizeLimit },
+    { name: 'unpacked size', value: dist.unpackedSize ?? 0, limit: effectiveUnpackedSizeLimit },
   ];
   return sizes.filter(({ value, limit }) => value > limit);
 }

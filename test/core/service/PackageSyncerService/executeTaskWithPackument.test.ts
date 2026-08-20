@@ -2396,7 +2396,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       );
     });
 
-    it('should sync unpacked package within the separate size limit', async () => {
+    it('should use tgz size limit as minimum unpacked size limit', async () => {
       app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
@@ -2419,8 +2419,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         res: {},
         headers: {},
       });
-      mock(app.config.cnpmcore, 'largePackageVersionSize', 80 * 1024 * 1024);
-      mock(app.config.cnpmcore, 'largePackageVersionUnpackedSize', 256 * 1024 * 1024);
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 256 * 1024 * 1024);
+      mock(app.config.cnpmcore, 'largePackageVersionUnpackedSize', 80 * 1024 * 1024);
       mock.error(PackageVersionFileService.prototype, 'isLargePackageVersionAllowed');
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
@@ -2454,6 +2454,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         headers: {},
       });
       mock(app.config.cnpmcore, 'enableSyncUnpkgFilesWhiteList', true);
+      mock(app.config.cnpmcore, 'largePackageVersionSize', 80 * 1024 * 1024);
       mock(app.config.cnpmcore, 'largePackageVersionUnpackedSize', 100 * 1024 * 1024);
       const name = 'cnpmcore-test-sync-deprecated';
       await packageSyncerService.createTask(name);
