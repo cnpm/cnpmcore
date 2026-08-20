@@ -2468,11 +2468,11 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert.match(
         log,
-        /Synced version 2.0.0 skipped, large package version size: 104857601, allow size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+        /Synced version 2.0.0 skipped, large package version tgz size: 104857601, maximum tgz size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
       );
     });
 
-    it('should sync unpacked package within the separate size limit', async () => {
+    it('should sync package when unpacked size is below its limit', async () => {
       app.mockHttpclient('https://registry.npmjs.org/Buffer/-/Buffer-0.0.0.tgz', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
         persist: false,
@@ -2512,7 +2512,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       app.mockAgent().assertNoPendingInterceptors();
     });
 
-    it('should mock large package version size skip by unpackedSize when under threshold', async () => {
+    it('should skip package when unpacked size exceeds its limit', async () => {
       mock.error(NPMRegistry.prototype, 'downloadTarball');
       mock.data(NPMRegistry.prototype, 'getFullManifestsBuffer', {
         data: Buffer.from(
@@ -2544,7 +2544,7 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       // console.log(log);
       assert.match(
         log,
-        /Synced version 2.0.0 skipped, large package version unpacked size: 104857601, allow unpacked size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
+        /Synced version 2.0.0 skipped, large package version unpacked size: 104857601, maximum unpacked size: 104857600, see https:\/\/github\.com\/cnpm\/unpkg-white-list/,
       );
     });
 
@@ -2628,7 +2628,10 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       const log = await TestUtil.readStreamToLog(stream);
       // console.log(log);
       assert.match(log, /🟢 Synced updated 1 versions, removed 0 versions/);
-      assert.match(log, /Synced version 2.0.0 size: 104857601 too large, it is allowed to sync by unpkg white list/);
+      assert.match(
+        log,
+        /Synced version 2.0.0 tgz size: 104857601 too large, it is allowed to sync by unpkg white list/,
+      );
       app.mockAgent().assertNoPendingInterceptors();
     });
 

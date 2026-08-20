@@ -51,7 +51,7 @@ interface syncDeletePkgOptions {
 }
 
 interface PackageVersionSizeLimitExceeded {
-  name: 'size' | 'unpacked size';
+  name: 'tgz size' | 'unpacked size';
   value: number;
   limit: number;
 }
@@ -63,14 +63,14 @@ function getPackageVersionSizeLimitsExceeded(
 ) {
   const effectiveUnpackedSizeLimit = Math.max(sizeLimit, unpackedSizeLimit);
   const sizes: PackageVersionSizeLimitExceeded[] = [
-    { name: 'size', value: dist.size ?? 0, limit: sizeLimit },
+    { name: 'tgz size', value: dist.size ?? 0, limit: sizeLimit },
     { name: 'unpacked size', value: dist.unpackedSize ?? 0, limit: effectiveUnpackedSizeLimit },
   ];
   return sizes.filter(({ value, limit }) => value > limit);
 }
 
 function formatPackageVersionSizeLimitsExceeded(exceededLimits: PackageVersionSizeLimitExceeded[]) {
-  return exceededLimits.map(({ name, value, limit }) => `${name}: ${value}, allow ${name}: ${limit}`).join(', ');
+  return exceededLimits.map(({ name, value, limit }) => `${name}: ${value}, maximum ${name}: ${limit}`).join(', ');
 }
 
 function formatPackageVersionSizesExceeded(exceededLimits: PackageVersionSizeLimitExceeded[]) {

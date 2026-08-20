@@ -163,12 +163,14 @@ export interface CnpmcoreConfig {
    */
   enableSyncUnpkgFilesWhiteList: boolean;
   /**
-   * maximum tgz file size for a package version, default is MAX_SAFE_INTEGER
+   * This value sets the maximum tgz file size for one package version.
+   * The default is Number.MAX_SAFE_INTEGER.
    */
   largePackageVersionSize: number;
   /**
-   * maximum unpacked size for a package version, default is 256MB.
-   * largePackageVersionSize is used when it is greater than this value.
+   * This value sets the maximum unpacked size for one package version.
+   * The default is 256 MiB.
+   * The service uses the greater of the two size limits as the unpacked size limit.
    */
   largePackageVersionUnpackedSize: number;
   /**
