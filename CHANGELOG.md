@@ -1,5 +1,9 @@
 # Changelog
 
+## <small>4.35.1 (2026-08-20)</small>
+
+* fix: separate tgz and unpacked package size limits (#1136) ([e4232f3](https://github.com/cnpm/cnpmcore/commit/e4232f3)), closes [#1136](https://github.com/cnpm/cnpmcore/issues/1136)
+
 ## 4.35.0 (2026-08-18)
 
 * feat: build ES2022 artifacts (#1128) ([c0b81ef](https://github.com/cnpm/cnpmcore/commit/c0b81ef)), closes [#1128](https://github.com/cnpm/cnpmcore/issues/1128)
