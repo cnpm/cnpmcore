@@ -50,6 +50,32 @@ interface syncDeletePkgOptions {
   data: Buffer;
 }
 
+interface PackageVersionSizeLimitExceeded {
+  name: 'size' | 'unpacked size';
+  value: number;
+  limit: number;
+}
+
+function getPackageVersionSizeLimitsExceeded(
+  dist: NonNullable<PackageJSONType['dist']>,
+  sizeLimit: number,
+  unpackedSizeLimit: number,
+) {
+  const sizes: PackageVersionSizeLimitExceeded[] = [
+    { name: 'size', value: dist.size ?? 0, limit: sizeLimit },
+    { name: 'unpacked size', value: dist.unpackedSize ?? 0, limit: unpackedSizeLimit },
+  ];
+  return sizes.filter(({ value, limit }) => value > limit);
+}
+
+function formatPackageVersionSizeLimitsExceeded(exceededLimits: PackageVersionSizeLimitExceeded[]) {
+  return exceededLimits.map(({ name, value, limit }) => `${name}: ${value}, allow ${name}: ${limit}`).join(', ');
+}
+
+function formatPackageVersionSizesExceeded(exceededLimits: PackageVersionSizeLimitExceeded[]) {
+  return exceededLimits.map(({ name, value }) => `${name}: ${value}`).join(', ');
+}
+
 function isoNow() {
   return new Date().toISOString();
 }
@@ -931,14 +957,21 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         logs = [];
         continue;
       }
-      const size = dist.size ?? dist.unpackedSize;
-      if (size && size > this.config.cnpmcore.largePackageVersionSize) {
+      const size = dist.size;
+      const unpackedSize = dist.unpackedSize;
+      const exceededSizeLimits = getPackageVersionSizeLimitsExceeded(
+        dist,
+        this.config.cnpmcore.largePackageVersionSize,
+        this.config.cnpmcore.largePackageVersionUnpackedSize,
+      );
+      if (exceededSizeLimits.length > 0) {
+        const exceededSizeLimitsMessage = formatPackageVersionSizeLimitsExceeded(exceededSizeLimits);
         const allowed = await this.packageVersionFileService.isLargePackageVersionAllowed(scope, name, version);
         const whiteListVersion = this.packageVersionFileService.unpkgWhiteListVersion;
         if (!allowed) {
           largeVersionCount++;
           if (largeVersionCount > this.config.cnpmcore.largePackageVersionBlockThreshold) {
-            task.error = `Synced version ${version} fail, too many large versions (${largeVersionCount}), large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
+            task.error = `Synced version ${version} fail, too many large versions (${largeVersionCount}), large package version ${exceededSizeLimitsMessage}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
             logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
             logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
             await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
@@ -950,21 +983,21 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
             );
             return;
           }
-          lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
+          lastErrorMessage = `large package version ${exceededSizeLimitsMessage}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
           logs.push(`[${isoNow()}] ⚠️ [${syncIndex}] Synced version ${version} skipped, ${lastErrorMessage}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           continue;
         }
         logs.push(
-          `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list, white list version: ${whiteListVersion}`,
+          `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} ${formatPackageVersionSizesExceeded(exceededSizeLimits)} too large, it is allowed to sync by unpkg white list, white list version: ${whiteListVersion}`,
         );
       }
       const publishTimeISO = timeMap[version];
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
       logs.push(
-        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}, size: ${size}`,
+        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}, size: ${size}, unpacked size: ${unpackedSize}`,
       );
       let localFile: string;
       try {
@@ -1453,14 +1486,21 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
         continue;
       }
 
-      const size = dist.size ?? dist.unpackedSize;
-      if (size && size > this.config.cnpmcore.largePackageVersionSize) {
+      const size = dist.size;
+      const unpackedSize = dist.unpackedSize;
+      const exceededSizeLimits = getPackageVersionSizeLimitsExceeded(
+        dist,
+        this.config.cnpmcore.largePackageVersionSize,
+        this.config.cnpmcore.largePackageVersionUnpackedSize,
+      );
+      if (exceededSizeLimits.length > 0) {
+        const exceededSizeLimitsMessage = formatPackageVersionSizeLimitsExceeded(exceededSizeLimits);
         const allowed = await this.packageVersionFileService.isLargePackageVersionAllowed(scope, name, version);
         const whiteListVersion = this.packageVersionFileService.unpkgWhiteListVersion;
         if (!allowed) {
           largeVersionCount++;
           if (largeVersionCount > this.config.cnpmcore.largePackageVersionBlockThreshold) {
-            task.error = `Synced version ${version} fail, too many large versions (${largeVersionCount}), large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
+            task.error = `Synced version ${version} fail, too many large versions (${largeVersionCount}), large package version ${exceededSizeLimitsMessage}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
             logs.push(`[${isoNow()}] ❌ ${task.error}, log: ${logUrl}`);
             logs.push(`[${isoNow()}] ❌❌❌❌❌ ${fullname} ❌❌❌❌❌`);
             await this.taskService.finishTask(task, TaskState.Fail, logs.join('\n'));
@@ -1472,14 +1512,14 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
             );
             return;
           }
-          lastErrorMessage = `large package version size: ${size}, allow size: ${this.config.cnpmcore.largePackageVersionSize}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
+          lastErrorMessage = `large package version ${exceededSizeLimitsMessage}, see ${UNPKG_WHITE_LIST_URL}, white list version: ${whiteListVersion}`;
           logs.push(`[${isoNow()}] ⚠️ [${syncIndex}] Synced version ${version} skipped, ${lastErrorMessage}`);
           await this.taskService.appendTaskLog(task, logs.join('\n'));
           logs = [];
           continue;
         }
         logs.push(
-          `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} size: ${size} too large, it is allowed to sync by unpkg white list, white list version: ${whiteListVersion}`,
+          `[${isoNow()}] 🚧 [${syncIndex}] Synced version ${version} ${formatPackageVersionSizesExceeded(exceededSizeLimits)} too large, it is allowed to sync by unpkg white list, white list version: ${whiteListVersion}`,
         );
       }
 
@@ -1487,7 +1527,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
       const publishTime = publishTimeISO ? new Date(publishTimeISO) : new Date();
       const delay = Date.now() - publishTime.getTime();
       logs.push(
-        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}, size: ${size}`,
+        `[${isoNow()}] 🚧 [${syncIndex}] Syncing version ${version}, delay: ${delay}ms [${publishTimeISO}], tarball: ${tarball}, size: ${size}, unpacked size: ${unpackedSize}`,
       );
       let localFile: string;
       try {

@@ -58,6 +58,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   enableSyncUnpkgFiles: true,
   enableSyncUnpkgFilesWhiteList: false,
   largePackageVersionSize: Number.MAX_SAFE_INTEGER,
+  largePackageVersionUnpackedSize: 256 * 1024 * 1024,
   largePackageVersionBlockThreshold: 3,
   strictSyncSpecivicVersion: false,
   enableElasticsearch: env('CNPMCORE_CONFIG_ENABLE_ES', 'boolean', false),
