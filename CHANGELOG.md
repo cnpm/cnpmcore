@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.35.2 (2026-08-20)</small>
+
+* fix: relay synced version removals (#1132) ([3ba20dc](https://github.com/cnpm/cnpmcore/commit/3ba20dc)), closes [#1132](https://github.com/cnpm/cnpmcore/issues/1132) [#1133](https://github.com/cnpm/cnpmcore/issues/1133)
+* chore: remove leoric compatibility mock (#1137) ([481e6b4](https://github.com/cnpm/cnpmcore/commit/481e6b4)), closes [#1137](https://github.com/cnpm/cnpmcore/issues/1137) [cyjake/leoric#499](https://github.com/cyjake/leoric/issues/499)
+
 ## <small>4.35.1 (2026-08-20)</small>
 
 * fix: separate tgz and unpacked package size limits (#1136) ([e4232f3](https://github.com/cnpm/cnpmcore/commit/e4232f3)), closes [#1136](https://github.com/cnpm/cnpmcore/issues/1136)
