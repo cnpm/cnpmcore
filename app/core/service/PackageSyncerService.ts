@@ -855,7 +855,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
           const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
           if (pkgVer) {
             logs.push(`[${isoNow()}] 🚧 [${syncIndex}] Remove version ${version} for force sync history`);
-            await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
+            await this.packageManagerService.removePackageVersion(pkg, pkgVer, true, true);
             existsItem = undefined;
             existsAbbreviatedItem = undefined;
             existsVersionMap[version] = undefined;
@@ -1413,7 +1413,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
         const pkgVer = await this.packageRepository.findPackageVersion(pkg.packageId, version);
         if (pkgVer) {
           logs.push(`[${isoNow()}] 🚧 Remove version ${version} for force sync history`);
-          await this.packageManagerService.removePackageVersion(pkg, pkgVer, true);
+          await this.packageManagerService.removePackageVersion(pkg, pkgVer, true, true);
         }
       }
       existsVersions = [];

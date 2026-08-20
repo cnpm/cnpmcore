@@ -1259,6 +1259,14 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.ok(r.data);
       assert.equal(Object.keys(r.data.versions).length, 1);
       assert.ok(!r.data.versions['1.0.0'], '1.0.0 should not exists');
+      const changes = await changeRepository.query(0, 100);
+      assert.ok(
+        changes.some(
+          (change) =>
+            change.type === 'PACKAGE_VERSION_REMOVED' && change.targetName === name && change.data.version === '1.0.0',
+        ),
+        'PACKAGE_VERSION_REMOVED change should exist',
+      );
     });
 
     it('should work on unpublished package', async () => {

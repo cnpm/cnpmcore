@@ -16,6 +16,7 @@ import { RegistryManagerService } from '../../../../app/core/service/RegistryMan
 import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerService.ts';
 import { TaskService } from '../../../../app/core/service/TaskService.ts';
 import { UserService } from '../../../../app/core/service/UserService.ts';
+import { ChangeRepository } from '../../../../app/repository/ChangeRepository.ts';
 import { HistoryTask as HistoryTaskModel } from '../../../../app/repository/model/HistoryTask.ts';
 import { Package as PackageModel } from '../../../../app/repository/model/Package.ts';
 import { PackageVersion } from '../../../../app/repository/model/PackageVersion.ts';
@@ -33,6 +34,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
   let scopeManagerService: ScopeManagerService;
   let userService: UserService;
   let packageVersionRepository: PackageVersionRepository;
+  let changeRepository: ChangeRepository;
 
   beforeEach(async () => {
     mock(app.config.cnpmcore.experimental, 'syncPackageWithPackument', true);
@@ -44,6 +46,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
     scopeManagerService = await app.getEggObject(ScopeManagerService);
     userService = await app.getEggObject(UserService);
     packageVersionRepository = await app.getEggObject(PackageVersionRepository);
+    changeRepository = await app.getEggObject(ChangeRepository);
   });
 
   describe('executeTask()', () => {
@@ -1362,6 +1365,14 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
       assert.ok(r.data);
       assert.equal(Object.keys(r.data.versions).length, 1);
       assert.ok(!r.data.versions['1.0.0'], '1.0.0 should not exists');
+      const changes = await changeRepository.query(0, 100);
+      assert.ok(
+        changes.some(
+          (change) =>
+            change.type === 'PACKAGE_VERSION_REMOVED' && change.targetName === name && change.data.version === '1.0.0',
+        ),
+        'PACKAGE_VERSION_REMOVED change should exist',
+      );
     });
 
     it('should work on unpublished package', async () => {
