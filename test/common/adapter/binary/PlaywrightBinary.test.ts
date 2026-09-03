@@ -180,6 +180,11 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
               revision: '1237',
               browserVersion: '152.0.7977.8',
             },
+            {
+              name: 'webkit',
+              revision: '2342',
+              browserVersion: '26.5',
+            },
           ],
         });
 
@@ -198,6 +203,18 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
       ]);
       for (const item of linuxResult.items) {
         assert.match(item.url, /^https:\/\/cdn\.playwright\.dev\/builds\/cft\/152\.0\.7977\.8\/linux64\//);
+      }
+
+      // https://github.com/cnpm/cnpmcore/issues/1130
+      const webkitResult = await binary.fetch('/builds/webkit/2342/');
+      assert.ok(webkitResult);
+      for (const platform of ['x64', 'arm64']) {
+        const fileName = `webkit-ubuntu-26.04${platform === 'arm64' ? '-arm64' : ''}.zip`;
+        const webkitItem: (typeof webkitResult.items)[number] | undefined = webkitResult.items.find(
+          (candidate) => candidate.name === fileName,
+        );
+        assert.ok(webkitItem, `${fileName} should be mirrored`);
+        assert.equal(webkitItem.url, `https://cdn.playwright.dev/builds/webkit/2342/${fileName}`);
       }
     });
 
