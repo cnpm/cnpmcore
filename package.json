@@ -96,7 +96,7 @@
     "@eggjs/tracer": "^4.0.2-beta.2",
     "@eggjs/typebox-validate": "^4.0.2-beta.2",
     "@elastic/elasticsearch": "^8.19.1",
-    "@simplewebauthn/server": "^7.4.0",
+    "@simplewebauthn/server": "^13.3.2",
     "base-x": "^5.0.1",
     "base64url": "^3.0.1",
     "bson-objectid": "^2.0.4",
