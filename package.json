@@ -98,7 +98,6 @@
     "@elastic/elasticsearch": "^8.19.1",
     "@simplewebauthn/server": "^13.3.2",
     "base-x": "^5.0.1",
-    "base64url": "^3.0.1",
     "bson-objectid": "^2.0.4",
     "dayjs": "^1.11.19",
     "egg": "^4.1.2-beta.2",
