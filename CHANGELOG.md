@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.36.0 (2026-09-19)
+
+* feat(deps): update dependency @simplewebauthn/server to v14 (#1147) ([eac4919](https://github.com/cnpm/cnpmcore/commit/eac4919)), closes [#1147](https://github.com/cnpm/cnpmcore/issues/1147)
+* chore(deps): update dependency @simplewebauthn/server to v13 [security] (#1141) ([b322d17](https://github.com/cnpm/cnpmcore/commit/b322d17)), closes [#1141](https://github.com/cnpm/cnpmcore/issues/1141)
+* chore(deps): update vite-plus related packages to v0.3.1 (#1142) ([925d2e1](https://github.com/cnpm/cnpmcore/commit/925d2e1)), closes [#1142](https://github.com/cnpm/cnpmcore/issues/1142)
+* chore(deps): update vite-plus related packages to v0.3.2 (#1143) ([f742cb1](https://github.com/cnpm/cnpmcore/commit/f742cb1)), closes [#1143](https://github.com/cnpm/cnpmcore/issues/1143)
+* chore(deps): update vite-plus related packages to v0.3.3 (#1145) ([0c5a4b6](https://github.com/cnpm/cnpmcore/commit/0c5a4b6)), closes [#1145](https://github.com/cnpm/cnpmcore/issues/1145)
+
 ## <small>4.35.3 (2026-09-03)</small>
 
 * fix(playwright): mirror WebKit for Ubuntu 26.04 (#1139) ([e6c63cd](https://github.com/cnpm/cnpmcore/commit/e6c63cd)), closes [#1139](https://github.com/cnpm/cnpmcore/issues/1139) [#1130](https://github.com/cnpm/cnpmcore/issues/1130)
