@@ -3,6 +3,8 @@ import { createHash } from 'node:crypto';
 import '@eggjs/typebox-validate';
 import { Type, type Static } from '@eggjs/typebox-validate/typebox';
 import {
+  type PublicKeyCredentialCreationOptionsJSON,
+  type PublicKeyCredentialRequestOptionsJSON,
   type VerifyAuthenticationResponseOpts,
   type VerifyRegistrationResponseOpts,
   generateAuthenticationOptions,
@@ -10,11 +12,6 @@ import {
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
 } from '@simplewebauthn/server';
-import type {
-  PublicKeyCredentialCreationOptionsJSON,
-  PublicKeyCredentialRequestOptionsJSON,
-} from '@simplewebauthn/typescript-types';
-import base64url from 'base64url';
 import {
   type EggContext,
   HTTPContext,
@@ -170,11 +167,9 @@ export class WebauthController extends MiddlewareController {
           expectedChallenge,
           expectedOrigin,
           expectedRPID,
-          authenticator: {
-            // @ts-expect-error type error
-            credentialPublicKey: base64url.toBuffer(credential.publicKey),
-            // @ts-expect-error type error
-            credentialID: base64url.toBuffer(credential.credentialId),
+          credential: {
+            id: credential.credentialId,
+            publicKey: new Uint8Array(Buffer.from(credential.publicKey, 'base64url')),
             counter: 0,
           },
         });
@@ -271,11 +266,9 @@ export class WebauthController extends MiddlewareController {
         });
         const { verified, registrationInfo } = verification;
         if (verified && registrationInfo) {
-          const { credentialPublicKey, credentialID } = registrationInfo;
-          // @ts-expect-error type error
-          const base64CredentialPublicKey = base64url.encode(Buffer.from(new Uint8Array(credentialPublicKey)));
-          // @ts-expect-error type error
-          const base64CredentialID = base64url.encode(Buffer.from(new Uint8Array(credentialID)));
+          const { credential } = registrationInfo;
+          const base64CredentialPublicKey = Buffer.from(credential.publicKey).toString('base64url');
+          const base64CredentialID = credential.id;
           await this.userService.createWebauthnCredential(user?.userId, {
             credentialId: base64CredentialID,
             publicKey: base64CredentialPublicKey,
@@ -324,14 +317,12 @@ export class WebauthController extends MiddlewareController {
     }
     if (credential?.credentialId && credential?.publicKey) {
       result.wanStatus = WanStatusCode.Bound;
-      result.wanCredentialAuthOption = generateAuthenticationOptions({
+      result.wanCredentialAuthOption = await generateAuthenticationOptions({
         timeout: 60_000,
         rpID: expectedRPID,
         allowCredentials: [
           {
-            // @ts-expect-error type error
-            id: base64url.toBuffer(credential.credentialId),
-            type: 'public-key',
+            id: credential.credentialId,
             transports: ['internal'],
           },
         ],
@@ -340,11 +331,10 @@ export class WebauthController extends MiddlewareController {
     } else {
       const encoder = new TextEncoder();
       const regUserIdBuffer = createHash('sha256').update(encoder.encode(name)).digest();
-      result.wanCredentialRegiOption = generateRegistrationOptions({
+      result.wanCredentialRegiOption = await generateRegistrationOptions({
         rpName: ctx.app.config.name,
         rpID: expectedRPID,
-        // @ts-expect-error type error
-        userID: base64url.encode(Buffer.from(regUserIdBuffer)),
+        userID: new Uint8Array(regUserIdBuffer),
         userName: name,
         userDisplayName: name,
         timeout: 60_000,
