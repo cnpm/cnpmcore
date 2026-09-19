@@ -1266,23 +1266,28 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
       assert.equal(Object.keys(r.data.versions).length, 1);
       assert.ok(!r.data.versions['1.0.0'], '1.0.0 should not exists');
       assert.equal(r.data['dist-tags'].latest, '2.0.0');
-      const changes = await changeRepository.query(0, 100);
-      assert.ok(
-        changes.some(
-          (change) =>
-            change.type === 'PACKAGE_VERSION_REMOVED' && change.targetName === name && change.data.version === '1.0.0',
-        ),
-        'PACKAGE_VERSION_REMOVED change should exist',
-      );
-      // CreateHook task is created by an async event handler after executeTask returns,
-      // poll the queue to avoid flaky assertion
+      // The PACKAGE_VERSION_REMOVED change and CreateHook task are created by an async
+      // event handler after executeTask returns, poll to avoid flaky assertions
+      let foundChange = false;
       let hookTask: CreateHookTask | null = null;
-      for (let i = 0; i < 10 && !hookTask; i++) {
-        hookTask = (await taskService.findExecuteTask(TaskType.CreateHook)) as CreateHookTask | null;
+      for (let i = 0; i < 10 && !(foundChange && hookTask); i++) {
+        if (!foundChange) {
+          const changes = await changeRepository.query(0, 100);
+          foundChange = changes.some(
+            (change) =>
+              change.type === 'PACKAGE_VERSION_REMOVED' &&
+              change.targetName === name &&
+              change.data.version === '1.0.0',
+          );
+        }
         if (!hookTask) {
+          hookTask = (await taskService.findExecuteTask(TaskType.CreateHook)) as CreateHookTask | null;
+        }
+        if (!foundChange || !hookTask) {
           await setTimeout(100);
         }
       }
+      assert.ok(foundChange, 'PACKAGE_VERSION_REMOVED change should exist');
       assert.ok(hookTask);
       assert.deepEqual(hookTask.data.hookEvent.change, {
         'dist-tag': 'latest',
