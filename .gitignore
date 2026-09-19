@@ -6,7 +6,6 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-.npmrc
 pnpm-lock.yaml
 package-lock.json
 
@@ -123,3 +122,4 @@ run
 !test/ctx_register.js
 
 .egg/
+.vitest/
