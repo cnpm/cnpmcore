@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
@@ -1273,7 +1274,15 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
         ),
         'PACKAGE_VERSION_REMOVED change should exist',
       );
-      const hookTask = (await taskService.findExecuteTask(TaskType.CreateHook)) as CreateHookTask | null;
+      // CreateHook task is created by an async event handler after executeTask returns,
+      // poll the queue to avoid flaky assertion
+      let hookTask: CreateHookTask | null = null;
+      for (let i = 0; i < 10 && !hookTask; i++) {
+        hookTask = (await taskService.findExecuteTask(TaskType.CreateHook)) as CreateHookTask | null;
+        if (!hookTask) {
+          await setTimeout(100);
+        }
+      }
       assert.ok(hookTask);
       assert.deepEqual(hookTask.data.hookEvent.change, {
         'dist-tag': 'latest',
