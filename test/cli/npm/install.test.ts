@@ -3,7 +3,7 @@ import { once } from 'node:events';
 import type { Server, AddressInfo } from 'node:net';
 import path from 'node:path';
 
-import { app } from '@eggjs/mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
 
 import { TestUtil } from '../../../test/TestUtil.ts';
@@ -33,6 +33,7 @@ describe('test/cli/npm/install.test.ts', () => {
   });
 
   beforeEach(async () => {
+    mock(app.config.cnpmcore, 'registry', registry);
     await npmLogin(registry, userconfig);
     await coffee
       .spawn('npm', ['publish', `--registry=${registry}`, `--userconfig=${userconfig}`, `--cache=${cacheDir}`], {
