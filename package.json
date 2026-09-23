@@ -91,16 +91,16 @@
   },
   "dependencies": {
     "@cnpmjs/packument": "^1.7.0",
-    "@eggjs/redis": "^4.0.2-beta.27",
-    "@eggjs/scripts": "^5.0.2-beta.27",
-    "@eggjs/tracer": "^4.0.2-beta.27",
-    "@eggjs/typebox-validate": "^4.0.2-beta.27",
+    "@eggjs/redis": "https://pkg.pr.new/eggjs/egg/@eggjs/redis@25cbd4992e7fdf6dc793380e199366775e8057f9",
+    "@eggjs/scripts": "https://pkg.pr.new/eggjs/egg/@eggjs/scripts@25cbd4992e7fdf6dc793380e199366775e8057f9",
+    "@eggjs/tracer": "https://pkg.pr.new/eggjs/egg/@eggjs/tracer@25cbd4992e7fdf6dc793380e199366775e8057f9",
+    "@eggjs/typebox-validate": "https://pkg.pr.new/eggjs/egg/@eggjs/typebox-validate@25cbd4992e7fdf6dc793380e199366775e8057f9",
     "@elastic/elasticsearch": "^8.19.1",
     "@simplewebauthn/server": "^14.0.0",
     "base-x": "^5.0.1",
     "bson-objectid": "^2.0.4",
     "dayjs": "^1.11.19",
-    "egg": "^4.1.2-beta.27",
+    "egg": "https://pkg.pr.new/eggjs/egg/egg@25cbd4992e7fdf6dc793380e199366775e8057f9",
     "egg-cors": "^3.0.1",
     "egg-status": "^1.0.0",
     "egg-view-nunjucks": "^2.3.0",
@@ -126,9 +126,9 @@
     "validate-npm-package-name": "^8.0.0"
   },
   "devDependencies": {
-    "@eggjs/bin": "^8.0.2-beta.27",
-    "@eggjs/mock": "^7.0.2-beta.27",
-    "@eggjs/tsconfig": "^3.1.2-beta.27",
+    "@eggjs/bin": "https://pkg.pr.new/eggjs/egg/@eggjs/bin@25cbd4992e7fdf6dc793380e199366775e8057f9",
+    "@eggjs/mock": "https://pkg.pr.new/eggjs/egg/@eggjs/mock@25cbd4992e7fdf6dc793380e199366775e8057f9",
+    "@eggjs/tsconfig": "https://pkg.pr.new/eggjs/egg/@eggjs/tsconfig@25cbd4992e7fdf6dc793380e199366775e8057f9",
     "@elastic/elasticsearch-mock": "^2.1.0",
     "@redocly/cli": "^2.43.2",
     "@simplewebauthn/typescript-types": "^7.4.0",
@@ -158,9 +158,7 @@
     "@aws-sdk/xml-builder": {
       "fast-xml-parser": "$fast-xml-parser"
     },
-    "@vitest/coverage-v8": "$@vitest/coverage-v8",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0-rc.0",
-    "vitest": "5.0.1"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0-rc.0"
   },
   "engines": {
     "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
