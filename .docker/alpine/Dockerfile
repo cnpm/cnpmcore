@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -19,7 +19,7 @@ RUN npmupdate -c --production \
   && npm cache clean --force
 
 # Stage 2: Production — clean, minimal image
-FROM node:22-alpine
+FROM node:24-alpine
 
 WORKDIR /usr/src/app
 
