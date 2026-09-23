@@ -165,21 +165,23 @@ npm run start:foreground
 这些警告本身不会导致 Node.js 退出，但 Egg 的 daemon 启动检查可能将 stderr 输出判为启动失败并停止服务。
 前台模式不会使用这一 daemon 启动检查。
 
-如果在容器外部署且需要 daemon 模式，请在 `package.json` 的 `start` 脚本中给 `eggctl` 添加 `--ignore-stderr`：
+如果在容器外部署且需要 daemon 模式，请使用：
 
-```json
-{
-  "scripts": {
-    "start": "eggctl start --daemon --ignore-stderr && touch egg.status"
-  }
-}
+```bash
+npm start
 ```
 
-无论采用哪种启动方式，部署脚本都应轮询 `http://127.0.0.1:7001/`，
-确认 HTTP 状态码为 `200` 且 JSON 响应包含 `instance_start_time` 后，再将部署标记为成功。
-请按实际地址和端口调整 URL，并设置超时（例如 60 秒）；超时后应输出日志并以非零状态码退出。
-`--ignore-stderr` 也会跳过对实际 stderr 错误的启动检查，因此不能仅凭启动命令退出码或 `egg.status` 文件判断服务就绪。
-健康检查逻辑可参考 [CI 部署检查](../.github/workflows/nodejs.yml)。
+`npm start` 先删除旧的 `egg.status`，再通过 `eggctl start --daemon --ignore-stderr` 启动服务。
+启动命令返回成功后，[健康检查脚本](../scripts/wait-for-ready.mjs) 会轮询 `http://127.0.0.1:7001/`，
+确认 HTTP 状态码为 `200` 且 JSON 响应包含非空字符串 `instance_start_time` 后，才创建新的 `egg.status`。
+健康检查默认最多等待 60 秒；超时后输出最后一次错误并以非零状态码退出，不创建 `egg.status`。
+
+健康检查默认使用 `PORT` 环境变量指定的端口，未设置时使用 `7001`。
+自定义监听地址时，可通过 `CNPMCORE_HEALTH_CHECK_URL` 指定检查 URL；
+通过 `CNPMCORE_HEALTH_CHECK_TIMEOUT` 设置检查超时，单位为毫秒。
+
+`--ignore-stderr` 也会跳过对实际 stderr 错误的启动检查，因此自定义部署脚本时必须保留 HTTP 健康检查。
+容器和 CI 使用前台模式时，也应在健康检查通过后再标记部署成功，具体逻辑可参考 [CI 部署检查](../.github/workflows/nodejs.yml)。
 
 ### 基于 MySQL 运行
 
