@@ -151,6 +151,36 @@ docker run -p 7001:7001 -it --rm \
 
 ## 运行容器
 
+### 启动方式与健康检查
+
+项目提供的 Docker 镜像默认通过 `npm run start:foreground` 前台启动服务。
+自定义容器启动命令或 CI 部署脚本时，也应使用前台模式：
+
+```bash
+npm run start:foreground
+```
+
+在 Node.js 24（24.7.0 及以上）中，SimpleWebAuthn 14 会在模块导入时检测后量子密码算法支持，
+触发 `SubtleCrypto.supports()` 和 `ML-DSA-44` 的 `ExperimentalWarning`，无需登录请求也会出现。
+这些警告本身不会导致 Node.js 退出，但 Egg 的 daemon 启动检查可能将 stderr 输出判为启动失败并停止服务。
+前台模式不会使用这一 daemon 启动检查。
+
+如果在容器外部署且需要 daemon 模式，请在 `package.json` 的 `start` 脚本中给 `eggctl` 添加 `--ignore-stderr`：
+
+```json
+{
+  "scripts": {
+    "start": "eggctl start --daemon --ignore-stderr && touch egg.status"
+  }
+}
+```
+
+无论采用哪种启动方式，部署脚本都应轮询 `http://127.0.0.1:7001/`，
+确认 HTTP 状态码为 `200` 且 JSON 响应包含 `instance_start_time` 后，再将部署标记为成功。
+请按实际地址和端口调整 URL，并设置超时（例如 60 秒）；超时后应输出日志并以非零状态码退出。
+`--ignore-stderr` 也会跳过对实际 stderr 错误的启动检查，因此不能仅凭启动命令退出码或 `egg.status` 文件判断服务就绪。
+健康检查逻辑可参考 [CI 部署检查](../.github/workflows/nodejs.yml)。
+
 ### 基于 MySQL 运行
 
 ```bash
