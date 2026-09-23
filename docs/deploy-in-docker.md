@@ -151,6 +151,38 @@ docker run -p 7001:7001 -it --rm \
 
 ## 运行容器
 
+### 启动方式与健康检查
+
+项目提供的 Docker 镜像默认通过 `npm run start:foreground` 前台启动服务。
+自定义容器启动命令或 CI 部署脚本时，也应使用前台模式：
+
+```bash
+npm run start:foreground
+```
+
+在 Node.js 24（24.7.0 及以上）中，SimpleWebAuthn 14 会在模块导入时检测后量子密码算法支持，
+触发 `SubtleCrypto.supports()` 和 `ML-DSA-44` 的 `ExperimentalWarning`，无需登录请求也会出现。
+这些警告本身不会导致 Node.js 退出，但 Egg 的 daemon 启动检查可能将 stderr 输出判为启动失败并停止服务。
+前台模式不会使用这一 daemon 启动检查。
+
+如果在容器外部署且需要 daemon 模式，请使用：
+
+```bash
+npm start
+```
+
+`npm start` 先删除旧的 `egg.status`，再通过 `eggctl start --daemon --ignore-stderr` 启动服务。
+启动命令返回成功后，[健康检查脚本](../scripts/wait-for-ready.mjs) 会轮询 `http://127.0.0.1:7001/`，
+确认 HTTP 状态码为 `200` 且 JSON 响应包含非空字符串 `instance_start_time` 后，才创建新的 `egg.status`。
+健康检查默认最多等待 60 秒；超时后输出最后一次错误并以非零状态码退出，不创建 `egg.status`。
+
+健康检查默认使用 `PORT` 环境变量指定的端口，未设置时使用 `7001`。
+自定义监听地址时，可通过 `CNPMCORE_HEALTH_CHECK_URL` 指定检查 URL；
+通过 `CNPMCORE_HEALTH_CHECK_TIMEOUT` 设置检查超时，单位为毫秒。
+
+`--ignore-stderr` 也会跳过对实际 stderr 错误的启动检查，因此自定义部署脚本时必须保留 HTTP 健康检查。
+容器和 CI 使用前台模式时，也应在健康检查通过后再标记部署成功，具体逻辑可参考 [CI 部署检查](../.github/workflows/nodejs.yml)。
+
 ### 基于 MySQL 运行
 
 ```bash
