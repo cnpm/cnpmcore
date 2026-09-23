@@ -123,3 +123,4 @@ run
 !test/ctx_register.js
 
 .egg/
+.vitest/
