@@ -22,9 +22,9 @@ const __dirname = path.dirname(__filename);
 
 const SavePackageVersionDownloadCounterPath = path.join(
   __dirname,
-  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.ts',
+  '../../../../app/port/schedule/SavePackageVersionDownloadCounter.js',
 );
-const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.ts');
+const UpdateTotalDataPath = path.join(__dirname, '../../../../app/port/schedule/UpdateTotalData.js');
 
 describe('test/port/controller/HomeController/showTotal.test.ts', () => {
   describe('[GET /] showTotal()', () => {

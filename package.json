@@ -128,7 +128,6 @@
   "devDependencies": {
     "@eggjs/bin": "^8.0.2-beta.27",
     "@eggjs/mock": "^7.0.2-beta.27",
-    "@eggjs/tegg-vitest": "^4.0.2-beta.27",
     "@eggjs/tsconfig": "^3.1.2-beta.27",
     "@elastic/elasticsearch-mock": "^2.1.0",
     "@redocly/cli": "^2.43.2",
@@ -148,7 +147,7 @@
     "coffee": "^5.5.1",
     "ioredis-mock": "^8.13.1",
     "typescript": "^7.0.0",
-    "vite-plus": "0.0.0-commit.df0bd1bf2da4b8516192bbb46440a6ecc68038f9",
+    "vite-plus": "1.0.0-rc.0",
     "vitest": "5.0.1",
     "yaml": "^2.9.0"
   },
@@ -160,7 +159,7 @@
       "fast-xml-parser": "$fast-xml-parser"
     },
     "@vitest/coverage-v8": "$@vitest/coverage-v8",
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.0.0-commit.df0bd1bf2da4b8516192bbb46440a6ecc68038f9",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0-rc.0",
     "vitest": "5.0.1"
   },
   "engines": {
