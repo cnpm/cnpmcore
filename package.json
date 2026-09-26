@@ -143,12 +143,12 @@
     "@types/semver": "^7.7.1",
     "@types/tar": "^7.0.0",
     "@types/validate-npm-package-name": "^4.0.2",
-    "@vitest/coverage-v8": "5.0.1",
+    "@vitest/coverage-v8": "5.0.2",
     "coffee": "^5.5.1",
     "ioredis-mock": "^8.13.1",
     "typescript": "^7.0.0",
-    "vite-plus": "1.0.0-rc.0",
-    "vitest": "5.0.1",
+    "vite-plus": "1.0.0-rc.1",
+    "vitest": "5.0.2",
     "yaml": "^2.9.0"
   },
   "optionalDependencies": {
@@ -159,8 +159,8 @@
       "fast-xml-parser": "$fast-xml-parser"
     },
     "@vitest/coverage-v8": "$@vitest/coverage-v8",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0-rc.0",
-    "vitest": "5.0.1"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.0.0-rc.1",
+    "vitest": "5.0.2"
   },
   "engines": {
     "node": "^20.18.0 || ^22.18.0 || ^24.11.0"
