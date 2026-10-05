@@ -34,6 +34,10 @@ You can also open the repo locally with the [Dev Containers](https://marketplace
 
 See [INTEGRATE.md](INTEGRATE.md)
 
+## How to deploy
+
+See [Docker deployment](docs/deploy-in-docker.md) for configuration, startup, and health checks.
+
 ## npmmirror.com
 
 [npmmirror.com](https://npmmirror.com) is the China NPM mirror hosted by cnpmcore, sponsored by [Alibaba Cloud / 阿里云](https://www.aliyun.com/).
