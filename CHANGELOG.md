@@ -1,5 +1,14 @@
 # Changelog
 
+## <small>4.36.1 (2026-10-05)</small>
+
+* fix: check HTTP readiness after daemon startup (#1154) ([84eae2a](https://github.com/cnpm/cnpmcore/commit/84eae2a)), closes [#1154](https://github.com/cnpm/cnpmcore/issues/1154)
+* chore: upgrade Vite+ to 1.0.0-rc.0 (#1152) ([9dbac59](https://github.com/cnpm/cnpmcore/commit/9dbac59)), closes [#1152](https://github.com/cnpm/cnpmcore/issues/1152)
+* chore(deps): update node.js to v24 (#1153) ([00f46fc](https://github.com/cnpm/cnpmcore/commit/00f46fc)), closes [#1153](https://github.com/cnpm/cnpmcore/issues/1153)
+* chore(deps): update npm to v12.1.0 (#1151) ([0f1080b](https://github.com/cnpm/cnpmcore/commit/0f1080b)), closes [#1151](https://github.com/cnpm/cnpmcore/issues/1151)
+* chore(deps): update npm to v12.2.0 (#1157) ([3912176](https://github.com/cnpm/cnpmcore/commit/3912176)), closes [#1157](https://github.com/cnpm/cnpmcore/issues/1157)
+* chore(deps): upgrade Egg packages to beta.27 (#1148) ([2c4f7af](https://github.com/cnpm/cnpmcore/commit/2c4f7af)), closes [#1148](https://github.com/cnpm/cnpmcore/issues/1148)
+
 ## 4.36.0 (2026-09-19)
 
 * feat(deps): update dependency @simplewebauthn/server to v14 (#1147) ([eac4919](https://github.com/cnpm/cnpmcore/commit/eac4919)), closes [#1147](https://github.com/cnpm/cnpmcore/issues/1147)
