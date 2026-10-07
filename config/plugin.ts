@@ -7,7 +7,7 @@ const plugin: EggPlugin = {
   },
   nunjucks: {
     enable: true,
-    package: 'egg-view-nunjucks',
+    package: '@eggjs/view-nunjucks',
   },
   ...tracerPlugin(),
   typeboxValidate: {
@@ -20,11 +20,11 @@ const plugin: EggPlugin = {
   },
   cors: {
     enable: true,
-    package: 'egg-cors',
+    package: '@eggjs/cors',
   },
   status: {
     enable: true,
-    package: 'egg-status',
+    package: '@eggjs/status',
   },
   elasticsearch: {
     enable: true,

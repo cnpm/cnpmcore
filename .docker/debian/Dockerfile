@@ -7,15 +7,15 @@ WORKDIR /usr/src/app
 COPY package.json ./
 
 # Install all dependencies (including devDependencies for tsc build)
-RUN npm install -g npminstall --registry=https://registry.npmmirror.com \
-  && npminstall -c
+RUN npm install -g npminstall --registry=https://registry.npmjs.org \
+  && npminstall --registry=https://registry.npmjs.org
 
 # Copy source and compile TypeScript (tsc compiles .ts to .js in-place)
 COPY . .
 RUN npm run tsc
 
 # Prune to production dependencies only and clean up
-RUN npmupdate -c --production \
+RUN npmupdate --production --registry=https://registry.npmjs.org \
   && npm cache clean --force
 
 # Stage 2: Production — clean, minimal image
