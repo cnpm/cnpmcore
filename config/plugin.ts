@@ -24,7 +24,7 @@ const plugin: EggPlugin = {
   },
   status: {
     enable: true,
-    package: 'egg-status',
+    package: '@eggjs/status',
   },
   elasticsearch: {
     enable: true,
