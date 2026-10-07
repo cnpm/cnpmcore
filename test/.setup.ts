@@ -1,10 +1,19 @@
-import { afterEach, beforeEach, vi } from 'vite-plus/test';
+import { afterEach, beforeAll, beforeEach, vi } from 'vite-plus/test';
 
 import { PackageManagerService } from '../app/core/service/PackageManagerService.ts';
 import { TestUtil } from './TestUtil.ts';
 
 // vitest hookTimeout defaults to 10s, align with egg-bin's testTimeout (60s)
 vi.setConfig({ hookTimeout: 60_000 });
+
+beforeAll(async () => {
+  const app = TestUtil.app;
+  await app.ready();
+  // @eggjs/mock creates the HTTP callback before async middleware loading finishes.
+  // Refresh the test server's handler after startup so HTTP tests reach the routes.
+  app.server.removeAllListeners('request');
+  app.server.on('request', app.callback());
+});
 
 beforeEach(async () => {
   // don't show console log on unittest by default
