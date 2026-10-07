@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.37.0 (2026-10-07)
+
+* feat: upgrade Egg to 4.2.0 (#1159) ([4cf7fdf](https://github.com/cnpm/cnpmcore/commit/4cf7fdf)), closes [#1159](https://github.com/cnpm/cnpmcore/issues/1159)
+* chore(deps): update vite-plus related packages (#1156) ([c114879](https://github.com/cnpm/cnpmcore/commit/c114879)), closes [#1156](https://github.com/cnpm/cnpmcore/issues/1156)
+
 ## <small>4.36.1 (2026-10-05)</small>
 
 * fix: check HTTP readiness after daemon startup (#1154) ([84eae2a](https://github.com/cnpm/cnpmcore/commit/84eae2a)), closes [#1154](https://github.com/cnpm/cnpmcore/issues/1154)
