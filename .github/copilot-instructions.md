@@ -263,7 +263,7 @@ When changing a Model, update **all 3 locations**:
 
 ## Prerequisites and Environment Setup
 
-- **Node.js**: ^20.18.0 or ^22.18.0 or ^24.11.0
+- **Node.js**: `^22.18.0 || ^24.11.0 || ^26.0.0`
 - **Database**: MySQL 5.7+ or PostgreSQL 17+ (SQLite support in progress)
 - **Cache**: Redis 6+
 - **Optional**: Elasticsearch 8.x for enhanced search capabilities
@@ -619,7 +619,7 @@ npm run test:local test/common/CryptoUtil.test.ts
 The project uses GitHub Actions with workflows in `.github/workflows/`:
 
 - `nodejs.yml`: Main CI pipeline with MySQL, PostgreSQL, and Elasticsearch testing
-- Multiple Node.js versions tested: 20, 22, 24
+- Multiple Node.js versions tested: 22, 24, 26
 - **CRITICAL**: CI jobs include long-running tests that can take 15+ minutes per database type
 
 ### Pre-commit Validation
