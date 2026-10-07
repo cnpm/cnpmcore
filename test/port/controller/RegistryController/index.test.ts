@@ -1,3 +1,4 @@
+import { beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
 
@@ -11,7 +12,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
   let adminUser: any;
   let registry: Registry;
   let taskService: TaskService;
-  before(async () => {
+  beforeAll(async () => {
     taskService = await app.getEggObject(TaskService);
   });
   beforeEach(async () => {

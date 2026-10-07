@@ -1,7 +1,7 @@
 import {
   UnprocessableEntityError,
   BadRequestError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import {
   HTTPController,
   HTTPMethod,
@@ -9,10 +9,10 @@ import {
   HTTPParam,
   HTTPBody,
   Inject,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
-import { Static, Type } from 'egg-typebox-validate/typebox';
+import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../../common/PackageUtil.js';
@@ -38,7 +38,7 @@ export class UpdatePackageController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-rev/:rev`,
     method: HTTPMethodEnum.PUT,
   })
-  async update(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: Maintainer) {
+  async update(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: Maintainer) {
     if (this.isNpmCommandValid(ctx, 'unpublish')) {
       // ignore it
       return { ok: false };

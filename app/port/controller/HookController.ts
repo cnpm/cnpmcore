@@ -1,5 +1,5 @@
 import {
-  Context,
+  HTTPContext,
   EggContext,
   HTTPBody,
   HTTPController,
@@ -46,7 +46,7 @@ export class HookController {
     path: '/v1/hooks/hook',
     method: HTTPMethodEnum.POST,
   })
-  async createHook(@Context() ctx: EggContext, @HTTPBody() req: CreateHookRequest) {
+  async createHook(@HTTPContext() ctx: EggContext, @HTTPBody() req: CreateHookRequest) {
     ctx.tValidate(CreateHookRequestRule, req);
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const hook = await this.hookManageService.createHook({
@@ -63,7 +63,7 @@ export class HookController {
     path: '/v1/hooks/hook/:id',
     method: HTTPMethodEnum.PUT,
   })
-  async updateHook(@Context() ctx: EggContext, @HTTPParam() id: string, @HTTPBody() req: UpdateHookRequest) {
+  async updateHook(@HTTPContext() ctx: EggContext, @HTTPParam() id: string, @HTTPBody() req: UpdateHookRequest) {
     ctx.tValidate(UpdateHookRequestRule, req);
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const hook = await this.hookManageService.updateHook({
@@ -83,7 +83,7 @@ export class HookController {
     path: '/v1/hooks/hook/:id',
     method: HTTPMethodEnum.DELETE,
   })
-  async deleteHook(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async deleteHook(@HTTPContext() ctx: EggContext, @HTTPParam() id: string) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     const hook = await this.hookManageService.deleteHook({
       operatorId: user.userId,
@@ -100,7 +100,7 @@ export class HookController {
     path: '/v1/hooks',
     method: HTTPMethodEnum.GET,
   })
-  async listHooks(@Context() ctx: EggContext) {
+  async listHooks(@HTTPContext() ctx: EggContext) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hooks = await this.hookManageService.listHooksByOwnerId(user.userId);
     const tasks = await this.taskService.findTasks(hooks.map(t => t.latestTaskId).filter((t): t is string => !!t));
@@ -117,7 +117,7 @@ export class HookController {
     path: '/v1/hooks/hook/:id',
     method: HTTPMethodEnum.GET,
   })
-  async getHook(@Context() ctx: EggContext, @HTTPParam() id: string) {
+  async getHook(@HTTPContext() ctx: EggContext, @HTTPParam() id: string) {
     const user = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const hook = await this.hookManageService.getHookByOwnerId(id, user.userId);
     let task: TriggerHookTask | null = null;

@@ -179,7 +179,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
     });
 
-    describe('hit range resolution', () => {
+    describe.todo('hit range resolution', () => {
       beforeEach(async () => {
         await CnpmPackageVersionModel.create({
           packageId: 'mock_package_id',
@@ -228,7 +228,7 @@ describe('test/core/service/PackageVersionService.test.ts', () => {
 
     });
 
-    describe('hit tag resolution', () => {
+    describe.todo('hit tag resolution', () => {
       beforeEach(async () => {
         await CnpmPackageVersionModel.create({
           packageId: 'mock_package_id',

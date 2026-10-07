@@ -3,7 +3,7 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { E400, NotFoundError } from 'egg-errors';
+import { E400, NotFoundError } from '@eggjs/errors';
 import { RegistryRepository } from '../../repository/RegistryRepository.js';
 import { AbstractService } from '../../common/AbstractService.js';
 import { Registry } from '../entity/Registry.js';

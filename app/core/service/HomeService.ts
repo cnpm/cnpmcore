@@ -2,7 +2,7 @@ import {
   AccessLevel,
   SingletonProto,
 } from '@eggjs/tegg';
-import { NotFoundError, NotImplementedError } from 'egg-errors';
+import { NotFoundError, NotImplementedError } from '@eggjs/errors';
 import { AbstractService } from '../../common/AbstractService.js';
 import { NOT_IMPLEMENTED_PATH } from '../../common/constants.js';
 

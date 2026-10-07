@@ -2,6 +2,8 @@
 
 ## 环境初始化
 
+需要 Node.js 22.18.0 或更高版本。
+
 本项目的外部服务依赖有：MySQL 数据库或 PostgreSQL 数据库、Redis 缓存服务。
 
 生成本地开发环境配置文件：
@@ -233,7 +235,7 @@ private async getPackageEntity(scope: string, name: string) {
 
 #### 1、请求参数校验
 
-使用 [egg-typebox-validate](https://github.com/xiekw2010/egg-typebox-validate) 来做请求参数校验，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义。
+使用 [@eggjs/typebox-validate](https://github.com/eggjs/egg/tree/next/plugins/typebox-validate) 来做请求参数校验，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义。
 详细使用方式可以参考 [PR#12](https://github.com/cnpm/cnpmcore/pull/12)。
 
 使用方式请直接参考 `app/port/typebox.ts` 代码。

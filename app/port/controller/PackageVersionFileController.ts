@@ -6,11 +6,11 @@ import {
   HTTPParam,
   HTTPQuery,
   Inject,
-  Context,
+  HTTPContext,
   EggContext,
   Middleware,
 } from '@eggjs/tegg';
-import { NotFoundError } from 'egg-errors';
+import { NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { AdminAccess } from '../middleware/AdminAccess.js';
@@ -72,7 +72,7 @@ export class PackageVersionFileController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   @Middleware(AdminAccess)
-  async sync(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() versionSpec: string) {
+  async sync(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() versionSpec: string) {
     ctx.tValidate(Spec, `${fullname}@${versionSpec}`);
     this.#requireUnpkgEnable();
     const [ scope, name ] = getScopeAndName(fullname);
@@ -92,7 +92,7 @@ export class PackageVersionFileController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/:versionSpec/files`,
     method: HTTPMethodEnum.GET,
   })
-  async listFiles(@Context() ctx: EggContext,
+  async listFiles(@HTTPContext() ctx: EggContext,
       @HTTPParam() fullname: string,
       @HTTPParam() versionSpec: string,
       @HTTPQuery() meta: string) {
@@ -124,7 +124,7 @@ export class PackageVersionFileController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/:versionSpec/files/:path(.+)`,
     method: HTTPMethodEnum.GET,
   })
-  async raw(@Context() ctx: EggContext,
+  async raw(@HTTPContext() ctx: EggContext,
       @HTTPParam() fullname: string,
       @HTTPParam() versionSpec: string,
       @HTTPParam() path: string,

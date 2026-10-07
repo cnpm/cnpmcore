@@ -2,7 +2,7 @@ import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
 import {
   ForbiddenError,
   NotFoundError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import { EggAppConfig } from 'egg';
 import { HookRepository } from '../../repository/HookRepository.js';
 import { Hook } from '../entity/Hook.js';

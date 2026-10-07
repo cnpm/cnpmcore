@@ -1,7 +1,7 @@
 import {
   NotFoundError,
   UnavailableForLegalReasonsError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import {
   Inject,
   EggContext,

@@ -1,6 +1,6 @@
 import os from 'node:os';
 import path from 'node:path';
-import { InternalServerError } from 'egg-errors';
+import { InternalServerError } from '@eggjs/errors';
 import { Entity, EntityData } from './Entity.js';
 import { EasyData, EntityUtil } from '../util/EntityUtil.js';
 import { TaskType, TaskState } from '../../common/enum/Task.js';

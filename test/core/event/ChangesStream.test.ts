@@ -1,3 +1,4 @@
+import { beforeAll } from 'vitest';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { PackageVersionAddedChangesStreamEvent } from '../../../app/core/event/ChangesStream.js';
@@ -5,7 +6,7 @@ import { PackageVersionAddedChangesStreamEvent } from '../../../app/core/event/C
 describe('test/core/event/BugVersionFixHandler.test.ts', () => {
   let packageVersionAddedChangesStreamEvent: PackageVersionAddedChangesStreamEvent;
 
-  before(async () => {
+  beforeAll(async () => {
     packageVersionAddedChangesStreamEvent = await app.getEggObject(PackageVersionAddedChangesStreamEvent);
   });
 

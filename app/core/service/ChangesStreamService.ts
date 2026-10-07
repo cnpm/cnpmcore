@@ -6,7 +6,7 @@ import {
   EggObjectFactory,
   Inject,
 } from '@eggjs/tegg';
-import { E500 } from 'egg-errors';
+import { E500 } from '@eggjs/errors';
 import { PackageSyncerService, RegistryNotMatchError } from './PackageSyncerService.js';
 import { TaskService } from './TaskService.js';
 import { RegistryManagerService } from './RegistryManagerService.js';

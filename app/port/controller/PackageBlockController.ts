@@ -4,12 +4,12 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPBody,
-  Context,
+  HTTPContext,
   EggContext,
   Inject,
   Middleware,
 } from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
@@ -31,7 +31,7 @@ export class PackageBlockController extends AbstractController {
     method: HTTPMethodEnum.PUT,
   })
   @Middleware(AdminAccess)
-  async blockPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: BlockPackageType) {
+  async blockPackage(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: BlockPackageType) {
     const params = { fullname, reason: data.reason };
     ctx.tValidate(BlockPackageRule, params);
     const packageEntity = await this.getPackageEntityByFullname(params.fullname);
@@ -58,7 +58,7 @@ export class PackageBlockController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
   })
   @Middleware(AdminAccess)
-  async unblockPackage(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
+  async unblockPackage(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string) {
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     if (packageEntity.isPrivate) {
       throw new ForbiddenError(`Can't unblock private package "${fullname}"`);

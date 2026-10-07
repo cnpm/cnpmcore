@@ -1,6 +1,7 @@
 import { ModelMetadataUtil } from '@eggjs/tegg/orm';
 import { EggProtoImplClass } from '@eggjs/tegg';
 import { get as lodashGet, set as lodashSet } from 'lodash-es';
+import type { Literal } from 'leoric';
 
 import { Bone, type LeoricBone } from './leoric.js';
 import { ModelConvertorUtil } from './ModelConvertorUtil.js';
@@ -36,7 +37,7 @@ export class ModelConvertor {
   }
 
   static convertEntityToChanges<T extends LeoricBone>(entity: object, ModelClazz: EggProtoImplClass<T>) {
-    const changes: Record<string, unknown> = {};
+    const changes: Record<string, Literal> = {};
     const metadata = ModelMetadataUtil.getModelMetadata(ModelClazz);
     if (!metadata) {
       throw new Error(`Model ${ModelClazz.name} has no metadata`);

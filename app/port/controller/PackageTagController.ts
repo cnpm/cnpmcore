@@ -4,11 +4,11 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPBody,
-  Context,
+  HTTPContext,
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
@@ -44,7 +44,7 @@ export class PackageTagController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags/:tag`,
     method: HTTPMethodEnum.PUT,
   })
-  async saveTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
+  async saveTag(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string, @HTTPBody() version: string) {
     const data = { tag, version };
     ctx.tValidate(TagWithVersionRule, data);
     const ensureRes = await this.ensurePublishAccess(ctx, fullname, true);
@@ -60,7 +60,7 @@ export class PackageTagController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags/:tag`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeTag(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
+  async removeTag(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() tag: string) {
     const data = { tag };
     ctx.tValidate(TagRule, data);
     if (tag === 'latest') {

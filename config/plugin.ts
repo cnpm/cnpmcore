@@ -1,4 +1,5 @@
 import { EggPlugin } from 'egg';
+import tracerPlugin from '@eggjs/tracer';
 
 const plugin: EggPlugin = {
   tegg: {
@@ -11,38 +12,35 @@ const plugin: EggPlugin = {
   },
   teggController: {
     enable: true,
-    package: '@eggjs/tegg-controller-plugin',
+    package: '@eggjs/controller-plugin',
   },
   teggSchedule: {
     enable: true,
-    package: '@eggjs/tegg-schedule-plugin',
+    package: '@eggjs/schedule-plugin',
   },
   teggOrm: {
     enable: true,
-    package: '@eggjs/tegg-orm-plugin',
+    package: '@eggjs/orm-plugin',
   },
-  eventbusModule: {
+  teggEventbus: {
     enable: true,
-    package: '@eggjs/tegg-eventbus-plugin',
+    package: '@eggjs/eventbus-plugin',
   },
-  aopModule: {
+  teggAop: {
     enable: true,
-    package: '@eggjs/tegg-aop-plugin',
+    package: '@eggjs/aop-plugin',
   },
   view: {
     enable: true,
   },
   nunjucks: {
     enable: true,
-    package: 'egg-view-nunjucks',
+    package: '@eggjs/view-nunjucks',
   },
-  tracer: {
-    enable: true,
-    package: '@eggjs/tracer',
-  },
+  ...tracerPlugin(),
   typeboxValidate: {
     enable: true,
-    package: 'egg-typebox-validate',
+    package: '@eggjs/typebox-validate',
   },
   redis: {
     enable: true,
@@ -50,7 +48,7 @@ const plugin: EggPlugin = {
   },
   cors: {
     enable: true,
-    package: 'egg-cors',
+    package: '@eggjs/cors',
   },
   status: {
     enable: true,

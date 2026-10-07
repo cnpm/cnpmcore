@@ -6,7 +6,7 @@ import {
   EventBus,
   Inject,
 } from '@eggjs/tegg';
-import { BadRequestError, ForbiddenError, NotFoundError } from 'egg-errors';
+import { BadRequestError, ForbiddenError, NotFoundError } from '@eggjs/errors';
 import { RequireAtLeastOne } from 'type-fest';
 import npa from 'npm-package-arg';
 import semver from 'semver';

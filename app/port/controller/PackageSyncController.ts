@@ -4,13 +4,13 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPBody,
-  Context,
+  HTTPContext,
   EggContext,
   Inject,
   HTTPQuery,
   BackgroundTaskHelper,
 } from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { ForbiddenError, NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';
@@ -55,7 +55,7 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs`,
     method: HTTPMethodEnum.PUT,
   })
-  async createSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
+  async createSyncTask(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() data: SyncPackageTaskType) {
     if (!this.enableSync) {
       throw new ForbiddenError('Not allow to sync package');
     }
@@ -157,7 +157,7 @@ export class PackageSyncController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/syncs/:taskId/log`,
     method: HTTPMethodEnum.GET,
   })
-  async showSyncTaskLog(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
+  async showSyncTaskLog(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() taskId: string) {
     const task = await this.packageSyncerService.findTask(taskId);
     if (!task) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" not found`);
     if (task.state === TaskState.Waiting) throw new NotFoundError(`Package "${fullname}" sync task "${taskId}" log not found`);
@@ -179,7 +179,7 @@ export class PackageSyncController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/sync`,
     method: HTTPMethodEnum.PUT,
   })
-  async deprecatedCreateSyncTask(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPQuery() nodeps: string) {
+  async deprecatedCreateSyncTask(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPQuery() nodeps: string) {
     const options: SyncPackageTaskType = {
       fullname,
       tips: `Sync cause by "${ctx.href}", parent traceId: ${ctx.tracer.traceId}`,

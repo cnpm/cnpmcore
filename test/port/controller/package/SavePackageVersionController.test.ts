@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { setTimeout } from 'node:timers/promises';
 import { app, mock } from '@eggjs/mock/bootstrap';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 import dayjs from 'dayjs';
 
 import { TestUser, TestUtil } from '../../../../test/TestUtil.js';

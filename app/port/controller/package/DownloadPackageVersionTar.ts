@@ -1,14 +1,14 @@
 import { PassThrough } from 'node:stream';
 import {
   NotFoundError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import {
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
 
@@ -40,7 +40,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.OPTIONS,
   })
-  async downloadForOptions(@Context() ctx: EggContext) {
+  async downloadForOptions(@HTTPContext() ctx: EggContext) {
     ctx.set('access-control-allow-origin', '*');
     ctx.set('access-control-allow-methods', 'GET,HEAD');
     ctx.status = 204;
@@ -51,7 +51,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.GET,
   })
-  async download(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+  async download(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
@@ -110,7 +110,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/download/:fullnameWithVersion+.tgz`,
     method: HTTPMethodEnum.GET,
   })
-  async deprecatedDownload(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() fullnameWithVersion: string) {
+  async deprecatedDownload(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() fullnameWithVersion: string) {
     // /@emotion/utils/download/@emotion/utils-0.11.3.tgz
     // => /@emotion/utils/-/utils-0.11.3.tgz
     const filenameWithVersion = getScopeAndName(fullnameWithVersion)[1];
@@ -142,7 +142,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.OPTIONS,
   })
-  async downloadVerdaccioPathStyleorOptions(@Context() ctx: EggContext) {
+  async downloadVerdaccioPathStyleorOptions(@HTTPContext() ctx: EggContext) {
     return this.downloadForOptions(ctx);
   }
 
@@ -151,7 +151,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:scope/:filenameWithVersion.tgz`,
     method: HTTPMethodEnum.GET,
   })
-  async downloadVerdaccioPathStyle(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+  async downloadVerdaccioPathStyle(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
     return this.download(ctx, fullname, filenameWithVersion);
   }
 }

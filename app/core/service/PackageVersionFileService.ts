@@ -8,7 +8,7 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { ConflictError, ForbiddenError } from 'egg-errors';
+import { ConflictError, ForbiddenError } from '@eggjs/errors';
 import semver from 'semver';
 import { AbstractService } from '../../common/AbstractService.js';
 import {

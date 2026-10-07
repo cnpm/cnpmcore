@@ -4,7 +4,7 @@ import {
   SingletonProto,
   Inject,
 } from '@eggjs/tegg';
-import { NotFoundError, ForbiddenError } from 'egg-errors';
+import { NotFoundError, ForbiddenError } from '@eggjs/errors';
 import { UserRepository } from '../../repository/UserRepository.js';
 import { User as UserEntity } from '../entity/User.js';
 import { Token as TokenEntity, TokenType } from '../entity/Token.js';

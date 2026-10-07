@@ -5,7 +5,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPBody,
-  Context,
+  HTTPContext,
   EggContext,
   HTTPQuery,
 } from '@eggjs/tegg';
@@ -13,8 +13,8 @@ import {
   EggLogger,
   EggAppConfig,
 } from 'egg';
-import { Static, Type } from 'egg-typebox-validate/typebox';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { Static, Type } from '@eggjs/typebox-validate/typebox';
+import { ForbiddenError, NotFoundError } from '@eggjs/errors';
 import { createHash } from 'node:crypto';
 import base64url from 'base64url';
 import {
@@ -86,7 +86,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login',
     method: HTTPMethodEnum.POST,
   })
-  async login(@Context() ctx: EggContext, @HTTPBody() loginRequest: LoginRequest) {
+  async login(@HTTPContext() ctx: EggContext, @HTTPBody() loginRequest: LoginRequest) {
     ctx.tValidate(LoginRequestRule, loginRequest);
     return this.authAdapter.getAuthUrl(ctx);
   }
@@ -95,7 +95,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/session/:sessionId',
     method: HTTPMethodEnum.GET,
   })
-  async loginRender(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+  async loginRender(@HTTPContext() ctx: EggContext, @HTTPParam() sessionId: string) {
     ctx.tValidate(SessionRule, { sessionId });
     ctx.type = 'html';
     const sessionToken = await this.cacheAdapter.get(sessionId);
@@ -116,7 +116,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/session/:sessionId',
     method: HTTPMethodEnum.POST,
   })
-  async loginImplement(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPBody() loginImplementRequest: LoginImplementRequest) {
+  async loginImplement(@HTTPContext() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPBody() loginImplementRequest: LoginImplementRequest) {
     ctx.tValidate(SessionRule, { sessionId });
     const sessionToken = await this.cacheAdapter.get(sessionId);
     if (typeof sessionToken !== 'string') {
@@ -261,7 +261,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/prepare/:sessionId',
     method: HTTPMethodEnum.GET,
   })
-  async loginPrepare(@Context() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPQuery() name: string) {
+  async loginPrepare(@HTTPContext() ctx: EggContext, @HTTPParam() sessionId: string, @HTTPQuery() name: string) {
     ctx.tValidate(SessionRule, { sessionId });
     const sessionToken = await this.cacheAdapter.get(sessionId);
     if (typeof sessionToken !== 'string') {
@@ -315,7 +315,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/sso/:sessionId',
     method: HTTPMethodEnum.POST,
   })
-  async ssoRequest(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+  async ssoRequest(@HTTPContext() ctx: EggContext, @HTTPParam() sessionId: string) {
     ctx.tValidate(SessionRule, { sessionId });
     const sessionData = await this.cacheAdapter.get(sessionId);
     if (sessionData !== '') {
@@ -338,7 +338,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/request/success',
     method: HTTPMethodEnum.GET,
   })
-  async loginRequestSuccess(@Context() ctx: EggContext) {
+  async loginRequestSuccess(@HTTPContext() ctx: EggContext) {
     ctx.type = 'html';
     return `<h1>😁😁😁 Authorization Successful 😁😁😁</h1>
     <p>You can close this tab and return to your command line.</p>`;
@@ -348,7 +348,7 @@ export class WebauthController extends MiddlewareController {
     path: '/-/v1/login/done/session/:sessionId',
     method: HTTPMethodEnum.GET,
   })
-  async loginDone(@Context() ctx: EggContext, @HTTPParam() sessionId: string) {
+  async loginDone(@HTTPContext() ctx: EggContext, @HTTPParam() sessionId: string) {
     ctx.tValidate(SessionRule, { sessionId });
     const token = await this.cacheAdapter.get(sessionId);
     if (typeof token !== 'string') {

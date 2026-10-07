@@ -2,7 +2,7 @@ import { Event, Inject } from '@eggjs/tegg';
 import {
   EggAppConfig, EggLogger,
 } from 'egg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 import { PACKAGE_VERSION_ADDED, PACKAGE_TAG_ADDED, PACKAGE_TAG_CHANGED } from './index.js';
 import { getScopeAndName } from '../../common/PackageUtil.js';
 import { PackageManagerService } from '../service/PackageManagerService.js';

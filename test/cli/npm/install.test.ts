@@ -1,3 +1,4 @@
+import { beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { app } from '@eggjs/mock/bootstrap';
@@ -13,7 +14,7 @@ describe('test/cli/npm/install.test.ts', () => {
   let demoDir: any;
   let userconfig: any;
   let cacheDir: any;
-  before(async () => {
+  beforeAll(async () => {
     cacheDir = TestUtil.mkdtemp();
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
     demoDir = TestUtil.getFixtures('demo');
@@ -30,7 +31,7 @@ describe('test/cli/npm/install.test.ts', () => {
     });
   });
 
-  after(async () => {
+  afterAll(async () => {
     await TestUtil.rm(userconfig);
     await TestUtil.rm(cacheDir);
     await TestUtil.rm(path.join(demoDir, 'node_modules'));

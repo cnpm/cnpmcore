@@ -4,7 +4,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
 
@@ -33,7 +33,7 @@ export class ShowPackageController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
   })
-  async show(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
+  async show(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string) {
     const [ scope, name ] = getScopeAndName(fullname);
     const isSync = isSyncWorkerRequest(ctx);
     const isFullManifests = ctx.accepts([ 'json', ABBREVIATED_META_TYPE ]) !== ABBREVIATED_META_TYPE;

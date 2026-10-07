@@ -1,15 +1,15 @@
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from '@eggjs/errors';
 import {
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPBody,
   HTTPParam,
-  Context,
+  HTTPContext,
   EggContext,
   Inject,
 } from '@eggjs/tegg';
-import { Static, Type } from 'egg-typebox-validate/typebox';
+import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 import { AuthAdapter } from '../../infra/AuthAdapter.js';
 import { AbstractController } from './AbstractController.js';
@@ -48,7 +48,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.POST,
   })
-  async createToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: TokenOptions) {
+  async createToken(@HTTPContext() ctx: EggContext, @HTTPBody() tokenOptions: TokenOptions) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     ctx.tValidate(TokenOptionsRule, tokenOptions);
 
@@ -77,7 +77,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens/token/:tokenKey',
     method: HTTPMethodEnum.DELETE,
   })
-  async removeToken(@Context() ctx: EggContext, @HTTPParam() tokenKey: string) {
+  async removeToken(@HTTPContext() ctx: EggContext, @HTTPParam() tokenKey: string) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'setting');
     await this.userService.removeToken(authorizedUser.userId, tokenKey);
     return { ok: true };
@@ -88,7 +88,7 @@ export class TokenController extends AbstractController {
     path: '/-/npm/v1/tokens',
     method: HTTPMethodEnum.GET,
   })
-  async listTokens(@Context() ctx: EggContext) {
+  async listTokens(@HTTPContext() ctx: EggContext) {
     // {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'token',
@@ -151,7 +151,7 @@ export class TokenController extends AbstractController {
   // 1. Need to submit token name and expires
   // 2. Optional to submit description, allowScopes, allowPackages information
   // 3. Need to implement ensureCurrentUser method in AuthAdapter, or pass in this.user
-  async createGranularToken(@Context() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
+  async createGranularToken(@HTTPContext() ctx: EggContext, @HTTPBody() tokenOptions: GranularTokenOptions) {
     ctx.tValidate(GranularTokenOptionsRule, tokenOptions);
     const user = await this.ensureWebUser(ctx.ip);
 

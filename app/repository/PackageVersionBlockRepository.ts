@@ -1,4 +1,5 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import type { Collection } from 'leoric';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import type { PackageVersionBlock as PackageVersionBlockModel } from './model/PackageVersionBlock.js';
@@ -34,7 +35,7 @@ export class PackageVersionBlockRepository extends AbstractRepository {
     return null;
   }
 
-  async listPackageVersionBlocks(packageId: string) {
+  async listPackageVersionBlocks(packageId: string): Promise<Collection<PackageVersionBlockModel>> {
     return await this.PackageVersionBlock.find({ packageId });
   }
 

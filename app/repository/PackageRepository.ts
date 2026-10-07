@@ -1,5 +1,5 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
-import { Orm } from '@eggjs/tegg-orm-plugin';
+import { Orm } from '@eggjs/orm-plugin';
 import { EggAppConfig } from 'egg';
 
 import { Bone } from './util/leoric.js';

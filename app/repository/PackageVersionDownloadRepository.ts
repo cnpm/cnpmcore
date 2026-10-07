@@ -1,4 +1,5 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import type { Collection } from 'leoric';
 
 import { AbstractRepository } from './AbstractRepository.js';
 import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.js';
@@ -38,7 +39,7 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
       model.id, model.packageId, model.version, model.yearMonth, field, counter);
   }
 
-  async query(packageId: string, start: Date, end: Date) {
+  async query(packageId: string, start: Date, end: Date): Promise<Collection<PackageVersionDownloadModel>> {
     const startYearMonth = start.getFullYear() * 100 + start.getMonth() + 1;
     const endYearMonth = end.getFullYear() * 100 + end.getMonth() + 1;
     const models = await this.PackageVersionDownload.find({

@@ -1,5 +1,5 @@
 import { EggContext, Next } from '@eggjs/tegg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 
 import { UserRoleManager } from '../UserRoleManager.js';
 

@@ -5,7 +5,7 @@ import {
   Inject,
 } from '@eggjs/tegg';
 import { isEmpty } from 'lodash-es';
-import { ForbiddenError, UnauthorizedError } from 'egg-errors';
+import { ForbiddenError, UnauthorizedError } from '@eggjs/errors';
 import { AbstractService } from '../../common/AbstractService.js';
 import { Token, isGranularToken } from '../entity/Token.js';
 import { TokenPackage as TokenPackageModel } from '../../../app/repository/model/TokenPackage.js';

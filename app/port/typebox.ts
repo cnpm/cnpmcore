@@ -1,8 +1,8 @@
-import { Type, Static } from 'egg-typebox-validate/typebox';
+import { Type, Static } from '@eggjs/typebox-validate/typebox';
 import semver from 'semver';
 import npa from 'npm-package-arg';
 import { uniq } from 'lodash-es';
-import { Ajv } from 'egg-typebox-validate';
+import { Ajv } from '@eggjs/typebox-validate';
 
 import { RegistryType } from '../common/enum/Registry.js';
 import { HookType } from '../common/enum/Hook.js';
@@ -41,7 +41,7 @@ export const BinaryNameRule = Type.String({
 
 // `[ -~]` matches all printable ASCII characters
 // https://catonmat.net/my-favorite-regex
-export const BinarySubpathRule = Type.RegEx(/^[ -~]{1,1024}$/);
+export const BinarySubpathRule = Type.String({ pattern: '^[ -~]{1,1024}$' });
 
 export const Tag = Type.String({
   format: 'semver-tag',

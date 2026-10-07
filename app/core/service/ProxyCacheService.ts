@@ -1,7 +1,7 @@
 import { EggHttpClient, HttpClientRequestOptions, HttpClientResponse, Context } from 'egg';
-import { ForbiddenError } from 'egg-errors';
+import { ForbiddenError } from '@eggjs/errors';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
-import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
+import { BackgroundTaskHelper } from '@eggjs/background-task';
 import { valid as semverValid } from 'semver';
 import { AbstractService } from '../../common/AbstractService.js';
 import { TaskService } from './TaskService.js';

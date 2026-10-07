@@ -1,6 +1,7 @@
 import leoric from 'leoric';
 
-const { DataTypes, Bone, LENGTH_VARIANTS } = leoric;
+const DataTypes: typeof import('leoric').DataTypes = leoric.DataTypes;
+const { Bone, LENGTH_VARIANTS } = leoric;
 
 export { DataTypes, Bone, LENGTH_VARIANTS };
 

@@ -4,7 +4,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
   HTTPBody,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
 import {
@@ -12,8 +12,8 @@ import {
   NotFoundError,
   UnauthorizedError,
   ForbiddenError,
-} from 'egg-errors';
-import { Static, Type } from 'egg-typebox-validate/typebox';
+} from '@eggjs/errors';
+import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from './AbstractController.js';
 import { LoginResultCode } from '../../common/enum/User.js';
@@ -57,7 +57,7 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.PUT,
   })
-  async loginOrCreateUser(@Context() ctx: EggContext, @HTTPParam() username: string, @HTTPBody() user: User) {
+  async loginOrCreateUser(@HTTPContext() ctx: EggContext, @HTTPParam() username: string, @HTTPBody() user: User) {
     // headers: {
     //   'user-agent': 'npm/8.1.2 node/v16.13.1 darwin arm64 workspaces/false',
     //   'npm-command': 'adduser',
@@ -125,7 +125,7 @@ export class UserController extends AbstractController {
     path: '/-/user/token/:token',
     method: HTTPMethodEnum.DELETE,
   })
-  async logout(@Context() ctx: EggContext, @HTTPParam() token: string) {
+  async logout(@HTTPContext() ctx: EggContext, @HTTPParam() token: string) {
     const authorizedUserAndToken = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     if (!authorizedUserAndToken) return { ok: false };
     if (authorizedUserAndToken.token.tokenKey !== sha512(token)) {
@@ -140,7 +140,7 @@ export class UserController extends AbstractController {
     path: '/-/user/org.couchdb.user::username',
     method: HTTPMethodEnum.GET,
   })
-  async showUser(@Context() ctx: EggContext, @HTTPParam() username: string) {
+  async showUser(@HTTPContext() ctx: EggContext, @HTTPParam() username: string) {
     const user = await this.userService.findUserByNameOrDisplayName(username);
     if (!user) {
       throw new NotFoundError(`User "${username}" not found`);
@@ -158,7 +158,7 @@ export class UserController extends AbstractController {
     path: '/-/whoami',
     method: HTTPMethodEnum.GET,
   })
-  async whoami(@Context() ctx: EggContext) {
+  async whoami(@HTTPContext() ctx: EggContext) {
     await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const authorizedRes = await this.userRoleManager.getAuthorizedUserAndToken(ctx);
     const { token, user } = authorizedRes!;
@@ -203,7 +203,7 @@ export class UserController extends AbstractController {
     path: '/-/npm/v1/user',
     method: HTTPMethodEnum.GET,
   })
-  async showProfile(@Context() ctx: EggContext) {
+  async showProfile(@HTTPContext() ctx: EggContext) {
     const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     return {
       // "tfa": {

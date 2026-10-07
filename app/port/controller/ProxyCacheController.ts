@@ -5,14 +5,14 @@ import {
   Inject,
   HTTPQuery,
   HTTPParam,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError, UnauthorizedError, NotImplementedError } from 'egg-errors';
+import { ForbiddenError, NotFoundError, UnauthorizedError, NotImplementedError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { ProxyCacheRepository } from '../../repository/ProxyCacheRepository.js';
-import { Static } from 'egg-typebox-validate/typebox';
+import { Static } from '@eggjs/typebox-validate/typebox';
 import { QueryPageOptions } from '../typebox.js';
 import { FULLNAME_REG_STRING } from '../../common/PackageUtil.js';
 import {
@@ -129,7 +129,7 @@ export class ProxyCacheController extends AbstractController {
     method: HTTPMethodEnum.DELETE,
     path: '/-/proxy-cache',
   })
-  async truncateProxyCaches(@Context() ctx: EggContext) {
+  async truncateProxyCaches(@HTTPContext() ctx: EggContext) {
     const isAdmin = await this.userRoleManager.isAdmin(ctx);
     if (!isAdmin) {
       throw new UnauthorizedError('only admin can do this');

@@ -4,7 +4,7 @@ import {
   UnprocessableEntityError,
   ForbiddenError,
   ConflictError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import {
   HTTPController,
   HTTPMethod,
@@ -12,12 +12,12 @@ import {
   HTTPParam,
   HTTPBody,
   Inject,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
 import * as ssri from 'ssri';
 import validateNpmPackageName from 'validate-npm-package-name';
-import { Static, Type } from 'egg-typebox-validate/typebox';
+import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 import { AbstractController } from '../AbstractController.js';
 import { getScopeAndName, FULLNAME_REG_STRING, extractPackageJSON } from '../../../common/PackageUtil.js';
@@ -89,7 +89,7 @@ export class SavePackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.PUT,
   })
-  async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
+  async save(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
     const { user } = await this.ensurePublishAccess(ctx, fullname, false);

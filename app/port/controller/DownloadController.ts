@@ -5,7 +5,7 @@ import {
   HTTPParam,
   Inject,
 } from '@eggjs/tegg';
-import { UnprocessableEntityError, NotFoundError } from 'egg-errors';
+import { UnprocessableEntityError, NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.js';

@@ -3,12 +3,12 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
-  Context,
+  HTTPContext,
   EggContext,
   Inject,
 } from '@eggjs/tegg';
 import path from 'node:path';
-import { NotFoundError } from 'egg-errors';
+import { NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { BinarySyncerService } from '../../core/service/BinarySyncerService.js';
@@ -25,7 +25,7 @@ export class BinarySyncController extends AbstractController {
     path: '/binary.html',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryHTML(@Context() ctx: EggContext) {
+  async showBinaryHTML(@HTTPContext() ctx: EggContext) {
     ctx.type = 'html';
     return ctx.app.binaryHTML;
   }
@@ -52,7 +52,7 @@ export class BinarySyncController extends AbstractController {
     path: '/-/binary/:binaryName(@[^/]{1,220}/[^/]{1,220}|[^@/]{1,220})/:subpath(.*)',
     method: HTTPMethodEnum.GET,
   })
-  async showBinary(@Context() ctx: EggContext, @HTTPParam() binaryName: BinaryName, @HTTPParam() subpath: string) {
+  async showBinary(@HTTPContext() ctx: EggContext, @HTTPParam() binaryName: BinaryName, @HTTPParam() subpath: string) {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);
@@ -110,7 +110,7 @@ export class BinarySyncController extends AbstractController {
     path: '/-/binary/:binaryName(@[^/]{1,220}/[^/]{1,220}|[^@/]{1,220})',
     method: HTTPMethodEnum.GET,
   })
-  async showBinaryIndex(@Context() ctx: EggContext, @HTTPParam() binaryName: BinaryName) {
+  async showBinaryIndex(@HTTPContext() ctx: EggContext, @HTTPParam() binaryName: BinaryName) {
     // check binaryName valid
     try {
       ctx.tValidate(BinaryNameRule, binaryName);

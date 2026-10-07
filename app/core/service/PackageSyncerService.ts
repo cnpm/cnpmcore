@@ -10,7 +10,7 @@ import { Pointcut } from '@eggjs/tegg/aop';
 import { EggHttpClient } from 'egg';
 import { isEqual, isEmpty } from 'lodash-es';
 import semver from 'semver';
-import { BadRequestError } from 'egg-errors';
+import { BadRequestError } from '@eggjs/errors';
 import { NPMRegistry, RegistryResponse } from '../../common/adapter/NPMRegistry.js';
 import { detectInstallScript, getScopeAndName } from '../../common/PackageUtil.js';
 import { downloadToTempfile } from '../../common/FileUtil.js';

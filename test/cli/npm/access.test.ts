@@ -1,3 +1,4 @@
+import { beforeAll, afterAll } from 'vitest';
 import path from 'node:path';
 import { app } from '@eggjs/mock/bootstrap';
 import coffee from 'coffee';
@@ -14,7 +15,7 @@ describe('test/cli/npm/access.test.ts', () => {
   let userconfig: any;
   let cacheDir: any;
   let useLegacyCommands: any;
-  before(async () => {
+  beforeAll(async () => {
     cacheDir = TestUtil.mkdtemp();
     fooPkgDir = TestUtil.getFixtures('@cnpm/foo');
     demoDir = TestUtil.getFixtures('demo');
@@ -32,7 +33,7 @@ describe('test/cli/npm/access.test.ts', () => {
     });
   });
 
-  after(async () => {
+  afterAll(async () => {
     await TestUtil.rm(userconfig);
     await TestUtil.rm(cacheDir);
     await TestUtil.rm(path.join(demoDir, 'node_modules'));

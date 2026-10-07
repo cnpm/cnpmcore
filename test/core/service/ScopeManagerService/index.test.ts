@@ -1,3 +1,4 @@
+import { beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
 
@@ -6,7 +7,7 @@ import { ScopeManagerService } from '../../../../app/core/service/ScopeManagerSe
 describe('test/core/service/ScopeManagerService/index.test.ts', () => {
   let scopeManagerService: ScopeManagerService;
 
-  before(async () => {
+  beforeAll(async () => {
     scopeManagerService = await app.getEggObject(ScopeManagerService);
   });
 

@@ -1,4 +1,5 @@
 import { AccessLevel, SingletonProto, Inject } from '@eggjs/tegg';
+import type { Collection } from 'leoric';
 
 import { ModelConvertor } from './util/ModelConvertor.js';
 import type { ProxyCache as ProxyModeCachedFilesModel } from './model/ProxyCache.js';
@@ -38,7 +39,7 @@ export class ProxyCacheRepository extends AbstractRepository {
   }
 
   // used by update & delete all cache
-  async findProxyCaches(fullname: string, version?: string) {
+  async findProxyCaches(fullname: string, version?: string): Promise<Collection<ProxyModeCachedFilesModel>> {
     const models = version ? await this.ProxyCache.find({ fullname, version }) : await this.ProxyCache.find({ fullname });
     return models;
   }

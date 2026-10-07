@@ -1,14 +1,14 @@
 import {
   BadRequestError,
   ForbiddenError,
-} from 'egg-errors';
+} from '@eggjs/errors';
 import {
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
   Inject,
-  Context,
+  HTTPContext,
   EggContext,
 } from '@eggjs/tegg';
 
@@ -36,7 +36,7 @@ export class RemovePackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-/:filenameWithVersion.tgz/-rev/:rev`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeByTarballUrl(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
+  async removeByTarballUrl(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
     const npmCommand = ctx.get('npm-command');
     if (npmCommand !== 'unpublish') {
       throw new BadRequestError('Only allow "unpublish" npm-command');
@@ -62,7 +62,7 @@ export class RemovePackageVersionController extends AbstractController {
     path: `/:fullname(${FULLNAME_REG_STRING})/-rev/:rev`,
     method: HTTPMethodEnum.DELETE,
   })
-  async removeByPkgUri(@Context() ctx: EggContext, @HTTPParam() fullname: string) {
+  async removeByPkgUri(@HTTPContext() ctx: EggContext, @HTTPParam() fullname: string) {
     const npmCommand = ctx.get('npm-command');
     if (npmCommand !== 'unpublish') {
       throw new BadRequestError('Only allow "unpublish" npm-command');

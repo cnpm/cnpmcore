@@ -4,7 +4,7 @@ import {
   HTTPMethodEnum,
   HTTPParam,
 } from '@eggjs/tegg';
-import { ForbiddenError, NotFoundError } from 'egg-errors';
+import { ForbiddenError, NotFoundError } from '@eggjs/errors';
 
 import { AbstractController } from './AbstractController.js';
 import { FULLNAME_REG_STRING, getFullname, getScopeAndName } from '../../common/PackageUtil.js';

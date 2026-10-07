@@ -5,7 +5,7 @@ import {
   ContextProto,
 } from '@eggjs/tegg';
 import { EggAppConfig, EggLogger } from 'egg';
-import { UnauthorizedError, ForbiddenError } from 'egg-errors';
+import { UnauthorizedError, ForbiddenError } from '@eggjs/errors';
 
 import { PackageRepository } from '../repository/PackageRepository.js';
 import { Package as PackageEntity } from '../core/entity/Package.js';
