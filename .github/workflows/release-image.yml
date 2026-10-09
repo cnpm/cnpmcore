@@ -1,31 +1,30 @@
-# https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images#publishing-images-to-github-packages
 name: Create and publish a Docker image
 
-# Configures this workflow to run manually
 on:
   workflow_dispatch:
-
   pull_request:
     branches: [master]
 
-# Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
+concurrency:
+  group: build-and-push-image-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
-# There is a single job in this workflow. It's configured to run on the latest available version of Ubuntu.
 jobs:
-  build-and-push-image:
+  build-and-test-image:
     runs-on: ubuntu-latest
-    concurrency:
-      group: build-and-push-image-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
-      cancel-in-progress: true
-    # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [debian, alpine]
+    env:
+      IMAGE_VARIANT: ${{ matrix.image }}
 
     services:
       mysql:
@@ -44,9 +43,73 @@ jobs:
     steps:
       - name: Checkout repository
         uses: taiki-e/checkout-action@v1
-      # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
+
+      # Refresh unlocked dependencies daily while reusing layers between runs.
+      - name: Set cache date
+        id: cache
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
+      - parallel:
+          - name: Set up Docker Buildx
+            uses: docker/setup-buildx-action@v4
+          - name: Prepare database
+            run: CNPMCORE_TEST_WORKERS=0 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+
+      - name: Build ${{ matrix.image }} image for testing
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: .docker/${{ matrix.image }}/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: cnpmcore:test-${{ matrix.image }}
+          cache-from: type=gha,scope=cnpmcore-${{ matrix.image }}-${{ steps.cache.outputs.date }}
+          cache-to: type=gha,mode=max,scope=cnpmcore-${{ matrix.image }}-${{ steps.cache.outputs.date }}
+
+      - name: Verify ${{ matrix.image }} image
+        run: |
+          docker run -d --rm --name "cnpmcore-$IMAGE_VARIANT" \
+            --network host \
+            -e NODE_ENV=production \
+            -e EGG_SERVER_ENV=prod \
+            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
+            -e CNPMCORE_DATABASE_TYPE=MySQL \
+            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
+            -e CNPMCORE_DATABASE_PORT=3306 \
+            -e CNPMCORE_DATABASE_NAME=cnpmcore \
+            -e CNPMCORE_DATABASE_USER=root \
+            -e CNPMCORE_DATABASE_PASSWORD= \
+            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
+            -e CNPMCORE_REDIS_PORT=6379 \
+            -e CNPMCORE_REDIS_DB=0 \
+            -e CNPMCORE_NFS_TYPE= \
+            -e CNPMCORE_FORCE_LOCAL_FS=true \
+            "cnpmcore:test-$IMAGE_VARIANT"
+          bash .docker/health-check.sh "cnpmcore-$IMAGE_VARIANT"
+
+  # Keep the existing check name and require both images to pass before publishing.
+  build-and-push-image:
+    if: ${{ always() }}
+    needs: build-and-test-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: Check image tests
+        env:
+          TEST_RESULT: ${{ needs.build-and-test-image.result }}
+        run: test "$TEST_RESULT" = success
+
+      - name: Checkout repository
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
+        uses: taiki-e/checkout-action@v1
+
       - name: Log in to the Container registry
-        if: github.event_name != 'pull_request'
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
         uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
@@ -54,87 +117,28 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
         uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
         uses: docker/setup-buildx-action@v4
 
-      # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
       - name: Extract metadata (tags, labels) for Docker
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
         id: meta
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Prepare database
-        run: CNPMCORE_TEST_WORKERS=0 CNPMCORE_DATABASE_NAME=cnpmcore bash ./prepare-database-mysql.sh
+      - name: Set cache date
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
+        id: cache
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
 
-      # Build and test debian image
-      - name: Build debian image for testing
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: .docker/debian/Dockerfile
-          platforms: linux/amd64
-          load: true
-          tags: cnpmcore:test-debian
-
-      - name: Verify debian image
-        run: |
-          docker run -d --rm --name cnpmcore-debian \
-            --network host \
-            -e NODE_ENV=production \
-            -e EGG_SERVER_ENV=prod \
-            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
-            -e CNPMCORE_DATABASE_TYPE=MySQL \
-            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
-            -e CNPMCORE_DATABASE_PORT=3306 \
-            -e CNPMCORE_DATABASE_NAME=cnpmcore \
-            -e CNPMCORE_DATABASE_USER=root \
-            -e CNPMCORE_DATABASE_PASSWORD= \
-            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
-            -e CNPMCORE_REDIS_PORT=6379 \
-            -e CNPMCORE_REDIS_DB=0 \
-            -e CNPMCORE_NFS_TYPE= \
-            -e CNPMCORE_FORCE_LOCAL_FS=true \
-            cnpmcore:test-debian
-          bash .docker/health-check.sh cnpmcore-debian
-
-      # Build and test alpine image
-      - name: Build alpine image for testing
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: .docker/alpine/Dockerfile
-          platforms: linux/amd64
-          load: true
-          tags: cnpmcore:test-alpine
-
-      - name: Verify alpine image
-        run: |
-          docker run -d --rm --name cnpmcore-alpine \
-            --network host \
-            -e NODE_ENV=production \
-            -e EGG_SERVER_ENV=prod \
-            -e CNPMCORE_CONFIG_REGISTRY=http://localhost:7001 \
-            -e CNPMCORE_DATABASE_TYPE=MySQL \
-            -e CNPMCORE_DATABASE_HOST=127.0.0.1 \
-            -e CNPMCORE_DATABASE_PORT=3306 \
-            -e CNPMCORE_DATABASE_NAME=cnpmcore \
-            -e CNPMCORE_DATABASE_USER=root \
-            -e CNPMCORE_DATABASE_PASSWORD= \
-            -e CNPMCORE_REDIS_HOST=127.0.0.1 \
-            -e CNPMCORE_REDIS_PORT=6379 \
-            -e CNPMCORE_REDIS_DB=0 \
-            -e CNPMCORE_NFS_TYPE= \
-            -e CNPMCORE_FORCE_LOCAL_FS=true \
-            cnpmcore:test-alpine
-          bash .docker/health-check.sh cnpmcore-alpine
-
-      # Build multi-platform and push (only on non-PR events)
       - name: Build and push Docker image
         id: push
-        if: github.event_name != 'pull_request'
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -143,12 +147,15 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=gha,scope=cnpmcore-debian-${{ steps.cache.outputs.date }}
+            type=gha,scope=cnpmcore-debian-release-${{ steps.cache.outputs.date }}
+          cache-to: type=gha,mode=max,scope=cnpmcore-debian-release-${{ steps.cache.outputs.date }}
 
-      # This step generates an artifact attestation for the image, which is a tamper-proof statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
       - name: Generate artifact attestation
-        if: github.event_name != 'pull_request'
+        if: success() && !cancelled() && github.event_name == 'workflow_dispatch'
         uses: actions/attest-build-provenance@v4
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
