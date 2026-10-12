@@ -7,6 +7,11 @@ import { SyncMode } from '../../../../app/common/constants.ts';
 import { NFSClientAdapter } from '../../../../app/infra/NFSClientAdapter.ts';
 import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
 
+// Remote NFS clients (OSS, S3) expose url(), which makes the download
+// controller redirect instead of returning 404, so tests that expect a 404
+// must mock url() away for them.
+const nfsClientHasUrl = ['oss', 's3'].includes(process.env.CNPMCORE_NFS_TYPE ?? '');
+
 describe('test/port/controller/package/DownloadPackageVersionTarController.test.ts', () => {
   let publisher: TestUser;
   let nfsClientAdapter: NFSClientAdapter;
@@ -143,7 +148,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       mock(nfsClientAdapter, 'createDownloadStream', async () => {
         return undefined;
       });
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
@@ -161,7 +166,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should 404 when package not exists', async () => {
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
@@ -186,7 +191,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
 
     it('should 404 when package version not exists', async () => {
       mock(app.config.cnpmcore, 'redirectNotFound', false);
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
@@ -223,7 +228,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should not redirect public package to source registry when syncMode=all', async () => {
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
@@ -244,7 +249,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
     });
 
     it('should redirect public package to source registry when syncMode=none', async () => {
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
@@ -349,7 +354,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       mock(nfsClientAdapter, 'createDownloadStream', async () => {
         return undefined;
       });
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
@@ -392,7 +397,7 @@ describe('test/port/controller/package/DownloadPackageVersionTarController.test.
       mock(nfsClientAdapter, 'createDownloadStream', async () => {
         return undefined;
       });
-      if (process.env.CNPMCORE_NFS_TYPE === 'oss') {
+      if (nfsClientHasUrl) {
         mock(nfsClientAdapter, 'url', async () => {
           return undefined;
         });
