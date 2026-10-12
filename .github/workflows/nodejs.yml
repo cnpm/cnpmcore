@@ -511,6 +511,14 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      # Self-contained S3-compatible backend, so this job does not depend on an
+      # external bucket (the previous remote endpoint started answering HTTP 530).
+      s3:
+        image: adobe/s3mock:5.2.3
+        env:
+          COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
+        ports:
+          - 9090:9090
 
     steps:
       - name: Checkout Git Source
@@ -529,15 +537,24 @@ jobs:
       - name: Install Dependencies
         run: ut
 
+      - name: Wait for S3 service
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:9090/ > /dev/null && exit 0
+            sleep 2
+          done
+          echo "S3 service did not become ready" && exit 1
+
       - name: Continuous Integration
         run: ut ci "test/cli/npm/install.test.ts"
         env:
           CNPMCORE_NFS_TYPE: s3
           CNPMCORE_NFS_REMOVE_BEFORE_UPLOAD: true
           CNPMCORE_NFS_S3_CLIENT_BUCKET: cnpmcore-unittest-github-nodejs-${{ matrix.node-version }}
-          CNPMCORE_NFS_S3_CLIENT_ENDPOINT: ${{ secrets.CNPMCORE_NFS_S3_ENDPOINT }}
-          CNPMCORE_NFS_S3_CLIENT_ID: ${{ secrets.CNPMCORE_NFS_S3_ID }}
-          CNPMCORE_NFS_S3_CLIENT_SECRET: ${{ secrets.CNPMCORE_NFS_S3_SECRET }}
+          CNPMCORE_NFS_S3_CLIENT_ENDPOINT: http://127.0.0.1:9090
+          # S3Mock accepts any credentials
+          CNPMCORE_NFS_S3_CLIENT_ID: s3mock
+          CNPMCORE_NFS_S3_CLIENT_SECRET: s3mock
           CNPMCORE_NFS_S3_CLIENT_FORCE_PATH_STYLE: true
           # CNPMCORE_NFS_S3_CLIENT_DISABLE_URL: true
 
