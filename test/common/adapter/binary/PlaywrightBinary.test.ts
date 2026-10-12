@@ -116,13 +116,55 @@ describe('test/common/adapter/binary/PlaywrightBinary.test.ts', () => {
         );
       }
 
-      // linux-arm64 did NOT migrate to CFT and must still resolve under builds/chromium/{revision}/.
+      // chromium 133 predates the arm64 CFT move, so linux-arm64 stays under builds/chromium/{revision}/.
       // Fixture revision is 1155.
       const chromiumRevResult = await binary.fetch('/builds/chromium/1155/');
       assert.ok(chromiumRevResult);
       const linuxArm64 = chromiumRevResult.items.find((item) => item.name === 'chromium-linux-arm64.zip');
       assert.ok(linuxArm64, 'chromium-linux-arm64.zip should still live at /builds/chromium/1155/');
       assert.equal(linuxArm64.url, 'https://cdn.playwright.dev/builds/chromium/1155/chromium-linux-arm64.zip');
+    });
+
+    // https://github.com/cnpm/cnpmcore/issues/1162
+    // chromium 153 (playwright 1.63.0) and up publish linux-arm64 under builds/cft/, like linux64.
+    it('should mirror linux-arm64 chromium as CFT once the browser version reaches 153', async () => {
+      app.mockHttpclient('https://registry.npmjs.com/playwright-core', 'GET', {
+        data: { versions: { '1.64.0': {} } },
+        persist: false,
+      });
+      mockPlaywrightCli();
+      app
+        .mockAgent()
+        .get('https://unpkg.com')
+        .intercept({
+          method: 'GET',
+          path: '/playwright-core@1.64.0/browsers.json',
+        })
+        .reply(200, {
+          browsers: [
+            { name: 'chromium', revision: '1248', browserVersion: '156.0.8078.4' },
+            { name: 'chromium-headless-shell', revision: '1248', browserVersion: '156.0.8078.4' },
+          ],
+        })
+        .persist();
+
+      const linuxArm64Result = await binary.fetch('/builds/cft/156.0.8078.4/linux-arm64/');
+      assert.ok(linuxArm64Result);
+      assert.deepEqual(linuxArm64Result.items.map((item) => item.name).sort(), [
+        'chrome-headless-shell-linux-arm64.zip',
+        'chrome-linux-arm64.zip',
+      ]);
+      for (const item of linuxArm64Result.items) {
+        assert.match(
+          item.url,
+          /https:\/\/cdn\.playwright\.dev\/builds\/cft\/156\.0\.8078\.4\/linux-arm64\/(chrome|chrome-headless-shell)-linux-arm64\.zip/,
+        );
+      }
+
+      // the modern revision no longer publishes a legacy arm64 build
+      const legacy = await binary.fetch('/builds/chromium/1248/');
+      assert.ok(legacy);
+      assert.equal(legacy.items.length, 0);
     });
 
     // https://github.com/cnpm/cnpmcore/issues/1123
