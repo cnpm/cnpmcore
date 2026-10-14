@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 
 import type { Context, EggAppConfig } from 'egg';
+import Redis from 'ioredis';
 import OSSClient from 'oss-cnpm';
 import { env } from 'read-env-value';
 import S3Client from 's3-cnpmcore';
@@ -114,6 +115,8 @@ export default function startConfig(appInfo: EggAppConfig) {
   };
 
   config.redis = {
+    // Use the project's ioredis version instead of the plugin's bundled version.
+    Redis,
     client: {
       port: env('CNPMCORE_REDIS_PORT', 'number', 6379),
       host: env('CNPMCORE_REDIS_HOST', 'string', '127.0.0.1'),
