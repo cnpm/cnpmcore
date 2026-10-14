@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -ex
+set -eo pipefail
 
 # read variables from environment
 db_host=${POSTGRES_HOST:-127.0.0.1}
@@ -39,7 +39,7 @@ echo "🤖 Running the following SQL files:"
 for file in $sql_files; do
   echo "🔖 Running $file..."
   # psql $param --dbname=$db_name --file=$file --echo-all
-  psql $param --dbname=$db_name --file=$file --quiet
+  psql $param --set=ON_ERROR_STOP=1 --dbname=$db_name --file=$file --quiet
 done
 
 echo "🎉 prepare database $db_name done"
@@ -56,7 +56,7 @@ for i in $(seq 0 $max_workers); do
   dropdb $param $worker_db 2>/dev/null || true
   createdb $param --echo --encoding=UTF8 $worker_db
   for file in $sql_files; do
-    psql $param --dbname=$worker_db --file=$file --quiet
+    psql $param --set=ON_ERROR_STOP=1 --dbname=$worker_db --file=$file --quiet
   done
 done
 echo "🎉 prepare worker databases done"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -ex
+set -eo pipefail
 
 # read variables from environment
 db_host=${CNPMCORE_DATABASE_HOST:-127.0.0.1}
