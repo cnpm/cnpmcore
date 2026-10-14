@@ -19,6 +19,14 @@ const PLAYWRIGHT_DRIVER_ARCHS = ['win32_x64', 'mac-arm64', 'mac', 'linux-arm64',
 // CFT entries use Chrome for Testing URLs: builds/cft/{browserVersion}/{suffix}
 // (introduced in playwright 1.58.1, see https://github.com/cnpm/cnpmcore/issues/1033)
 const cft = (suffix: string) => ({ cft: suffix }) as const;
+// linux-arm64 chromium only reached CFT at chromium 153 (playwright 1.63.0); older browser versions
+// — still most of the synced window — stay on builds/chromium/{revision}/, which still resolves.
+// https://github.com/microsoft/playwright/blob/v1.63.0/packages/playwright-core/src/server/registry/index.ts#L139-L147
+const CFT_LINUX_ARM64_SINCE = 153;
+const linuxArm64 =
+  (cftSuffix: string, legacyPath: string) =>
+  (browser: { browserVersion?: string }): string | { cft: string } =>
+    Number(browser.browserVersion?.split('.')[0]) >= CFT_LINUX_ARM64_SINCE ? cft(cftSuffix) : legacyPath;
 /* eslint-disable quote-props */
 const DOWNLOAD_PATHS = {
   chromium: {
@@ -28,15 +36,24 @@ const DOWNLOAD_PATHS = {
     'ubuntu22.04-x64': cft('linux64/chrome-linux64.zip'),
     'ubuntu24.04-x64': cft('linux64/chrome-linux64.zip'),
     'ubuntu18.04-arm64': undefined,
-    'ubuntu20.04-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
-    'ubuntu22.04-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
-    'ubuntu24.04-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
+    'ubuntu20.04-arm64': linuxArm64(
+      'linux-arm64/chrome-linux-arm64.zip',
+      'builds/chromium/%s/chromium-linux-arm64.zip',
+    ),
+    'ubuntu22.04-arm64': linuxArm64(
+      'linux-arm64/chrome-linux-arm64.zip',
+      'builds/chromium/%s/chromium-linux-arm64.zip',
+    ),
+    'ubuntu24.04-arm64': linuxArm64(
+      'linux-arm64/chrome-linux-arm64.zip',
+      'builds/chromium/%s/chromium-linux-arm64.zip',
+    ),
     'debian11-x64': cft('linux64/chrome-linux64.zip'),
-    'debian11-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
+    'debian11-arm64': linuxArm64('linux-arm64/chrome-linux-arm64.zip', 'builds/chromium/%s/chromium-linux-arm64.zip'),
     'debian12-x64': cft('linux64/chrome-linux64.zip'),
-    'debian12-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
+    'debian12-arm64': linuxArm64('linux-arm64/chrome-linux-arm64.zip', 'builds/chromium/%s/chromium-linux-arm64.zip'),
     'debian13-x64': cft('linux64/chrome-linux64.zip'),
-    'debian13-arm64': 'builds/chromium/%s/chromium-linux-arm64.zip',
+    'debian13-arm64': linuxArm64('linux-arm64/chrome-linux-arm64.zip', 'builds/chromium/%s/chromium-linux-arm64.zip'),
     'mac10.13': cft('mac-x64/chrome-mac-x64.zip'),
     'mac10.14': cft('mac-x64/chrome-mac-x64.zip'),
     'mac10.15': cft('mac-x64/chrome-mac-x64.zip'),
@@ -59,15 +76,33 @@ const DOWNLOAD_PATHS = {
     'ubuntu22.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'ubuntu24.04-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
     'ubuntu18.04-arm64': undefined,
-    'ubuntu20.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
-    'ubuntu22.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
-    'ubuntu24.04-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'ubuntu20.04-arm64': linuxArm64(
+      'linux-arm64/chrome-headless-shell-linux-arm64.zip',
+      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    ),
+    'ubuntu22.04-arm64': linuxArm64(
+      'linux-arm64/chrome-headless-shell-linux-arm64.zip',
+      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    ),
+    'ubuntu24.04-arm64': linuxArm64(
+      'linux-arm64/chrome-headless-shell-linux-arm64.zip',
+      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    ),
     'debian11-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
-    'debian11-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian11-arm64': linuxArm64(
+      'linux-arm64/chrome-headless-shell-linux-arm64.zip',
+      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    ),
     'debian12-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
-    'debian12-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian12-arm64': linuxArm64(
+      'linux-arm64/chrome-headless-shell-linux-arm64.zip',
+      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    ),
     'debian13-x64': cft('linux64/chrome-headless-shell-linux64.zip'),
-    'debian13-arm64': 'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    'debian13-arm64': linuxArm64(
+      'linux-arm64/chrome-headless-shell-linux-arm64.zip',
+      'builds/chromium/%s/chromium-headless-shell-linux-arm64.zip',
+    ),
     'mac10.13': undefined,
     'mac10.14': undefined,
     'mac10.15': undefined,
@@ -506,7 +541,8 @@ export class PlaywrightBinary extends AbstractBinary {
           // https://cdn.playwright.dev/builds/chromium-tip-of-tree/1293/chromium-tip-of-tree-headless-shell-mac-arm64.zip
           browserDirname = 'chromium-tip-of-tree';
         }
-        for (const [platform, remotePath] of Object.entries(downloadPaths)) {
+        for (const [platform, downloadPath] of Object.entries(downloadPaths)) {
+          const remotePath = typeof downloadPath === 'function' ? downloadPath(browser) : downloadPath;
           if (!remotePath) continue;
           const revision = browser.revisionOverrides?.[platform] ?? browser.revision;
           const itemDate = browser.browserVersion || revision;
