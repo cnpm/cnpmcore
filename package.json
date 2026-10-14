@@ -108,7 +108,7 @@
     "eggjs-elasticsearch": "^0.0.6",
     "fast-xml-parser": "^5.8.0",
     "fs-cnpm": "^2.4.1",
-    "ioredis": "^5.8.2",
+    "ioredis": "^6.0.0",
     "leoric": "^2.16.0",
     "lodash-es": "^4.17.21",
     "mime-types": "^3.0.2",
