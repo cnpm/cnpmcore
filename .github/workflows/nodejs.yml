@@ -394,6 +394,17 @@ jobs:
       - name: Checkout Git Source
         uses: taiki-e/checkout-action@v1
 
+      - name: Prepare database
+        id: database
+        background: true
+        timeout-minutes: 3
+        run: bash ./prepare-database-postgresql.sh
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+
       # Start Elasticsearch while Node.js and dependencies are prepared.
       - name: Configure sysctl limits
         run: |
@@ -436,9 +447,15 @@ jobs:
             'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=60s' \
             | jq -e '.timed_out == false and (.status == "yellow" or .status == "green")'
 
+      - name: Wait for database preparation
+        wait: database
+
+      # The database is ready; run coverage without the precov lifecycle hook.
       - name: Continuous Integration
-        run: ut ci:postgresql
+        run: ./node_modules/.bin/egg-bin cov --exclude "**/test/**"
         env:
+          EGG_FILE_PARALLELISM: true
+          CNPMCORE_DATABASE_TYPE: PostgreSQL
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: localhost
           POSTGRES_USER: postgres
@@ -481,6 +498,12 @@ jobs:
       - name: Checkout Git Source
         uses: taiki-e/checkout-action@v1
 
+      - name: Prepare database
+        id: database
+        background: true
+        timeout-minutes: 3
+        run: bash ./prepare-database-mysql.sh
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v7
         with:
@@ -494,9 +517,14 @@ jobs:
       - name: Install Dependencies
         run: ut
 
+      - name: Wait for database preparation
+        wait: database
+
+      # The database is ready; run coverage without the precov lifecycle hook.
       - name: Continuous Integration
-        run: ut ci
+        run: ./node_modules/.bin/egg-bin cov --exclude "**/test/**"
         env:
+          EGG_FILE_PARALLELISM: true
           CNPMCORE_CONFIG_ENABLE_JSON_BUILDER: ${{ matrix.enableJSONBuilder }}
 
       - name: Code Coverage
