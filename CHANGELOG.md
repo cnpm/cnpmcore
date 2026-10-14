@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.37.2 (2026-10-14)</small>
+
+* chore(deps): update vite-plus related packages (#1164) ([8c6fead](https://github.com/cnpm/cnpmcore/commit/8c6fead)), closes [#1164](https://github.com/cnpm/cnpmcore/issues/1164)
+* perf(ci): parallelize setup, tests, and Docker checks (#1160) ([12915e0](https://github.com/cnpm/cnpmcore/commit/12915e0)), closes [#1160](https://github.com/cnpm/cnpmcore/issues/1160)
+
 ## <small>4.37.1 (2026-10-14)</small>
 
 * fix(playwright): sync linux-arm64 chromium from builds/cft on chromium 153+ (#1163) ([73c65f8](https://github.com/cnpm/cnpmcore/commit/73c65f8)), closes [#1163](https://github.com/cnpm/cnpmcore/issues/1163)
