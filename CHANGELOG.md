@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.37.1 (2026-10-14)</small>
+
+* fix(playwright): sync linux-arm64 chromium from builds/cft on chromium 153+ (#1163) ([73c65f8](https://github.com/cnpm/cnpmcore/commit/73c65f8)), closes [#1163](https://github.com/cnpm/cnpmcore/issues/1163)
+* ci: run test-mysql57-s3-nfs against a local S3Mock instead of the remote bucket (#1161) ([269ca4c](https://github.com/cnpm/cnpmcore/commit/269ca4c)), closes [#1161](https://github.com/cnpm/cnpmcore/issues/1161) [#1152](https://github.com/cnpm/cnpmcore/issues/1152)
+
 ## 4.37.0 (2026-10-07)
 
 * feat: upgrade Egg to 4.2.0 (#1159) ([4cf7fdf](https://github.com/cnpm/cnpmcore/commit/4cf7fdf)), closes [#1159](https://github.com/cnpm/cnpmcore/issues/1159)
