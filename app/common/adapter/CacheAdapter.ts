@@ -1,8 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { AccessLevel, Inject, SingletonProto } from 'egg';
-// FIXME: @eggjs/redis should use ioredis v5
-// https://github.com/eggjs/redis/issues/35
 import type { Redis } from 'ioredis';
 
 const ONE_DAY = 3600 * 24;
