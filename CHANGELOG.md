@@ -1,5 +1,12 @@
 # Changelog
 
+## <small>4.37.3 (2026-10-15)</small>
+
+* fix: omit registry credentials from API responses ([3959274](https://github.com/cnpm/cnpmcore/commit/3959274))
+* Merge commit from fork ([0bf0052](https://github.com/cnpm/cnpmcore/commit/0bf0052))
+* chore(deps): update dependency ioredis to v6 (#1117) ([a6d0d4a](https://github.com/cnpm/cnpmcore/commit/a6d0d4a)), closes [#1117](https://github.com/cnpm/cnpmcore/issues/1117)
+* chore(deps): update node.js to v24.22.0 (#1165) ([48ffb26](https://github.com/cnpm/cnpmcore/commit/48ffb26)), closes [#1165](https://github.com/cnpm/cnpmcore/issues/1165)
+
 ## <small>4.37.2 (2026-10-14)</small>
 
 * chore(deps): update vite-plus related packages (#1164) ([8c6fead](https://github.com/cnpm/cnpmcore/commit/8c6fead)), closes [#1164](https://github.com/cnpm/cnpmcore/issues/1164)
