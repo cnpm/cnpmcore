@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 
-import { app } from '@eggjs/mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { TaskType } from '../../../../app/common/enum/Task.ts';
 import type { Registry } from '../../../../app/core/entity/Registry.ts';
 import type { ChangesStreamTaskData } from '../../../../app/core/entity/Task.ts';
+import { RegistryManagerService } from '../../../../app/core/service/RegistryManagerService.ts';
 import { TaskService } from '../../../../app/core/service/TaskService.ts';
 import { type TestUser, TestUtil } from '../../../../test/TestUtil.ts';
 
@@ -12,8 +13,10 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
   let adminUser: TestUser;
   let registry: Registry;
   let taskService: TaskService;
+  let registryManagerService: RegistryManagerService;
   before(async () => {
     taskService = await app.getEggObject(TaskService);
+    registryManagerService = await app.getEggObject(RegistryManagerService);
   });
   beforeEach(async () => {
     adminUser = await TestUtil.createAdmin();
@@ -27,6 +30,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         host: 'https://r.cnpmjs.org/',
         changeStream: 'https://r.cnpmjs.org/_changes',
         type: 'cnpmcore',
+        authToken: 'upstream-test-token',
       })
       .expect(200);
 
@@ -112,6 +116,26 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
 
       assert.ok(res.body.count === 2);
       assert.ok(res.body.data[1].name === 'custom5');
+      for (const item of res.body.data) {
+        assert.equal('authToken' in item, false);
+      }
+    });
+
+    it('should not expose auth tokens to authenticated users', async () => {
+      const user = await TestUtil.createUser();
+      mock(app.config.cnpmcore, 'alwaysAuth', true);
+
+      for (const authorization of [user.authorization, adminUser.authorization]) {
+        const list = await app.httpRequest().get('/-/registry').set('authorization', authorization).expect(200);
+        assert.equal('authToken' in list.body.data[0], false);
+
+        const detail = await app
+          .httpRequest()
+          .get(`/-/registry/${registry.registryId}`)
+          .set('authorization', authorization)
+          .expect(200);
+        assert.equal('authToken' in detail.body, false);
+      }
     });
   });
 
@@ -157,6 +181,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
     it('should 200', async () => {
       const queryRes = await app.httpRequest().get(`/-/registry/${registry.registryId}`);
       assert.deepEqual(queryRes.body, registry);
+      assert.equal('authToken' in queryRes.body, false);
     });
 
     it('should error', async () => {
@@ -248,9 +273,7 @@ describe('test/port/controller/RegistryController/index.test.ts', () => {
         })
         .expect(200);
 
-      const registList = await app.httpRequest().get('/-/registry').expect(200);
-
-      const latestToken = await registList.body.data[0].authToken;
+      const latestToken = await registryManagerService.getAuthTokenByRegistryHost(registry.host);
       assert.equal(latestToken, 'testAuthToekn');
     });
   });

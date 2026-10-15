@@ -12,6 +12,7 @@ import {
   Middleware,
 } from 'egg';
 import { NotFoundError } from 'egg/errors';
+import { pick } from 'lodash-es';
 
 import type { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService.ts';
 import type { ScopeManagerService } from '../../core/service/ScopeManagerService.ts';
@@ -23,6 +24,18 @@ import {
   type QueryPageOptions,
 } from '../typebox.ts';
 import { AbstractController } from './AbstractController.ts';
+
+const registryResponseKeys = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'registryId',
+  'name',
+  'host',
+  'changeStream',
+  'userPrefix',
+  'type',
+] as const;
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -43,7 +56,10 @@ export class RegistryController extends AbstractController {
       pageSize,
       pageIndex,
     });
-    return registries;
+    return {
+      ...registries,
+      data: registries.data.map((registry) => pick(registry, registryResponseKeys)),
+    };
   }
 
   @HTTPMethod({
@@ -55,7 +71,7 @@ export class RegistryController extends AbstractController {
     if (!registry) {
       throw new NotFoundError('registry not found');
     }
-    return registry;
+    return pick(registry, registryResponseKeys);
   }
 
   @HTTPMethod({
