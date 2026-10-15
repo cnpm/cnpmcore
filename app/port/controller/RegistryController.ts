@@ -11,12 +11,25 @@ import {
   Middleware,
 } from '@eggjs/tegg';
 import { NotFoundError } from 'egg-errors';
+import { pick } from 'lodash';
 import { AbstractController } from './AbstractController';
 import { Static } from 'egg-typebox-validate/typebox';
 import { RegistryManagerService, UpdateRegistryCmd } from '../../core/service/RegistryManagerService';
 import { AdminAccess } from '../middleware/AdminAccess';
 import { ScopeManagerService } from '../../core/service/ScopeManagerService';
 import { RegistryCreateOptions, QueryPageOptions, RegistryCreateSyncOptions, RegistryUpdateOptions } from '../typebox';
+
+const registryResponseKeys = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'registryId',
+  'name',
+  'host',
+  'changeStream',
+  'userPrefix',
+  'type',
+] as const;
 
 @HTTPController()
 export class RegistryController extends AbstractController {
@@ -31,7 +44,10 @@ export class RegistryController extends AbstractController {
   })
   async listRegistries(@HTTPQuery() pageSize: Static<typeof QueryPageOptions>['pageSize'], @HTTPQuery() pageIndex: Static<typeof QueryPageOptions>['pageIndex']) {
     const registries = await this.registryManagerService.listRegistries({ pageSize, pageIndex });
-    return registries;
+    return {
+      ...registries,
+      data: registries.data.map(registry => pick(registry, registryResponseKeys)),
+    };
   }
 
   @HTTPMethod({
@@ -43,7 +59,7 @@ export class RegistryController extends AbstractController {
     if (!registry) {
       throw new NotFoundError('registry not found');
     }
-    return registry;
+    return pick(registry, registryResponseKeys);
   }
 
   @HTTPMethod({
