@@ -14,5 +14,7 @@ jobs:
   release:
     name: NPM
     uses: node-modules/github-actions/.github/workflows/npm-release.yml@master
+    with:
+      install: npm i --no-package-lock --no-fund --force --no-save leoric@2.13.8 && rm -rf package-lock.json
     secrets:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
