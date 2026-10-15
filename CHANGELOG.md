@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>3.84.3 (2026-10-15)</small>
+
+* fix: omit registry credentials from API responses ([8aa5f14](https://github.com/cnpm/cnpmcore/commit/8aa5f14))
+* Merge commit from fork ([1309cb2](https://github.com/cnpm/cnpmcore/commit/1309cb2))
+
 ## <small>3.84.2 (2026-07-13)</small>
 
 * fix: allow Egg typings generation during install (#1109) ([f4d2f59](https://github.com/cnpm/cnpmcore/commit/f4d2f59)), closes [#1109](https://github.com/cnpm/cnpmcore/issues/1109)
