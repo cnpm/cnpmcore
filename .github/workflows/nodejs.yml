@@ -10,7 +10,28 @@ on:
     branches: [master]
   merge_group:
 
+permissions:
+  contents: read
+
 jobs:
+  zizmor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    concurrency:
+      group: zizmor-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout Git Source
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1
+
+      - name: Audit GitHub Actions
+        uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
+        with:
+          advanced-security: false
+          annotations: true
+
   typecheck:
     runs-on: ubuntu-latest
 
@@ -20,17 +41,17 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: taiki-e/checkout-action@v1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1
 
       - name: Use Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
           package-manager-cache: false
 
       - name: setup utoo
-        uses: utooland/setup-utoo@v1
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # v1
 
       - name: Install Dependencies
         run: ut
@@ -63,12 +84,12 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
       redis:
-        image: redis
+        image: redis:8
         ports:
           - 6379:6379
     steps:
       - name: Checkout Git Source
-        uses: taiki-e/checkout-action@v1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1
 
       # Start Elasticsearch while Node.js, dependencies, and the app are prepared.
       - name: Configure sysctl limits
@@ -89,14 +110,14 @@ jobs:
           wait: 0
 
       - name: Use Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
           package-manager-cache: false
 
       - name: setup utoo
-        uses: utooland/setup-utoo@v1
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # v1
 
       - name: Install Dependencies
         run: ut
@@ -377,7 +398,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres
+        image: postgres:18
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: postgres
@@ -397,7 +418,7 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - name: Checkout Git Source
-        uses: taiki-e/checkout-action@v1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1
 
       - name: Prepare database
         id: database
@@ -429,14 +450,14 @@ jobs:
           wait: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: ${{ matrix.node-version }}
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
           package-manager-cache: false
 
       - name: setup utoo
-        uses: utooland/setup-utoo@v1
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # v1
 
       - name: Install Dependencies
         run: ut
@@ -471,7 +492,7 @@ jobs:
           CNPMCORE_CONFIG_ES_CLIENT_NODE: http://localhost:9200
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -506,7 +527,7 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=5
     steps:
       - name: Checkout Git Source
-        uses: taiki-e/checkout-action@v1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1
 
       - name: Prepare database
         id: database
@@ -515,14 +536,14 @@ jobs:
         run: bash ./prepare-database-mysql.sh
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: ${{ matrix.node-version }}
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
           package-manager-cache: false
 
       - name: setup utoo
-        uses: utooland/setup-utoo@v1
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # v1
 
       - name: Install Dependencies
         run: ut
@@ -538,7 +559,7 @@ jobs:
           CNPMCORE_CONFIG_ENABLE_JSON_BUILDER: ${{ matrix.enableJSONBuilder }}
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -581,17 +602,17 @@ jobs:
 
     steps:
       - name: Checkout Git Source
-        uses: taiki-e/checkout-action@v1
+        uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: ${{ matrix.node-version }}
           # project does not commit a lockfile; disable setup-node npm auto-cache (would fail: lock file not found)
           package-manager-cache: false
 
       - name: setup utoo
-        uses: utooland/setup-utoo@v1
+        uses: utooland/setup-utoo@e7aa4d726a17f79f68aed736476ea5bd68f8ba52 # v1
 
       - name: Install Dependencies
         run: ut
@@ -618,7 +639,7 @@ jobs:
           # CNPMCORE_NFS_S3_CLIENT_DISABLE_URL: true
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v7
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -631,6 +652,7 @@ jobs:
       - test-mysql57-fs-nfs
       - test-mysql57-s3-nfs
       - typecheck
+      - zizmor
     steps:
       - name: Check required jobs
         env:
