@@ -13,6 +13,6 @@ permissions:
 jobs:
   release:
     name: NPM
-    uses: cnpm/github-actions/.github/workflows/npm-release.yml@master
+    uses: cnpm/github-actions/.github/workflows/npm-release.yml@ab705e57cc5065b144c4bec854e850d9bbeb0478 # master
     secrets:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
