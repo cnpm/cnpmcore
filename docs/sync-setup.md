@@ -80,7 +80,8 @@ npm registry 将通过服务实时广播相关包变更，也就是 `changesStre
 ### 热门包延迟复查
 
 热门包收到 changes 后的有限延迟复查支持通过 `cnpmcore.syncRecheck` 开启，默认关闭。
-阈值、容量、共享下载量快照和重试预算见 [RFC 1170](./rfcs/1170-popular-package-sync-rechecks.md)。
+收到通知时直接查询本地数据库，前七个完整自然日下载量达到一万的包进入复查，无需预热。
+阈值、待处理容量和重试预算见 [RFC 1170](./rfcs/1170-popular-package-sync-rechecks.md)。
 
 ### 📦 同步所有存量包
 

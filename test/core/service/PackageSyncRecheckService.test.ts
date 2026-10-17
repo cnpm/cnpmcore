@@ -7,7 +7,6 @@ import { TaskState, TaskType } from '../../../app/common/enum/Task.ts';
 import type { Registry } from '../../../app/core/entity/Registry.ts';
 import { Task } from '../../../app/core/entity/Task.ts';
 import { PackageManagerService } from '../../../app/core/service/PackageManagerService.ts';
-import { PackagePopularityService } from '../../../app/core/service/PackagePopularityService.ts';
 import { PackageSyncerService } from '../../../app/core/service/PackageSyncerService.ts';
 import { PackageSyncRecheckService } from '../../../app/core/service/PackageSyncRecheckService.ts';
 import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.ts';
@@ -32,11 +31,11 @@ describe('test/core/service/PackageSyncRecheckService.test.ts', () => {
     mock(app.config.cnpmcore, 'syncRecheck', {
       ...app.config.cnpmcore.syncRecheck,
       enabled: true,
-      include: [name],
       delays: [1000, 2000, 3000],
     });
-    mock.data(PackageVersionDownloadRepository.prototype, 'listPopularPackages', []);
-    await (await app.getEggObject(PackagePopularityService)).refresh();
+    mock(PackageVersionDownloadRepository.prototype, 'getWeeklyDownloads', async (fullname: string) =>
+      fullname === name ? 10_000 : 0,
+    );
     service = await app.getEggObject(PackageSyncRecheckService);
     syncer = await app.getEggObject(PackageSyncerService);
     tasks = await app.getEggObject(TaskService);
@@ -133,6 +132,19 @@ describe('test/core/service/PackageSyncRecheckService.test.ts', () => {
     assert.ok(followup);
     assert.notEqual(followup.taskId, initial.taskId);
     assert.equal(followup.data.maxAttempts, 1);
+  });
+
+  it('stops pending checks when the stored weekly downloads drop below the threshold', async () => {
+    const initial = await syncer.createTask(name);
+    await tasks.finishTask(initial, TaskState.Success);
+    await service.record(registry, { fullname: name, seq: '1' }, initial);
+    mock.data(PackageVersionDownloadRepository.prototype, 'getWeeklyDownloads', 9999);
+    await tick();
+    const state = await queue.get(queue.key(registry.registryId, name));
+    assert.ok(state);
+    assert.equal(state.pending, false);
+    assert.deepEqual(state.attempts, []);
+    assert.equal(await syncer.findExecuteTask(), null);
   });
 
   it('stops early only when explicit targets are present after a successful sync', async () => {
