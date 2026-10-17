@@ -13,6 +13,8 @@ import { AbstractService } from '../../common/AbstractService.ts';
 import { Package as PackageEntity } from '../entity/Package.ts';
 import { isGranularToken, type Token } from '../entity/Token.ts';
 
+const BEARER_TOKEN_RE = /^Bearer ([\w.]+?)$/;
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -71,7 +73,7 @@ export class TokenService extends AbstractService {
 
   async getUserAndToken(authorization: string) {
     if (!authorization) return null;
-    const matchs = /^Bearer ([\w.]+?)$/.exec(authorization);
+    const matchs = BEARER_TOKEN_RE.exec(authorization);
     if (!matchs) return null;
     const tokenValue = matchs[1];
     const tokenKey = sha512(tokenValue);

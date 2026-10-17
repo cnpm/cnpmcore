@@ -127,6 +127,7 @@
     "validate-npm-package-name": "^8.0.0"
   },
   "devDependencies": {
+    "@e18e/eslint-plugin": "^0.8.1",
     "@eggjs/bin": "^8.1.0",
     "@eggjs/mock": "^7.1.0",
     "@eggjs/tsconfig": "^3.2.0",

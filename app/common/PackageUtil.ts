@@ -7,6 +7,8 @@ import * as tar from 'tar';
 
 import type { AuthorType, PackageJSONType } from '../repository/PackageRepository.ts';
 
+const USER_PREFIX_RE = /^.*:/;
+
 // /@cnpm%2ffoo
 // /@cnpm%2Ffoo
 // /@cnpm/foo
@@ -27,7 +29,7 @@ export function getFullname(scope: string, name: string): string {
 }
 
 export function cleanUserPrefix(username: string): string {
-  return username.replace(/^.*:/, '');
+  return username.replace(USER_PREFIX_RE, '');
 }
 
 export function getPrefixedName(prefix: string, username: string): string {

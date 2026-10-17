@@ -5,6 +5,8 @@ import { BinaryType } from '../../enum/Binary.ts';
 import { BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 import { GithubBinary } from './GithubBinary.ts';
 
+const VERSION_PREFIX_RE = /^v\d+?\./;
+
 @SingletonProto()
 @BinaryAdapter(BinaryType.Electron)
 export class ElectronBinary extends GithubBinary {
@@ -23,7 +25,7 @@ export class ElectronBinary extends GithubBinary {
           date: item.published_at,
         });
         // v14.2.6 => 14.2.6
-        if (/^v\d+?\./.test(item.tag_name)) {
+        if (VERSION_PREFIX_RE.test(item.tag_name)) {
           items.push({
             name: `${item.tag_name.slice(1)}/`,
             isDir: true,

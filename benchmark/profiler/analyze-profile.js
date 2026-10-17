@@ -6,6 +6,9 @@
 
 import fs from 'node:fs';
 
+const PACKAGE_NAME_RE = /node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/;
+const APPLICATION_FILE_RE = /application\/(.+)/;
+
 const profilePath = process.argv[2];
 
 if (!profilePath) {
@@ -55,7 +58,7 @@ console.log(`- Active/User Time: ${activeHits} (${((activeHits / totalHits) * 10
 // Get top functions by self time
 const excluded = ['(idle)', '(root)', '(program)', '(garbage collector)'];
 const topBySelf = profile.nodes
-  .filter((n) => n.hitCount > 0 && excluded.indexOf(n.callFrame.functionName) === -1)
+  .filter((n) => n.hitCount > 0 && !excluded.includes(n.callFrame.functionName))
   .sort((a, b) => b.hitCount - a.hitCount)
   .slice(0, 30);
 
@@ -84,20 +87,20 @@ topBySelf.forEach((node, idx) => {
 const fileStats = new Map();
 profile.nodes.forEach((node) => {
   if (node.hitCount === 0) return;
-  if (excluded.indexOf(node.callFrame.functionName) !== -1) return;
+  if (excluded.includes(node.callFrame.functionName)) return;
 
   let url = node.callFrame.url || '(native)';
 
   // Normalize file path
   if (url.includes('node_modules')) {
     // Extract package name
-    const match = url.match(/node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/);
+    const match = url.match(PACKAGE_NAME_RE);
     if (match) {
       url = 'node_modules/' + match[1];
     }
   } else if (!url.includes('node:') && url) {
     // Application code - get relative path
-    const appMatch = url.match(/application\/(.+)/);
+    const appMatch = url.match(APPLICATION_FILE_RE);
     if (appMatch) {
       url = appMatch[1];
     }
@@ -132,7 +135,7 @@ const categories = {
 
 profile.nodes.forEach((node) => {
   if (node.hitCount === 0) return;
-  if (excluded.indexOf(node.callFrame.functionName) !== -1) return;
+  if (excluded.includes(node.callFrame.functionName)) return;
 
   const url = node.callFrame.url || '';
 
@@ -163,7 +166,7 @@ console.log('\n## Application Code Hotspots\n');
 const appFunctions = profile.nodes
   .filter((n) => {
     if (n.hitCount === 0) return false;
-    if (excluded.indexOf(n.callFrame.functionName) !== -1) return false;
+    if (excluded.includes(n.callFrame.functionName)) return false;
     const url = n.callFrame.url || '';
     return url.includes('application/') && !url.includes('node_modules');
   })
@@ -177,7 +180,7 @@ if (appFunctions.length > 0) {
   appFunctions.forEach((node, idx) => {
     const pct = ((node.hitCount / activeHits) * 100).toFixed(2);
     const url = node.callFrame.url || '';
-    const file = url.match(/application\/(.+)/)?.[1] || url;
+    const file = url.match(APPLICATION_FILE_RE)?.[1] || url;
     console.log(
       `| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${file} | ${node.callFrame.lineNumber} |`,
     );
@@ -191,7 +194,7 @@ console.log('\n## NPM Package Hotspots\n');
 const npmFunctions = profile.nodes
   .filter((n) => {
     if (n.hitCount === 0) return false;
-    if (excluded.indexOf(n.callFrame.functionName) !== -1) return false;
+    if (excluded.includes(n.callFrame.functionName)) return false;
     const url = n.callFrame.url || '';
     return url.includes('node_modules');
   })
@@ -205,7 +208,7 @@ if (npmFunctions.length > 0) {
   npmFunctions.forEach((node, idx) => {
     const pct = ((node.hitCount / activeHits) * 100).toFixed(2);
     const url = node.callFrame.url || '';
-    const pkgMatch = url.match(/node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/);
+    const pkgMatch = url.match(PACKAGE_NAME_RE);
     const pkg = pkgMatch ? pkgMatch[1] : 'unknown';
     console.log(
       `| ${idx + 1} | ${node.hitCount} | ${pct}% | ${node.callFrame.functionName} | ${pkg} | ${node.callFrame.lineNumber} |`,
@@ -243,7 +246,7 @@ if (rootNode && rootNode.children) {
       const totalTime = calculateTotalTime(childId);
       return { node, totalTime };
     })
-    .filter((x) => x && excluded.indexOf(x.node.callFrame.functionName) === -1)
+    .filter((x) => x && !excluded.includes(x.node.callFrame.functionName))
     .sort((a, b) => b.totalTime - a.totalTime)
     .slice(0, 15);
 

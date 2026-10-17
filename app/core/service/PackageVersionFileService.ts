@@ -23,6 +23,8 @@ import type { PackageManagerService } from './PackageManagerService.ts';
 
 export const UNPKG_WHITE_LIST_URL = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60_000;
+const README_FILENAME_RE = /^README(\.\w{1,20})?$/i;
+const MARKDOWN_EXTENSION_RE = /\.m?a?r?k?d?o?w?n?$/i;
 
 interface ExtractedPackageFile {
   filename: string;
@@ -426,16 +428,15 @@ export class PackageVersionFileService extends AbstractService {
   #matchReadmeFilename(filename: string) {
     // support README,README.*
     // https://github.com/npm/read-package-json/blob/main/lib/read-json.js#L280
-    return /^README(\.\w{1,20})?$/i.test(filename);
+    return README_FILENAME_RE.test(filename);
   }
 
   // https://github.com/npm/read-package-json/blob/main/lib/read-json.js#L280
   #preferMarkdownReadme(files: string[]) {
     let fallback = 0;
-    const markdownRE = /\.m?a?r?k?d?o?w?n?$/i;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      if (markdownRE.test(file)) {
+      if (MARKDOWN_EXTENSION_RE.test(file)) {
         return file;
       } else if (file.toLowerCase() === 'README') {
         fallback = i;

@@ -17,6 +17,20 @@ export default defineConfig({
       vitest: true,
     },
     rules: {
+      // Keep e18e rules compatible with ES2022 and Oxlint's JavaScript plugin support.
+      'e18e/prefer-array-at': 'error',
+      'e18e/prefer-array-fill': 'error',
+      'e18e/prefer-includes': 'error',
+      'e18e/prefer-nullish-coalescing': 'error',
+      'e18e/prefer-object-has-own': 'error',
+      'e18e/prefer-url-canparse': 'error',
+      'e18e/prefer-array-from-map': 'error',
+      'e18e/prefer-timer-args': 'error',
+      'e18e/prefer-date-now': 'error',
+      'e18e/prefer-regex-test': 'error',
+      'e18e/prefer-array-some': 'error',
+      'e18e/prefer-static-regex': 'error',
+      'e18e/prefer-string-fromcharcode': 'error',
       'max-params': ['error', 6],
       'no-console': 'warn',
       'import/no-anonymous-default-export': 'error',
@@ -33,6 +47,12 @@ export default defineConfig({
     ignorePatterns: ['index.d.ts'],
     overrides: [
       {
+        files: ['test/**'],
+        rules: {
+          'e18e/prefer-static-regex': 'off',
+        },
+      },
+      {
         files: ['benchmark/**'],
         rules: {
           'no-console': 'allow',
@@ -44,6 +64,7 @@ export default defineConfig({
       typeCheck: true,
     },
     jsPlugins: [
+      '@e18e/eslint-plugin',
       {
         name: 'vite-plus',
         specifier: 'vite-plus/oxlint-plugin',

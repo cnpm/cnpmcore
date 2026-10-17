@@ -9,6 +9,8 @@ import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from
 // Mozilla product-details API for listing Firefox versions
 // https://product-details.mozilla.org/1.0/firefox.json
 const PRODUCT_DETAILS_URL = 'https://product-details.mozilla.org/1.0/firefox.json';
+const MAJOR_VERSION_RE = /^(\d+)/;
+const VERSION_DIRECTORY_RE = /^\d+\.\d+/;
 
 interface FirefoxRelease {
   version: string;
@@ -60,7 +62,7 @@ export class FirefoxBinary extends AbstractBinary {
     const items: BinaryItem[] = [];
     for (const version of versionSet) {
       // Filter out old Firefox versions (< 100.0.0)
-      const match = /^(\d+)/.exec(version);
+      const match = MAJOR_VERSION_RE.exec(version);
       if (match) {
         const major = Number.parseInt(match[1]);
         if (major < 100) {
@@ -165,7 +167,7 @@ export class FirefoxBinary extends AbstractBinary {
       if (href.startsWith('/')) {
         // Extract the last part of the path
         const parts = href.split('/').filter(Boolean);
-        name = parts[parts.length - 1] ?? '';
+        name = parts.at(-1) ?? '';
         if (href.endsWith('/')) {
           name += '/';
         }
@@ -184,7 +186,7 @@ export class FirefoxBinary extends AbstractBinary {
       if (isDir && name !== '../' && dir === '/') {
         const versionName = name.slice(0, -1); // Remove trailing '/'
         // Skip non-version directories that are just special names
-        if (/^\d+\.\d+/.test(versionName)) {
+        if (VERSION_DIRECTORY_RE.test(versionName)) {
           try {
             const major = Number.parseInt(versionName.split('.')[0]);
             if (major < 100) {

@@ -8,6 +8,7 @@ import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from
 
 const PACKAGE_URL = 'https://registry.npmjs.com/playwright-core';
 const PLAYWRIGHT_CLI_PACKAGE_URL = 'https://registry.npmjs.com/@playwright%2fcli/latest';
+const RELEASE_VERSION_RE = /^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/;
 // playwright.azureedge.net is deprecated and returns 400 for the new
 // `builds/cft/*` namespace; cdn.playwright.dev serves both the legacy
 // `builds/*` and the CFT paths. See https://github.com/cnpm/cnpmcore/issues/1033
@@ -426,7 +427,7 @@ export class PlaywrightBinary extends AbstractBinary {
 
       // Only download beta and release versions of packages to reduce amount of request
       const packageVersions = Object.keys(packageData.versions)
-        .filter((version) => version.match(/^(?:\d+\.\d+\.\d+)(?:-beta-\d+)?$/))
+        .filter((version) => RELEASE_VERSION_RE.test(version))
         // select recently update 20 items
         .slice(-20);
       // @playwright/cli can pin an alpha playwright-core release. Include that

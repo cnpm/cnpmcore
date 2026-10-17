@@ -10,6 +10,8 @@ import type { TokenService } from '../core/service/TokenService.ts';
 import type { PackageRepository } from '../repository/PackageRepository.ts';
 import type { TeamRepository } from '../repository/TeamRepository.ts';
 
+const NPM_MAJOR_VERSION_RE = /\bnpm\/(\d{1,5})\./;
+
 // https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-tokens-on-the-website
 export type TokenRole = 'read' | 'publish' | 'setting';
 
@@ -136,7 +138,7 @@ export class UserRoleManager {
       // user-agent: "npm/6.14.12 node/v10.24.1 darwin x64"
       // pnpm: "pnpm/10.17.0 npm/? node/v20.19.5 darwin arm64"
       const isPnpm = userAgent.startsWith('pnpm/');
-      const m = /\bnpm\/(\d{1,5})\./.exec(userAgent);
+      const m = NPM_MAJOR_VERSION_RE.exec(userAgent);
       if (m) {
         const major = Number.parseInt(m[1]);
         if (major < 7) {

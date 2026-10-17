@@ -41,6 +41,8 @@ import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
 import type { UserService } from './UserService.ts';
 
+const UTF8MB3_RE = /[\u0020-\uD7FF\uE000-\uFFFD]/;
+
 interface syncDeletePkgOptions {
   task: Task;
   pkg: Package | null;
@@ -1154,8 +1156,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     let shouldRefreshDistTags = false;
     for (const tag in distTags) {
       const version = distTags[tag];
-      const utf8mb3Regex = /[\u0020-\uD7FF\uE000-\uFFFD]/;
-      if (!utf8mb3Regex.test(tag)) {
+      if (!UTF8MB3_RE.test(tag)) {
         logs.push(`[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), tag name is out of utf8mb3, skip`);
         continue;
       }
@@ -1740,8 +1741,7 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
     let shouldRefreshDistTags = false;
     for (const tag in distTags) {
       const version = distTags[tag];
-      const utf8mb3Regex = /[\u0020-\uD7FF\uE000-\uFFFD]/;
-      if (!utf8mb3Regex.test(tag)) {
+      if (!UTF8MB3_RE.test(tag)) {
         logs.push(`[${isoNow()}] 🚧 invalid tag(${tag}: ${version}), tag name is out of utf8mb3, skip`);
         continue;
       }

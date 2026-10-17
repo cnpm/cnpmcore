@@ -20,7 +20,7 @@ export class FixNoPaddingVersionService {
       if (packageVersions.length === 0) {
         break;
       }
-      const lastVersion = packageVersions[packageVersions.length - 1];
+      const lastVersion = packageVersions.at(-1)!;
       id = (lastVersion.id as unknown as number) + 1;
       this.logger.info(
         '[FixNoPaddingVersionService] fix padding version ids %j',
