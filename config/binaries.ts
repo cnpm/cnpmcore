@@ -993,6 +993,20 @@ const binaries = {
     repo: 'larksuite/cli',
     distUrl: 'https://github.com/larksuite/cli/releases',
   },
+  'fnos-cli': {
+    category: 'fnos-cli',
+    description: 'fnOS CLI - Command line interface for fnOS NAS',
+    type: BinaryType.GitHub,
+    repo: 'fnnas-labs/fnos-cli-skill',
+    distUrl: 'https://github.com/fnnas-labs/fnos-cli-skill/releases',
+  },
+  'fygo-cli': {
+    category: 'fygo-cli',
+    description: 'Fygo CLI - Command line interface for Fygo NAS',
+    type: BinaryType.GitHub,
+    repo: 'fygonas-labs/fygo-cli-skill',
+    distUrl: 'https://github.com/fygonas-labs/fygo-cli-skill/releases',
+  },
 } as const;
 
 export interface BinaryTaskConfig {
