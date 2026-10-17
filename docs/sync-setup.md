@@ -77,6 +77,11 @@ npm view cnpmcore --registry=http://127.0.0.1:7001
 
 npm registry 将通过服务实时广播相关包变更，也就是 `changesStreamRegistry` 这个配置。我们可以开启 `enableChangesStream` 进行自动同步。可以观察 `tasks` 表内任务状态。
 
+### 热门包延迟复查
+
+热门包收到 changes 后的有限延迟复查支持通过 `cnpmcore.syncRecheck` 开启，默认关闭。
+阈值、容量、共享下载量快照和重试预算见 [RFC 1170](./rfcs/1170-popular-package-sync-rechecks.md)。
+
 ### 📦 同步所有存量包
 
 changesStream 内包含了包所有版本变更信息，在存量同步场景存在大量冗余，我们可以通过一个脚本来快速创建同步任务。

@@ -1,5 +1,7 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
+import { getFullname } from '../common/PackageUtil.ts';
+import type { PackagePopularity } from '../common/SyncRecheck.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
 import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.ts';
 
@@ -9,6 +11,41 @@ import type { PackageVersionDownload as PackageVersionDownloadModel } from './mo
 export class PackageVersionDownloadRepository extends AbstractRepository {
   @Inject()
   private readonly PackageVersionDownload: typeof PackageVersionDownloadModel;
+
+  async listPopularPackages(minDownloads: number, limit: number, now = new Date()): Promise<PackagePopularity[]> {
+    const days: { month: number; field: string }[] = [];
+    for (let offset = 1; offset <= 7; offset++) {
+      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset);
+      days.push({
+        month: date.getFullYear() * 100 + date.getMonth() + 1,
+        field: `d${String(date.getDate()).padStart(2, '0')}`,
+      });
+    }
+    // Column names come only from calendar dates. All other inputs are bound.
+    const expression = days.map((day) => `CASE WHEN d.year_month = ? THEN d.${day.field} ELSE 0 END`).join(' + ');
+    const { rows } = await this.PackageVersionDownload.query(
+      `SELECT p.scope, p.name, SUM(${expression}) AS downloads
+       FROM package_version_downloads d JOIN packages p ON p.package_id = d.package_id
+       WHERE d.year_month BETWEEN ? AND ? AND d.version <> ? AND p.is_private = ?
+       GROUP BY p.scope, p.name HAVING SUM(${expression}) >= ?
+       ORDER BY downloads DESC, p.scope, p.name LIMIT ?`,
+      [
+        ...days.map((day) => day.month),
+        days[6].month,
+        days[0].month,
+        '*',
+        false,
+        ...days.map((day) => day.month),
+        minDownloads,
+        limit,
+      ],
+    );
+    // Exclude imported '*' totals: adding them to per-version counters double-counts traffic.
+    return (rows || []).map((row: { scope: string; name: string; downloads: number | string }) => ({
+      name: getFullname(row.scope, row.name),
+      downloads: Number(row.downloads),
+    }));
+  }
 
   async plus(packageId: string, version: string, counter: number): Promise<void> {
     const now = new Date();
