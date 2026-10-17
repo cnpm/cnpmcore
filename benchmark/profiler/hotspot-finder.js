@@ -7,6 +7,9 @@
 
 import fs from 'node:fs';
 
+const PACKAGE_NAME_RE = /node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/;
+const PACKAGE_FILE_RE = /node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)\/(.+)/;
+
 const args = process.argv.slice(2);
 let profilePath = null;
 let filterPattern = null;
@@ -70,7 +73,7 @@ function getCallerChain(nodeId, maxDepth = 5) {
     if (name !== '(root)' && name !== '(idle)' && name !== '(program)') {
       let location = '';
       if (url.includes('node_modules')) {
-        const match = url.match(/node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/);
+        const match = url.match(PACKAGE_NAME_RE);
         location = match ? match[1] : url.split('/').slice(-2).join('/');
       } else if (url.includes('node:')) {
         location = url;
@@ -94,7 +97,7 @@ function getCallerChain(nodeId, maxDepth = 5) {
 // Calculate total active time
 const excluded = ['(idle)', '(root)', '(program)', '(garbage collector)'];
 const totalActive = profile.nodes.reduce((sum, n) => {
-  if (excluded.indexOf(n.callFrame.functionName) !== -1) return sum;
+  if (excluded.includes(n.callFrame.functionName)) return sum;
   return sum + n.hitCount;
 }, 0);
 
@@ -102,7 +105,7 @@ const totalActive = profile.nodes.reduce((sum, n) => {
 let hotspots = profile.nodes
   .filter((n) => {
     if (n.hitCount === 0) return false;
-    if (excluded.indexOf(n.callFrame.functionName) !== -1) return false;
+    if (excluded.includes(n.callFrame.functionName)) return false;
 
     if (filterPattern) {
       const url = n.callFrame.url || '';
@@ -132,7 +135,7 @@ hotspots.forEach((item, idx) => {
 
   let location = cf.url || '(native)';
   if (location.includes('node_modules')) {
-    const match = location.match(/node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)\/(.+)/);
+    const match = location.match(PACKAGE_FILE_RE);
     if (match) {
       location = `${match[1]}/${match[2]}`;
     }

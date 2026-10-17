@@ -6,6 +6,9 @@
 
 import fs from 'node:fs';
 
+const PACKAGE_NAME_RE = /node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/;
+const APPLICATION_FILE_RE = /(?:application|app)\/(.+)/;
+
 const args = process.argv.slice(2);
 let profilePath = null;
 let targetPattern = 'Bone';
@@ -74,11 +77,11 @@ function getFullPath(nodeId, maxDepth = 30) {
       shortLocation = url;
     } else if (url.includes('node_modules')) {
       category = 'npm';
-      const match = url.match(/node_modules\/_?([^@][^/]*|@[^/]+\/[^/]+)/);
+      const match = url.match(PACKAGE_NAME_RE);
       shortLocation = match ? match[1] : url.split('/').slice(-2).join('/');
     } else if (url.includes('application/') || url.includes('/app/')) {
       category = 'app';
-      const match = url.match(/(?:application|app)\/(.+)/);
+      const match = url.match(APPLICATION_FILE_RE);
       shortLocation = match ? match[1] : url.split('/').slice(-2).join('/');
     }
 

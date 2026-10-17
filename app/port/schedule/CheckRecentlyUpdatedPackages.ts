@@ -6,6 +6,8 @@ import { getScopeAndName } from '../../common/PackageUtil.ts';
 import type { PackageSyncerService } from '../../core/service/PackageSyncerService.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
 
+const PAGE_CONTEXT_RE = /window\.__context__ = ([^<]+?)<\/script>/;
+
 // https://github.com/cnpm/cnpmcore/issues/9
 @Schedule<IntervalParams>({
   type: ScheduleType.WORKER,
@@ -68,7 +70,7 @@ export class CheckRecentlyUpdatedPackages {
         continue;
       }
 
-      const matches = /window\.__context__ = ([^<]+?)<\/script>/.exec(html);
+      const matches = PAGE_CONTEXT_RE.exec(html);
       if (!matches) continue;
 
       try {

@@ -21,6 +21,8 @@ import { AdminAccess } from '../middleware/AdminAccess.ts';
 import { BinaryNameRule, BinarySubpathRule } from '../typebox.ts';
 import { AbstractController } from './AbstractController.ts';
 
+const HTTP_URL_RE = /^https?:\/\//;
+
 @HTTPController()
 export class BinarySyncController extends AbstractController {
   @Inject()
@@ -46,7 +48,7 @@ export class BinarySyncController extends AbstractController {
         category: `${binaryConfig.category}/`,
         description: binaryConfig.description,
         distUrl: binaryConfig.distUrl,
-        repoUrl: /^https?:\/\//.test(binaryConfig.repo) ? binaryConfig.repo : `https://github.com/${binaryConfig.repo}`,
+        repoUrl: HTTP_URL_RE.test(binaryConfig.repo) ? binaryConfig.repo : `https://github.com/${binaryConfig.repo}`,
         type: 'dir',
         url: `${this.config.cnpmcore.registry}/-/binary/${binaryConfig.category}/`,
       };

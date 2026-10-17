@@ -12,6 +12,8 @@ import type { PackageVersionRepository } from '../../repository/PackageVersionRe
 import type { SearchManifestType, SearchMappingType, SearchRepository } from '../../repository/SearchRepository.ts';
 import type { PackageManagerService } from './PackageManagerService.ts';
 
+const DURATION_RE = /^(\d+)(h|d|w)$/;
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -233,7 +235,7 @@ export class PackageSearchService extends AbstractService {
 
   // Parse duration string like '1h', '1d', '1w', '2w' to milliseconds
   private _parseDuration(duration: string): number {
-    const match = duration.match(/^(\d+)(h|d|w)$/);
+    const match = duration.match(DURATION_RE);
     if (!match) {
       if (duration) {
         this.logger.warn(

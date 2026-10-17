@@ -10,6 +10,8 @@ import { OrgMember } from '../entity/OrgMember.ts';
 import { Team } from '../entity/Team.ts';
 import { TeamMember } from '../entity/TeamMember.ts';
 
+const SCOPE_PREFIX_RE = /^@/;
+
 export interface CreateOrgCmd {
   name: string;
   description?: string;
@@ -74,7 +76,7 @@ export class OrgService extends AbstractService {
 
   // Auto-create org for allowScopes if it doesn't exist
   async ensureOrgForScope(scope: string): Promise<Org> {
-    const orgName = scope.replace(/^@/, '');
+    const orgName = scope.replace(SCOPE_PREFIX_RE, '');
     const existing = await this.orgRepository.findOrgByName(orgName);
     if (existing) return existing;
 

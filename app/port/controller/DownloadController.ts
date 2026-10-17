@@ -8,6 +8,8 @@ import type { PackageVersionDownloadRepository } from '../../repository/PackageV
 import { AbstractController } from './AbstractController.ts';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
+const SINGLE_DATE_RE = /^(\d{4}-\d{2}-\d{2})$/;
+const DATE_RANGE_RE = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/;
 
 @HTTPController()
 export class DownloadController extends AbstractController {
@@ -193,7 +195,7 @@ export class DownloadController extends AbstractController {
     }
 
     // Support single date: YYYY-MM-DD
-    const singleDateMatch = /^(\d{4}-\d{2}-\d{2})$/.exec(range);
+    const singleDateMatch = SINGLE_DATE_RE.exec(range);
     if (singleDateMatch) {
       const date = dayjs(singleDateMatch[1], DATE_FORMAT, true);
       if (!date.isValid()) {
@@ -205,7 +207,7 @@ export class DownloadController extends AbstractController {
     }
 
     // Support date range: YYYY-MM-DD:YYYY-MM-DD
-    const matchs = /^(\d{4}-\d{2}-\d{2}):(\d{4}-\d{2}-\d{2})$/.exec(range);
+    const matchs = DATE_RANGE_RE.exec(range);
     if (!matchs) {
       throw new UnprocessableEntityError(
         `range(${range}) format invalid, must be "last-day", "last-week", "last-month", "last-year", "${DATE_FORMAT}" or "${DATE_FORMAT}:${DATE_FORMAT}" style`,

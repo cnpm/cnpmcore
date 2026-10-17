@@ -74,7 +74,7 @@ export class CreateHookTriggerService extends AbstractService {
     let hooks = await this.hookRepository.listHooksByTypeAndName(type, name);
     while (hooks.length > 0) {
       await this.createTriggerTasks(hooks, hookEvent);
-      hooks = await this.hookRepository.listHooksByTypeAndName(type, name, hooks[hooks.length - 1].id);
+      hooks = await this.hookRepository.listHooksByTypeAndName(type, name, hooks.at(-1)!.id);
       await this.taskService.appendTaskLog(
         task,
         `[${isoNow()}][Hooks] PushHooks to ${type} ${name} ${hooks.length} \n`,

@@ -6,6 +6,8 @@ import binaries, { type BinaryName } from '../../../../config/binaries.ts';
 import { BinaryType } from '../../enum/Binary.ts';
 import { AbstractBinary, BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 
+const ENGINE_COMMIT_RE = /\.(\w{30,})$/;
+
 @SingletonProto()
 @BinaryAdapter(BinaryType.Prisma)
 export class PrismaBinary extends AbstractBinary {
@@ -43,7 +45,7 @@ export class PrismaBinary extends AbstractBinary {
         pkg.devDependencies?.['@prisma/engines-version'] || pkg.dependencies?.['@prisma/engines-version'] || '';
       // "@prisma/engines-version": "4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c"
       // "@prisma/engines-version": "5.7.0-41.79fb5193cf0a8fdbef536e4b4a159cad677ab1b9"
-      const matched = /\.(\w{30,})$/.exec(enginesVersion);
+      const matched = ENGINE_COMMIT_RE.exec(enginesVersion);
       if (!matched) continue;
       const commitId = matched[1];
       if (commitIdMap[commitId]) continue;

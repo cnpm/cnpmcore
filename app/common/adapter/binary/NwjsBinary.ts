@@ -7,6 +7,8 @@ import { BinaryType } from '../../enum/Binary.ts';
 import { BinaryAdapter, type BinaryItem, type FetchResult } from './AbstractBinary.ts';
 import { BucketBinary } from './BucketBinary.ts';
 
+const MILLISECONDS_RE = /\.\d{3}/;
+
 /**
  * NW.js binary adapter.
  *
@@ -75,10 +77,7 @@ export class NwjsBinary extends BucketBinary {
   private async requestR2Xml(prefix: string): Promise<string> {
     const host = new URL(this.r2Endpoint).host;
     const now = new Date();
-    const amzDate = now
-      .toISOString()
-      .replace(/[-:]/g, '')
-      .replace(/\.\d{3}/, '');
+    const amzDate = now.toISOString().replace(/[-:]/g, '').replace(MILLISECONDS_RE, '');
     const dateStamp = amzDate.slice(0, 8);
 
     const method = 'GET';
