@@ -1,7 +1,6 @@
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 
-import { getFullname } from '../common/PackageUtil.ts';
-import type { PackagePopularity } from '../common/SyncRecheck.ts';
+import { getScopeAndName } from '../common/PackageUtil.ts';
 import { AbstractRepository } from './AbstractRepository.ts';
 import type { PackageVersionDownload as PackageVersionDownloadModel } from './model/PackageVersionDownload.ts';
 
@@ -12,7 +11,8 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
   @Inject()
   private readonly PackageVersionDownload: typeof PackageVersionDownloadModel;
 
-  async listPopularPackages(minDownloads: number, limit: number, now = new Date()): Promise<PackagePopularity[]> {
+  async getWeeklyDownloads(fullname: string, now = new Date()): Promise<number> {
+    const [scope, name] = getScopeAndName(fullname);
     const days: { month: number; field: string }[] = [];
     for (let offset = 1; offset <= 7; offset++) {
       const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - offset);
@@ -24,27 +24,14 @@ export class PackageVersionDownloadRepository extends AbstractRepository {
     // Column names come only from calendar dates. All other inputs are bound.
     const expression = days.map((day) => `CASE WHEN d.year_month = ? THEN d.${day.field} ELSE 0 END`).join(' + ');
     const { rows } = await this.PackageVersionDownload.query(
-      `SELECT p.scope, p.name, SUM(${expression}) AS downloads
+      `SELECT SUM(${expression}) AS downloads
        FROM package_version_downloads d JOIN packages p ON p.package_id = d.package_id
-       WHERE d.year_month BETWEEN ? AND ? AND d.version <> ? AND p.is_private = ?
-       GROUP BY p.scope, p.name HAVING SUM(${expression}) >= ?
-       ORDER BY downloads DESC, p.scope, p.name LIMIT ?`,
-      [
-        ...days.map((day) => day.month),
-        days[6].month,
-        days[0].month,
-        '*',
-        false,
-        ...days.map((day) => day.month),
-        minDownloads,
-        limit,
-      ],
+       WHERE p.scope = ? AND p.name = ? AND p.is_private = ?
+         AND d.year_month BETWEEN ? AND ? AND d.version <> ?`,
+      [...days.map((day) => day.month), scope, name, false, days[6].month, days[0].month, '*'],
     );
     // Exclude imported '*' totals: adding them to per-version counters double-counts traffic.
-    return (rows || []).map((row: { scope: string; name: string; downloads: number | string }) => ({
-      name: getFullname(row.scope, row.name),
-      downloads: Number(row.downloads),
-    }));
+    return Number(rows?.[0]?.downloads || 0);
   }
 
   async plus(packageId: string, version: string, counter: number): Promise<void> {

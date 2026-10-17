@@ -33,9 +33,11 @@ describe('test/repository/PackagePopularity.test.ts', () => {
       });
       await PackageVersionDownload.create({ packageId: pkg.packageId, version: '*', yearMonth: 202601, d01: 900_000 });
     }
-    assert.deepEqual(await repository.listPopularPackages(10_000, 10, new Date(2026, 0, 3)), [
-      { name: '@cnpm/hot', downloads: 10_000 },
-    ]);
-    assert.equal((await repository.listPopularPackages(1, 1, new Date(2026, 0, 3))).length, 1);
+    const now = new Date(2026, 0, 3);
+    assert.equal(await repository.getWeeklyDownloads('@cnpm/hot', now), 10_000);
+    assert.equal(await repository.getWeeklyDownloads('@cnpm/cold', now), 9999);
+    assert.equal(await repository.getWeeklyDownloads('@cnpm/private', now), 0);
+    assert.equal(await repository.getWeeklyDownloads('hot', now), 0);
+    assert.equal(await repository.getWeeklyDownloads('missing', now), 0);
   });
 });

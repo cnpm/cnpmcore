@@ -40,10 +40,7 @@ export const cnpmcoreConfig: CnpmcoreConfig = {
   syncRecheck: {
     enabled: false,
     minWeeklyDownloads: 10_000,
-    maxPackages: 2000,
-    include: [],
-    popularityUrl: '',
-    refreshInterval: 60 * 60_000,
+    maxPendingPackages: 2000,
     delays: [2 * 60_000, 10 * 60_000, 30 * 60_000],
     maxAttemptsPerHour: 3,
     dispatchInterval: 1000,

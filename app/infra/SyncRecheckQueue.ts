@@ -62,7 +62,7 @@ export class SyncRecheckQueue {
         before,
         JSON.stringify(after),
         after.pending ? after.nextCheckAt : '',
-        config.maxPackages,
+        config.maxPendingPackages,
         Math.max(2 * HOUR, (config.delays.at(-1) || 0) + HOUR),
       );
       if (result === 1) return after;

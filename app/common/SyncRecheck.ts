@@ -1,11 +1,7 @@
 export interface SyncRecheckConfig {
   enabled: boolean;
   minWeeklyDownloads: number;
-  maxPackages: number;
-  include: string[];
-  /** Optional shared snapshot: { updatedAt, packages: [{ name, downloads }] }. */
-  popularityUrl: string;
-  refreshInterval: number;
+  maxPendingPackages: number;
   /** Elapsed milliseconds after the first change, not delays between attempts. */
   delays: number[];
   maxAttemptsPerHour: number;
@@ -28,9 +24,4 @@ export interface SyncRecheckState {
   lease?: string;
   dispatchTaskId?: string;
   dispatchGeneration?: number;
-}
-
-export interface PackagePopularity {
-  name: string;
-  downloads: number;
 }

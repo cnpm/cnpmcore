@@ -3,94 +3,55 @@ import assert from 'node:assert/strict';
 import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { PackagePopularityService } from '../../../app/core/service/PackagePopularityService.ts';
+import { PackageVersionDownload } from '../../../app/repository/model/PackageVersionDownload.ts';
+import { PackageRepository } from '../../../app/repository/PackageRepository.ts';
 import { PackageVersionDownloadRepository } from '../../../app/repository/PackageVersionDownloadRepository.ts';
+import { TestUtil } from '../../TestUtil.ts';
 
 describe('test/core/service/PackagePopularityService.test.ts', () => {
   let service: PackagePopularityService;
   beforeEach(async () => {
     service = await app.getEggObject(PackagePopularityService);
-    mock(app.config.cnpmcore, 'syncRecheck', {
-      ...app.config.cnpmcore.syncRecheck,
-      enabled: true,
-      maxPackages: 2,
-      include: ['pinned'],
-    });
-    mock.data(PackageVersionDownloadRepository.prototype, 'listPopularPackages', [
-      { name: 'cold', downloads: 9999 },
-      { name: 'boundary', downloads: 10_000 },
-      { name: 'hot', downloads: 20_000 },
-    ]);
+    mock(app.config.cnpmcore.syncRecheck, 'enabled', true);
   });
 
-  it('applies the threshold and capacity including pinned packages, and caches the selection', async () => {
-    await service.refresh();
-    assert.equal(await service.includes('pinned'), true);
-    assert.equal(await service.includes('hot'), true);
-    assert.equal(await service.includes('cold'), false);
-    assert.equal(await service.includes('boundary'), false);
-    mock.error(PackageVersionDownloadRepository.prototype, 'listPopularPackages');
-    await service.refresh();
-    assert.equal(await service.includes('hot'), true);
+  it('checks the current database totals against 10,000 downloads without a warmup', async () => {
+    const name = '@cnpm/popular';
+    await TestUtil.createPackage({ name, isPrivate: false });
+    const pkg = await (await app.getEggObject(PackageRepository)).findPackage('@cnpm', 'popular');
+    assert.ok(pkg);
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const field = `d${String(yesterday.getDate()).padStart(2, '0')}`;
+    const counter = await PackageVersionDownload.create({
+      packageId: pkg.packageId,
+      version: '1.0.0',
+      yearMonth: yesterday.getFullYear() * 100 + yesterday.getMonth() + 1,
+      [field]: 9999,
+    });
+    assert.equal(await service.includes(name), false);
+    await counter.update({ [field]: 10_000 });
+    assert.equal(await service.includes(name), true);
+    await counter.update({ [field]: 9999 });
+    assert.equal(await service.includes(name), false);
   });
 
-  it('includes the threshold boundary and excludes invalid counts from a shared snapshot', async () => {
-    mock(app.config.cnpmcore.syncRecheck, 'popularityUrl', 'https://stats.example.com/packages');
-    mock(app.config.cnpmcore.syncRecheck, 'include', []);
-    app.mockHttpclient('https://stats.example.com/packages', {
-      data: {
-        updatedAt: new Date().toISOString(),
-        packages: [
-          { name: 'boundary', downloads: 10_000 },
-          { name: 'cold', downloads: 9999 },
-          { name: 'invalid', downloads: '999999' },
-        ],
-      },
-    });
-    mock.error(PackageVersionDownloadRepository.prototype, 'listPopularPackages');
-    await service.refresh();
-    assert.equal(await service.includes('boundary'), true);
-    assert.equal(await service.includes('cold'), false);
-    assert.equal(await service.includes('invalid'), false);
+  it('excludes packages with no stored downloads', async () => {
+    assert.equal(await service.includes('missing'), false);
+    await TestUtil.createPackage({ name: '@cnpm/empty', isPrivate: false });
+    assert.equal(await service.includes('@cnpm/empty'), false);
   });
 
-  it('retains the last set when refresh fails and does no work when disabled', async () => {
-    await service.refresh();
-    await app.redis.del('CNPMCORE_SYNC_RECHECK:popular:updated');
-    mock(app.config.cnpmcore.syncRecheck, 'popularityUrl', 'https://stats.example.com/stale');
-    app.mockHttpclient('https://stats.example.com/stale', {
-      data: { updatedAt: '2000-01-01', packages: [] },
-    });
-    await assert.rejects(service.refresh(), /stale/);
-    assert.equal(await service.includes('hot'), true);
+  it('does not query download counts when disabled', async () => {
     mock(app.config.cnpmcore.syncRecheck, 'enabled', false);
-    await service.refresh();
-    assert.equal(await service.includes('hot'), false);
+    mock.error(PackageVersionDownloadRepository.prototype, 'getWeeklyDownloads');
+    assert.equal(await service.includes('popular'), false);
   });
 
-  it('rejects invalid limits before starting background work', async () => {
+  it('rejects invalid limits before checking eligibility', async () => {
     mock(app.config.cnpmcore.syncRecheck, 'delays', [100, 50]);
-    await assert.rejects(service.refresh(), /strictly increasing/);
+    await assert.rejects(service.includes('popular'), /strictly increasing/);
     mock(app.config.cnpmcore.syncRecheck, 'maxAttemptsPerHour', 0);
-    await assert.rejects(service.refresh(), /positive integers/);
-  });
-
-  it('rebuilds an evicted selection even when its refresh timestamp remains', async () => {
-    await service.refresh();
-    await app.redis.del('CNPMCORE_SYNC_RECHECK:popular');
-    await service.refresh();
-    assert.equal(await service.includes('hot'), true);
-  });
-
-  it('does not publish a slow refresh after another process takes its lease', async () => {
-    await service.refresh();
-    await app.redis.del('CNPMCORE_SYNC_RECHECK:popular:updated');
-    mock(PackageVersionDownloadRepository.prototype, 'listPopularPackages', async () => {
-      await app.redis.set('CNPMCORE_SYNC_RECHECK:popular:lock', 'new-owner');
-      return [{ name: 'replacement', downloads: 30_000 }];
-    });
-    await service.refresh();
-    assert.equal(await service.includes('hot'), true);
-    assert.equal(await service.includes('replacement'), false);
-    assert.equal(await app.redis.get('CNPMCORE_SYNC_RECHECK:popular:lock'), 'new-owner');
+    await assert.rejects(service.includes('popular'), /positive integers/);
   });
 });

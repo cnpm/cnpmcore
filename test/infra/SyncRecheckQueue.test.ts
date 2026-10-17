@@ -16,7 +16,7 @@ describe('test/infra/SyncRecheckQueue.test.ts', () => {
       ...app.config.cnpmcore.syncRecheck,
       enabled: true,
       delays: [100, 200, 300],
-      maxPackages: 2,
+      maxPendingPackages: 2,
     });
   });
 
