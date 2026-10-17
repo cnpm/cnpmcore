@@ -1,5 +1,6 @@
 import type { DATABASE_TYPE } from '../../config/database.ts';
 import type { ChangesStreamMode, SyncDeleteMode, SyncMode } from '../common/constants.ts';
+import type { SyncRecheckConfig } from '../common/SyncRecheck.ts';
 
 export { cnpmcoreConfig } from '../../config/config.default.ts';
 
@@ -86,6 +87,7 @@ export interface CnpmcoreConfig {
    */
   enableChangesStream: boolean;
   checkChangesStreamInterval: number;
+  syncRecheck: SyncRecheckConfig;
   changesStreamRegistry: string;
   /**
    * handle _changes request mode, default is 'streaming', please set it to 'json' when on cnpmcore registry

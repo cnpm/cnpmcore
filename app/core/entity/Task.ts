@@ -17,6 +17,7 @@ export const PID = process.pid;
 export interface TaskBaseData {
   taskWorker: string;
   shouldNotMerge?: boolean;
+  maxAttempts?: number;
 }
 
 export interface TaskData<T = TaskBaseData> extends EntityData {
@@ -35,6 +36,9 @@ export interface TaskData<T = TaskBaseData> extends EntityData {
 }
 
 export interface SyncPackageTaskOptions {
+  /** Internal ID for recovery of a reserved recheck dispatch. */
+  taskId?: string;
+  maxAttempts?: number;
   authorId?: string;
   authorIp?: string;
   tips?: string;
@@ -164,9 +168,14 @@ export class Task<T extends TaskBaseData = TaskBaseData> extends Entity {
         forceSyncHistory: options?.forceSyncHistory,
         force: options?.force,
         specificVersions: options?.specificVersions,
+        maxAttempts: options?.maxAttempts,
       },
     };
     const task = this.create(data);
+    if (options?.taskId) {
+      task.taskId = options.taskId;
+      task.bizId = `SyncRecheck:${options.taskId}`;
+    }
     task.logPath = `/packages/${fullname}/syncs/${dayjs().format('YYYY/MM/DDHHmm')}-${task.taskId}.log`;
     return task;
   }
