@@ -51,5 +51,43 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       assert.equal(res.status, 200);
       assert.equal(res.body.results.length, 2, `res.body.results.length: ${res.body.results.length}`);
     });
+
+    it('should omit team-private package events from the public feed', async () => {
+      const victim = await TestUtil.createUser({ name: 'changes-victim-priv' });
+      const publicPkg = await TestUtil.getFullPackage({ name: '@cnpm/changes-public', version: '1.0.0' });
+      const privatePkg = await TestUtil.getFullPackage({ name: '@cnpm/changes-private', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${publicPkg.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(publicPkg)
+        .expect(201);
+      await app
+        .httpRequest()
+        .put(`/${privatePkg.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(privatePkg)
+        .expect(201);
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', victim.authorization)
+        .send({ name: 'changes-vteam' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/changes-vteam/package')
+        .set('authorization', victim.authorization)
+        .send({ package: privatePkg.name })
+        .expect(200);
+
+      await setTimeout(100);
+      const res = await app.httpRequest().get('/_changes').expect(200);
+      const ids = res.body.results.map((r: { id: string }) => r.id);
+      assert.ok(ids.includes(publicPkg.name), `expected public package in feed, got ${ids.join(',')}`);
+      assert.ok(!ids.includes(privatePkg.name), `private package must not appear in public _changes`);
+    });
   });
 });
