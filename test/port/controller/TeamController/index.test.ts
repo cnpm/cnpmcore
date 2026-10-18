@@ -742,13 +742,21 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
 
   // ==================== team package management ====================
   describe('team package management (/-/team/:scope/:team/package)', () => {
-    it('should list empty packages initially', async () => {
+    it('should list empty packages initially for team member', async () => {
       const res = await app
         .httpRequest()
         .get('/-/team/teamorg/developers/package')
-        .set('authorization', normalUser.authorization)
+        .set('authorization', adminUser.authorization)
         .expect(200);
       assert.deepEqual(res.body, {});
+    });
+
+    it('should 403 when non-member lists team packages', async () => {
+      await app
+        .httpRequest()
+        .get('/-/team/teamorg/developers/package')
+        .set('authorization', normalUser.authorization)
+        .expect(403);
     });
 
     it('should 401 list packages without authorization', async () => {
@@ -805,6 +813,44 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', adminUser.authorization)
         .send({ package: '@cnpm/nonexistent-pkg' })
         .expect(404);
+    });
+
+    it('should 403 when non-member lists private team packages on allowScopes org', async () => {
+      const victim = await TestUtil.createUser({ name: 'listteam-victim' });
+      const attacker = await TestUtil.createUser({ name: 'listteam-attacker' });
+      const pkgPayload = await TestUtil.getFullPackage({ name: '@cnpm/listteam-secret', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(pkgPayload)
+        .expect(201);
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', victim.authorization)
+        .send({ name: 'listteam-vteam' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/listteam-vteam/package')
+        .set('authorization', victim.authorization)
+        .send({ package: pkgPayload.name })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .get('/-/team/cnpm/listteam-vteam/package')
+        .set('authorization', attacker.authorization)
+        .expect(403);
+
+      const ok = await app
+        .httpRequest()
+        .get('/-/team/cnpm/listteam-vteam/package')
+        .set('authorization', victim.authorization)
+        .expect(200);
+      assert.equal(ok.body[pkgPayload.name], 'read');
     });
 
     it('should 403 when non-owner tries to grant', async () => {
