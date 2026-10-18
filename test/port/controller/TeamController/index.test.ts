@@ -815,6 +815,41 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .expect(404);
     });
 
+    it('should allow org owner but not plain org member to list team packages', async () => {
+      await app
+        .httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'listpkg-owner-team' })
+        .expect(200);
+      const orgOwner = await TestUtil.createUser({ name: 'listpkg-org-owner' });
+      const orgMember = await TestUtil.createUser({ name: 'listpkg-org-member' });
+      await app
+        .httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: orgOwner.name, role: 'owner' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: orgMember.name, role: 'member' })
+        .expect(200);
+
+      const res = await app
+        .httpRequest()
+        .get('/-/team/teamorg/listpkg-owner-team/package')
+        .set('authorization', orgOwner.authorization)
+        .expect(200);
+      assert.deepEqual(res.body, {});
+      await app
+        .httpRequest()
+        .get('/-/team/teamorg/listpkg-owner-team/package')
+        .set('authorization', orgMember.authorization)
+        .expect(403);
+    });
+
     it('should 403 when non-member lists private team packages on allowScopes org', async () => {
       const victim = await TestUtil.createUser({ name: 'listteam-victim' });
       const attacker = await TestUtil.createUser({ name: 'listteam-attacker' });

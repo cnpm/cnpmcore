@@ -310,12 +310,12 @@ export class TeamController extends AbstractController {
     if (!team) {
       throw new NotFoundError(`Team "${teamName}" not found`);
     }
-    // Listing reveals private package names; restrict to team members and admins.
-    const isAdmin = await this.userRoleManager.isAdmin(ctx);
-    if (!isAdmin) {
-      const membership = await this.teamRepository.findMember(team.teamId, authorizedUser.userId);
-      if (!membership) {
-        throw new ForbiddenError('Only team members or admin can list team packages');
+    // Listing reveals private package names; restrict to team members, org owners and admins.
+    if (!(await this.userRoleManager.isAdmin(ctx))) {
+      const teamMember = await this.teamRepository.findMember(team.teamId, authorizedUser.userId);
+      const orgMember = teamMember ? null : await this.orgRepository.findMember(org.orgId, authorizedUser.userId);
+      if (!teamMember && orgMember?.role !== 'owner') {
+        throw new ForbiddenError('Only team members, org owners or admin can list team packages');
       }
     }
     const teamPackages = await this.teamService.listPackages(team.teamId);
