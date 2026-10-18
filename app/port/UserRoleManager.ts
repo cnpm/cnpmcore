@@ -112,12 +112,12 @@ export class UserRoleManager {
       return null;
     }
 
-    // check token expired & set lastUsedAt
-    await this.tokenService.checkTokenStatus(authorizedUserAndToken.token);
-    // enforce optional CIDR allowlist (client IP from egg, respects config.proxy)
+    // enforce optional CIDR allowlist before touching lastUsedAt (client IP from egg, respects config.proxy)
     if (!this.tokenService.checkCidrWhitelist(authorizedUserAndToken.token, ctx.ip)) {
       throw new ForbiddenError(`Token "${authorizedUserAndToken.token.tokenMark}" is not allowed from ip "${ctx.ip}"`);
     }
+    // check token expired & set lastUsedAt
+    await this.tokenService.checkTokenStatus(authorizedUserAndToken.token);
     this.currentAuthorizedToken = authorizedUserAndToken.token;
     this.currentAuthorizedUser = authorizedUserAndToken.user;
     ctx.userId = authorizedUserAndToken.user.userId;
