@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { setTimeout } from 'node:timers/promises';
 
-import { app } from '@eggjs/mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
+import { ChangesStreamController } from '../../../../app/port/controller/ChangesStreamController.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () => {
@@ -88,6 +89,66 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       const ids = res.body.results.map((r: { id: string }) => r.id);
       assert.ok(ids.includes(publicPkg.name), `expected public package in feed, got ${ids.join(',')}`);
       assert.ok(!ids.includes(privatePkg.name), `private package must not appear in public _changes`);
+    });
+
+    it('should keep advancing past omitted team-private events', async () => {
+      mock(ChangesStreamController, 'PAGE_SIZE', 2);
+      const owner = await TestUtil.createUser({ name: 'changes-page-owner' });
+      const publish = async (name: string, version: string) => {
+        const pkg = await TestUtil.getFullPackage({ name, version });
+        await app
+          .httpRequest()
+          .put(`/${name}`)
+          .set('authorization', owner.authorization)
+          .set('user-agent', owner.ua)
+          .send(pkg)
+          .expect(201);
+      };
+      await publish('@cnpm/changes-page-a', '1.0.0');
+      await publish('@cnpm/changes-page-private', '1.0.0');
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', owner.authorization)
+        .send({ name: 'changes-page-team' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/changes-page-team/package')
+        .set('authorization', owner.authorization)
+        .send({ package: '@cnpm/changes-page-private' })
+        .expect(200);
+      for (const version of ['1.0.1', '1.0.2', '1.0.3']) {
+        await publish('@cnpm/changes-page-private', version);
+      }
+      await publish('@cnpm/changes-page-b', '1.0.0');
+      await setTimeout(100);
+
+      let res = await app.httpRequest().get('/_changes').expect(200);
+      let ids: string[] = res.body.results.map((r: { id: string }) => r.id);
+      assert.ok(!ids.includes('@cnpm/changes-page-private'));
+      assert.equal(ids[0], '@cnpm/changes-page-a');
+      // page is filled with the next public event instead of stopping at omitted ones
+      assert.equal(ids.at(-1), '@cnpm/changes-page-b');
+
+      // resuming from the last public seq before a run of private events still advances
+      const since = res.body.results[0].seq;
+      res = await app.httpRequest().get('/_changes').query({ since }).expect(200);
+      ids = res.body.results.map((r: { id: string }) => r.id);
+      assert.ok(!ids.includes('@cnpm/changes-page-private'));
+      assert.ok(res.body.results.at(-1).seq > since, 'feed must advance');
+      assert.equal(ids.at(-1), '@cnpm/changes-page-b');
+
+      // with a bounded scan, a request that already advanced may stop early...
+      mock(ChangesStreamController, 'MAX_SCAN_PAGES', 1);
+      res = await app.httpRequest().get('/_changes').expect(200);
+      ids = res.body.results.map((r: { id: string }) => r.id);
+      assert.deepEqual(ids, ['@cnpm/changes-page-a']);
+      // ...but resuming from that seq keeps scanning until the feed advances
+      res = await app.httpRequest().get('/_changes').query({ since }).expect(200);
+      ids = res.body.results.map((r: { id: string }) => r.id);
+      assert.ok(!ids.includes('@cnpm/changes-page-private'));
+      assert.equal(ids.at(-1), '@cnpm/changes-page-b');
     });
   });
 });

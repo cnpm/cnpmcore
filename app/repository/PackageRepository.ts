@@ -262,6 +262,17 @@ export class PackageRepository extends AbstractRepository {
     return await Promise.all(models.map((model) => this.#convertPackageModelToEntity(model)));
   }
 
+  // Batch lookup of packageIds within one scope, returns Map<name, packageId>
+  async findPackageIdsByNames(scope: string, names: string[]): Promise<Map<string, string>> {
+    const result = new Map<string, string>();
+    if (names.length === 0) return result;
+    const models = await this.Package.find({ scope, name: names }).select('packageId', 'name');
+    for (const model of models) {
+      result.set(model.name, model.packageId);
+    }
+    return result;
+  }
+
   async findPackageId(scope: string, name: string) {
     const model = await this.Package.findOne({ scope, name }).select('packageId');
     if (!model) return null;
