@@ -39,12 +39,14 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
       gzip: true,
     });
 
+    let lastSeq = Number(since);
     if (data.results?.length > 0) {
       for (const change of data.results) {
         const seq = String(change.seq);
         const fullname = change.id;
         // cnpmcore 默认返回 >= 需要做特殊判断
         if (seq && fullname && seq !== since) {
+          lastSeq = Number(seq);
           const change = {
             fullname,
             seq,
@@ -52,6 +54,11 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
           yield change;
         }
       }
+    }
+    // cnpmcore omits some events (e.g. team-private packages) and reports the last scanned seq,
+    // advance past them so the next request does not rescan the same range
+    if (data.last_seq && Number(data.last_seq) > lastSeq) {
+      yield { fullname: '', seq: String(data.last_seq) };
     }
   }
 }

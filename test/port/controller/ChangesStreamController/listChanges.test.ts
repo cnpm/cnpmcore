@@ -3,7 +3,10 @@ import { setTimeout } from 'node:timers/promises';
 
 import { app, mock } from '@eggjs/mock/bootstrap';
 
+import { OrgService } from '../../../../app/core/service/OrgService.ts';
+import { TeamService } from '../../../../app/core/service/TeamService.ts';
 import { ChangesStreamController } from '../../../../app/port/controller/ChangesStreamController.ts';
+import { TeamRepository } from '../../../../app/repository/TeamRepository.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () => {
@@ -139,16 +142,105 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       assert.ok(res.body.results.at(-1).seq > since, 'feed must advance');
       assert.equal(ids.at(-1), '@cnpm/changes-page-b');
 
-      // with a bounded scan, a request that already advanced may stop early...
+      // the scan is bounded; last_seq lets consumers resume past omitted events
       mock(ChangesStreamController, 'MAX_SCAN_PAGES', 1);
-      res = await app.httpRequest().get('/_changes').expect(200);
-      ids = res.body.results.map((r: { id: string }) => r.id);
-      assert.deepEqual(ids, ['@cnpm/changes-page-a']);
-      // ...but resuming from that seq keeps scanning until the feed advances
       res = await app.httpRequest().get('/_changes').query({ since }).expect(200);
-      ids = res.body.results.map((r: { id: string }) => r.id);
-      assert.ok(!ids.includes('@cnpm/changes-page-private'));
-      assert.equal(ids.at(-1), '@cnpm/changes-page-b');
+      assert.deepEqual(
+        res.body.results.map((r: { id: string }) => r.id),
+        ['@cnpm/changes-page-a'],
+      );
+      assert.ok(res.body.last_seq > since, 'last_seq must advance');
+      let cursor = res.body.last_seq;
+      const seen: string[] = [];
+      for (let i = 0; i < 20 && !seen.includes('@cnpm/changes-page-b'); i++) {
+        res = await app.httpRequest().get('/_changes').query({ since: cursor }).expect(200);
+        seen.push(...res.body.results.map((r: { id: string }) => r.id));
+        assert.ok(res.body.last_seq > cursor || seen.includes('@cnpm/changes-page-b'), 'feed must advance');
+        cursor = res.body.last_seq;
+      }
+      assert.ok(!seen.includes('@cnpm/changes-page-private'));
+      assert.ok(seen.includes('@cnpm/changes-page-b'));
+
+      // no changes since: no last_seq
+      res = await app
+        .httpRequest()
+        .get('/_changes')
+        .query({ since: cursor + 1000 })
+        .expect(200);
+      assert.deepEqual(res.body, { results: [] });
+    });
+
+    it('should emit a change when a team-private package becomes public again', async () => {
+      const owner = await TestUtil.createUser({ name: 'changes-unbind-owner' });
+      const names = ['@cnpm/changes-unbind-revoke', '@cnpm/changes-unbind-team', '@cnpm/changes-unbind-org'];
+      for (const name of names) {
+        const pkg = await TestUtil.getFullPackage({ name, version: '1.0.0' });
+        await app
+          .httpRequest()
+          .put(`/${name}`)
+          .set('authorization', owner.authorization)
+          .set('user-agent', owner.ua)
+          .send(pkg)
+          .expect(201);
+      }
+      for (const team of ['changes-unbind-t1', 'changes-unbind-t2']) {
+        await app
+          .httpRequest()
+          .put('/-/org/cnpm/team')
+          .set('authorization', owner.authorization)
+          .send({ name: team })
+          .expect(200);
+      }
+      const bind = async (team: string, name: string) => {
+        await app
+          .httpRequest()
+          .put(`/-/team/cnpm/${team}/package`)
+          .set('authorization', owner.authorization)
+          .send({ package: name })
+          .expect(200);
+      };
+      await bind('changes-unbind-t1', names[0]);
+      await bind('changes-unbind-t2', names[1]);
+      await bind('changes-unbind-t1', names[2]);
+      await bind('changes-unbind-t2', names[2]);
+      await setTimeout(100);
+      const listIds = async (since = 0) => {
+        const res = await app.httpRequest().get('/_changes').query({ since }).expect(200);
+        return res.body.results.map((r: { id: string }) => r.id) as string[];
+      };
+      let ids = await listIds();
+      for (const name of names) {
+        assert.ok(!ids.includes(name));
+      }
+
+      // revoke the only binding
+      await app
+        .httpRequest()
+        .delete('/-/team/cnpm/changes-unbind-t1/package')
+        .set('authorization', owner.authorization)
+        .send({ package: names[0] })
+        .expect(200);
+      // remove a team: names[1] becomes public, names[2] still bound to t1
+      const teamService = await app.getEggObject(TeamService);
+      const orgService = await app.getEggObject(OrgService);
+      const org = await orgService.findOrgByName('cnpm');
+      assert.ok(org);
+      const team2 = await app
+        .getEggObject(TeamRepository)
+        .then((repo) => repo.findTeam(org.orgId, 'changes-unbind-t2'));
+      assert.ok(team2);
+      await teamService.removeTeam(team2.teamId);
+      await setTimeout(100);
+      ids = await listIds();
+      assert.ok(ids.includes(names[0]), ids.join(','));
+      assert.ok(ids.includes(names[1]), ids.join(','));
+      assert.ok(!ids.includes(names[2]), ids.join(','));
+
+      // remove the org: last binding of names[2] goes away
+      await orgService.removeOrg(org.orgId);
+      await setTimeout(100);
+      ids = await listIds();
+      assert.ok(ids.includes(names[2]), ids.join(','));
     });
   });
 });

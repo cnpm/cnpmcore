@@ -33,16 +33,19 @@ export class ChangesStreamController extends AbstractController {
     ctx.tValidate(ChangeRule, params);
     const limit = ChangesStreamController.PAGE_SIZE;
     // Public feed must not reveal team-private packages (same binding used by checkReadAccess);
-    // their events are omitted. Keep scanning past omitted events so the feed always advances
-    // (consumers resume from the last returned seq, inclusive), but bound the scan once it has.
+    // their events are omitted. Keep scanning past omitted events to fill the page, within a
+    // bounded number of rows. `last_seq` is the last scanned seq (CouchDB style), so consumers
+    // can resume past a run of omitted events even when no public event was returned.
     const maxScan = limit * ChangesStreamController.MAX_SCAN_PAGES;
     const results: { seq: Change['id']; type: string; id: string; changes: unknown[] }[] = [];
     let cursor = params.since;
     let scanned = 0;
-    while (results.length < limit) {
+    let lastSeq: Change['id'] | undefined;
+    while (results.length < limit && scanned < maxScan) {
       const changes = await this.changeRepository.query(cursor, limit);
       const teamBound = await this.#findTeamBoundFullnames(changes.map((change) => change.targetName));
       for (const change of changes) {
+        lastSeq = change.id;
         if (teamBound.has(change.targetName)) continue;
         results.push({
           seq: change.id,
@@ -54,11 +57,10 @@ export class ChangesStreamController extends AbstractController {
       }
       scanned += changes.length;
       if (changes.length < limit) break;
-      const progressed = results.some((item) => Number(item.seq) > params.since);
-      if (progressed && scanned >= maxScan) break;
-      cursor = Number(changes.at(-1)?.id) + 1;
+      cursor = Number(lastSeq) + 1;
     }
-    return { results };
+    // last_seq is omitted (undefined) when there are no changes since `since`
+    return { results, last_seq: lastSeq };
   }
 
   // Returns the subset of fullnames that are team-bound (private) packages
