@@ -55,5 +55,43 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
       assert.equal(res.body.latest, '1.0.0');
       assert.deepEqual(Object.keys(res.body), ['latest']);
     });
+
+    it('should 403 dist-tags for team-private package without access', async () => {
+      const victim = await TestUtil.createUser({ name: 'tag-victim-priv' });
+      const attacker = await TestUtil.createUser({ name: 'tag-attacker-priv' });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/tag-private', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(pkg)
+        .expect(201);
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', victim.authorization)
+        .send({ name: 'tag-vteam' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/tag-vteam/package')
+        .set('authorization', victim.authorization)
+        .send({ package: pkg.name })
+        .expect(200);
+
+      await app.httpRequest().get(`/-/package/${pkg.name}/dist-tags`).expect(401);
+      await app
+        .httpRequest()
+        .get(`/-/package/${pkg.name}/dist-tags`)
+        .set('authorization', attacker.authorization)
+        .expect(403);
+      const ok = await app
+        .httpRequest()
+        .get(`/-/package/${pkg.name}/dist-tags`)
+        .set('authorization', victim.authorization)
+        .expect(200);
+      assert.equal(ok.body.latest, '1.0.0');
+    });
   });
 });

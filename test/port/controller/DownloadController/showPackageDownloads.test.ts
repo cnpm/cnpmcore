@@ -484,4 +484,52 @@ describe('test/port/controller/DownloadController/showPackageDownloads.test.ts',
       assert.equal(data.package, '@cnpm/koa');
     });
   });
+
+  describe('team-private package download access', () => {
+    it('should 403 package download endpoints without read access', async () => {
+      const victim = await TestUtil.createUser({ name: 'dl-victim-priv' });
+      const attacker = await TestUtil.createUser({ name: 'dl-attacker-priv' });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/dl-private', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(pkg)
+        .expect(201);
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', victim.authorization)
+        .send({ name: 'dl-vteam' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/dl-vteam/package')
+        .set('authorization', victim.authorization)
+        .send({ package: pkg.name })
+        .expect(200);
+
+      const today = dayjs().format('YYYY-MM-DD');
+      await app
+        .httpRequest()
+        .get(`/downloads/point/${today}/${encodeURIComponent(pkg.name)}`)
+        .expect(401);
+      await app
+        .httpRequest()
+        .get(`/downloads/point/${today}/${encodeURIComponent(pkg.name)}`)
+        .set('authorization', attacker.authorization)
+        .expect(403);
+      await app
+        .httpRequest()
+        .get(`/downloads/range/${today}:${today}/${encodeURIComponent(pkg.name)}`)
+        .set('authorization', attacker.authorization)
+        .expect(403);
+      await app
+        .httpRequest()
+        .get(`/downloads/point/${today}/${encodeURIComponent(pkg.name)}`)
+        .set('authorization', victim.authorization)
+        .expect(200);
+    });
+  });
 });
