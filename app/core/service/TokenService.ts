@@ -17,6 +17,7 @@ import { isGranularToken, type Token } from '../entity/Token.ts';
 
 const BEARER_TOKEN_RE = /^Bearer ([\w.]+?)$/;
 
+const CIDR_PREFIX_RE = /^\d{1,3}$/;
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -86,35 +87,27 @@ export class TokenService extends AbstractService {
     if (!clientIp) {
       return false;
     }
-    // Normalize IPv4-mapped IPv6 (::ffff:a.b.c.d)
-    let ip = clientIp;
-    if (ip.startsWith('::ffff:')) {
-      ip = ip.slice(7);
-    }
-    const ipVersion = isIP(ip);
+    // BlockList matches IPv4-mapped IPv6 addresses (any notation) against IPv4 entries and vice versa
+    const ipVersion = isIP(clientIp);
     if (!ipVersion) {
       return false;
     }
-    const family = ipVersion === 6 ? 'ipv6' : 'ipv4';
     const blockList = new BlockList();
     for (const entry of whitelist) {
-      try {
-        if (entry.includes('/')) {
-          const [addr, prefixStr] = entry.split('/');
-          const addrVersion = isIP(addr);
-          if (!addrVersion) continue;
-          const entryFamily = addrVersion === 6 ? 'ipv6' : 'ipv4';
-          blockList.addSubnet(addr, Number(prefixStr), entryFamily);
-        } else {
-          const addrVersion = isIP(entry);
-          if (!addrVersion) continue;
-          blockList.addAddress(entry, addrVersion === 6 ? 'ipv6' : 'ipv4');
-        }
-      } catch {
-        // ignore invalid whitelist entries
+      const [addr, prefix, ...rest] = entry.split('/');
+      const addrVersion = isIP(addr);
+      if (!addrVersion || rest.length > 0) continue;
+      const entryFamily = addrVersion === 6 ? 'ipv6' : 'ipv4';
+      if (prefix === undefined) {
+        blockList.addAddress(addr, entryFamily);
+        continue;
       }
+      // reject empty / non-numeric / out-of-range prefixes instead of treating them as /0
+      const maxPrefix = addrVersion === 6 ? 128 : 32;
+      if (!CIDR_PREFIX_RE.test(prefix) || Number(prefix) > maxPrefix) continue;
+      blockList.addSubnet(addr, Number(prefix), entryFamily);
     }
-    return blockList.check(ip, family);
+    return blockList.check(clientIp, ipVersion === 6 ? 'ipv6' : 'ipv4');
   }
 
   async getUserAndToken(authorization: string) {

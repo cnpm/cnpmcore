@@ -31,8 +31,10 @@ describe('test/core/service/TokenService.checkCidrWhitelist.test.ts', () => {
     assert.equal(tokenService.checkCidrWhitelist(token, '10.1.2.3'), true);
     assert.equal(tokenService.checkCidrWhitelist(token, '192.168.1.5'), true);
     assert.equal(tokenService.checkCidrWhitelist(token, '192.168.1.6'), false);
-    // ipv4-mapped ipv6 client address
+    // ipv4-mapped ipv6 client address, dotted and hex notation
     assert.equal(tokenService.checkCidrWhitelist(token, '::ffff:10.9.9.9'), true);
+    assert.equal(tokenService.checkCidrWhitelist(createToken(['192.0.2.0/24']), '::ffff:c000:201'), true);
+    assert.equal(tokenService.checkCidrWhitelist(createToken(['192.0.2.0/24']), '::ffff:c000:301'), false);
   });
 
   it('should match ipv6 subnets', () => {
@@ -47,5 +49,9 @@ describe('test/core/service/TokenService.checkCidrWhitelist.test.ts', () => {
     assert.equal(tokenService.checkCidrWhitelist(token, 'garbage'), false);
     assert.equal(tokenService.checkCidrWhitelist(token, '10.0.0.1'), true);
     assert.equal(tokenService.checkCidrWhitelist(createToken(['not-an-ip']), '10.0.0.1'), false);
+    // malformed prefixes must not fail open as /0
+    for (const entry of ['10.0.0.0/', '10.0.0.0/33', '10.0.0.0/-1', '10.0.0.0/8/8', '10.0.0.0/ 8', '::/129']) {
+      assert.equal(tokenService.checkCidrWhitelist(createToken([entry]), '8.8.8.8'), false, entry);
+    }
   });
 });
