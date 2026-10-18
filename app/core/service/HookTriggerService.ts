@@ -3,6 +3,7 @@ import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
 import { TaskState } from '../../common/enum/Task.ts';
 import { isoNow } from '../../common/LogUtil.ts';
 import { getScopeAndName } from '../../common/PackageUtil.ts';
+import { assertSafeWebhookEndpoint } from '../../common/WebhookUrlUtil.ts';
 import type { DistRepository } from '../../repository/DistRepository.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
@@ -74,6 +75,7 @@ export class HookTriggerService {
   }
 
   async doExecuteTrigger(hook: Hook, payload: object): Promise<number> {
+    assertSafeWebhookEndpoint(hook.endpoint);
     const { digest, payloadStr } = hook.signPayload(payload);
     const url = new URL(hook.endpoint);
     const res = await this.httpClient.request(hook.endpoint, {

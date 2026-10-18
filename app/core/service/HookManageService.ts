@@ -2,6 +2,7 @@ import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
 import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import type { HookType } from '../../common/enum/Hook.ts';
+import { assertSafeWebhookEndpoint } from '../../common/WebhookUrlUtil.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import { Hook } from '../entity/Hook.ts';
 
@@ -40,6 +41,7 @@ export class HookManageService {
   }
 
   async createHook(cmd: CreateHookCommand): Promise<Hook> {
+    assertSafeWebhookEndpoint(cmd.endpoint);
     const hooks = await this.hookRepository.listHooksByOwnerId(cmd.ownerId);
     // FIXME: 会有并发问题，需要有一个用户全局锁去记录
     if (hooks.length >= this.hooksLimit) {
@@ -58,6 +60,7 @@ export class HookManageService {
     if (hook.ownerId !== cmd.operatorId) {
       throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
     }
+    assertSafeWebhookEndpoint(cmd.endpoint);
     hook.endpoint = cmd.endpoint;
     hook.secret = cmd.secret;
     await this.hookRepository.saveHook(hook);
