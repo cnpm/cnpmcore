@@ -2,7 +2,11 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
+import { DEVELOPERS_TEAM } from '../../../../app/common/constants.ts';
+import { TeamPackage } from '../../../../app/core/entity/TeamPackage.ts';
 import { OrgRepository } from '../../../../app/repository/OrgRepository.ts';
+import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
+import { TeamRepository } from '../../../../app/repository/TeamRepository.ts';
 import { TestUtil } from '../../../TestUtil.ts';
 
 describe('test/port/controller/TeamController/index.test.ts', () => {
@@ -819,6 +823,318 @@ describe('test/port/controller/TeamController/index.test.ts', () => {
         .set('authorization', normalUser.authorization)
         .send({ package: '@cnpm/foo' })
         .expect(403);
+    });
+
+    // GHSA-95hv-57mq-2964: grant/revoke must require package maintainer (or admin)
+    // and package scope must match the team org. Team ownership alone is not enough.
+    it('should 403 when team owner who is not a package maintainer tries to grant', async () => {
+      const victim = await TestUtil.createUser({ name: 'ghsa95hv-victim' });
+      const attacker = await TestUtil.createUser({ name: 'ghsa95hv-attacker' });
+      const pkgPayload = await TestUtil.getFullPackage({ name: '@cnpm/ghsa95hv-secret', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(pkgPayload)
+        .expect(201);
+
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', attacker.authorization)
+        .send({ name: 'ghsa95hv-evil' })
+        .expect(200);
+
+      const res = await app
+        .httpRequest()
+        .put('/-/team/cnpm/ghsa95hv-evil/package')
+        .set('authorization', attacker.authorization)
+        .send({ package: '@cnpm/ghsa95hv-secret' })
+        .expect(403);
+      assert.match(res.body.error || res.body.message || JSON.stringify(res.body), /not authorized|Forbidden/i);
+
+      // package still has no team binding, so unauthenticated/attacker read must not become private-only
+      const readRes = await app
+        .httpRequest()
+        .get('/@cnpm/ghsa95hv-secret')
+        .set('authorization', attacker.authorization)
+        .set('Accept', 'application/json');
+      assert.notEqual(readRes.status, 403);
+    });
+
+    it('should 403 when team owner who is not a package maintainer tries to revoke', async () => {
+      const victim = await TestUtil.createUser({ name: 'ghsa95hv-victim-rev' });
+      const attacker = await TestUtil.createUser({ name: 'ghsa95hv-attacker-rev' });
+      const pkgPayload = await TestUtil.getFullPackage({ name: '@cnpm/ghsa95hv-secret-rev', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(pkgPayload)
+        .expect(201);
+
+      // victim binds package to their own team
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', victim.authorization)
+        .send({ name: 'ghsa95hv-vteam' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/ghsa95hv-vteam/package')
+        .set('authorization', victim.authorization)
+        .send({ package: '@cnpm/ghsa95hv-secret-rev' })
+        .expect(200);
+
+      // attacker owns a different team and must not revoke (or grant) the victim package
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', attacker.authorization)
+        .send({ name: 'ghsa95hv-evil-rev' })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .delete('/-/team/cnpm/ghsa95hv-evil-rev/package')
+        .set('authorization', attacker.authorization)
+        .send({ package: '@cnpm/ghsa95hv-secret-rev' })
+        .expect(403);
+
+      // attacker still cannot read the now team-bound private package
+      await app
+        .httpRequest()
+        .get('/@cnpm/ghsa95hv-secret-rev')
+        .set('authorization', attacker.authorization)
+        .set('Accept', 'application/json')
+        .expect(403);
+    });
+
+    it('should 403 when package scope does not match team org', async () => {
+      const publisher = await TestUtil.createUser({ name: 'ghsa95hv-scope-pub' });
+      const pkgPayload = await TestUtil.getFullPackage({ name: '@cnpm/ghsa95hv-scope-pkg', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgPayload)
+        .expect(201);
+
+      // teamorg is a non-allowScopes org; package is @cnpm/*
+      await app
+        .httpRequest()
+        .put('/-/org/teamorg/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'ghsa95hv-scope-team' })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .put('/-/team/teamorg/ghsa95hv-scope-team/package')
+        .set('authorization', adminUser.authorization)
+        .send({ package: '@cnpm/ghsa95hv-scope-pkg' })
+        .expect(403);
+    });
+
+    it('should allow package maintainer who owns the team to grant and revoke', async () => {
+      const maintainer = await TestUtil.createUser({ name: 'ghsa95hv-maintainer' });
+      const pkgPayload = await TestUtil.getFullPackage({ name: '@cnpm/ghsa95hv-ok', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', maintainer.authorization)
+        .set('user-agent', maintainer.ua)
+        .send(pkgPayload)
+        .expect(201);
+
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', maintainer.authorization)
+        .send({ name: 'ghsa95hv-ok-team' })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/ghsa95hv-ok-team/package')
+        .set('authorization', maintainer.authorization)
+        .send({ package: '@cnpm/ghsa95hv-ok' })
+        .expect(200);
+
+      const listRes = await app
+        .httpRequest()
+        .get('/-/team/cnpm/ghsa95hv-ok-team/package')
+        .set('authorization', maintainer.authorization)
+        .expect(200);
+      assert.equal(listRes.body['@cnpm/ghsa95hv-ok'], 'read');
+
+      await app
+        .httpRequest()
+        .delete('/-/team/cnpm/ghsa95hv-ok-team/package')
+        .set('authorization', maintainer.authorization)
+        .send({ package: '@cnpm/ghsa95hv-ok' })
+        .expect(200);
+    });
+
+    it('should allow admin to grant when scope matches even if not a maintainer', async () => {
+      const publisher = await TestUtil.createUser({ name: 'ghsa95hv-admin-pub' });
+      const pkgPayload = await TestUtil.getFullPackage({ name: '@cnpm/ghsa95hv-admin-pkg', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgPayload)
+        .expect(201);
+
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', adminUser.authorization)
+        .send({ name: 'ghsa95hv-admin-team' })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/ghsa95hv-admin-team/package')
+        .set('authorization', adminUser.authorization)
+        .send({ package: '@cnpm/ghsa95hv-admin-pkg' })
+        .expect(200);
+    });
+
+    // Legacy cross-scope bindings (created before the grant scope check) must still
+    // be revocable by admin/maintainer; grant of new cross-scope bindings stays forbidden.
+    async function createLegacyCrossScopeBinding(packageName: string, publisher: any) {
+      const pkgPayload = await TestUtil.getFullPackage({ name: packageName, version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkgPayload.name}`)
+        .set('authorization', publisher.authorization)
+        .set('user-agent', publisher.ua)
+        .send(pkgPayload)
+        .expect(201);
+
+      const orgRepository = await app.getEggObject(OrgRepository);
+      const teamRepository = await app.getEggObject(TeamRepository);
+      const packageRepository = await app.getEggObject(PackageRepository);
+      const org = await orgRepository.findOrgByName('teamorg');
+      assert(org);
+      const team = await teamRepository.findTeam(org.orgId, DEVELOPERS_TEAM);
+      assert(team);
+      const pkg = await packageRepository.findPackage('@cnpm', packageName.split('/')[1]);
+      assert(pkg);
+      // Simulate legacy data: bind @cnpm/* package to non-@cnpm org team directly.
+      await teamRepository.addPackage(
+        TeamPackage.create({
+          teamId: team.teamId,
+          packageId: pkg.packageId,
+        }),
+      );
+      return { team, pkg };
+    }
+
+    it('should allow admin to revoke an existing cross-scope binding', async () => {
+      const publisher = await TestUtil.createUser({ name: 'ghsa95hv-legacy-admin-pub' });
+      await createLegacyCrossScopeBinding('@cnpm/ghsa95hv-legacy-admin', publisher);
+
+      await app
+        .httpRequest()
+        .delete('/-/team/teamorg/developers/package')
+        .set('authorization', adminUser.authorization)
+        .send({ package: '@cnpm/ghsa95hv-legacy-admin' })
+        .expect(200);
+
+      const listRes = await app
+        .httpRequest()
+        .get('/-/team/teamorg/developers/package')
+        .set('authorization', adminUser.authorization)
+        .expect(200);
+      assert.equal(listRes.body['@cnpm/ghsa95hv-legacy-admin'], undefined);
+    });
+
+    it('should allow package maintainer to revoke an existing cross-scope binding', async () => {
+      const maintainer = await TestUtil.createUser({ name: 'ghsa95hv-legacy-maint' });
+      await createLegacyCrossScopeBinding('@cnpm/ghsa95hv-legacy-maint', maintainer);
+
+      // Give maintainer team-owner write access on the legacy team.
+      await app
+        .httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: maintainer.name, role: 'member' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/teamorg/developers/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: maintainer.name })
+        .expect(200);
+      await app
+        .httpRequest()
+        .patch(`/-/team/teamorg/developers/member/${maintainer.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .delete('/-/team/teamorg/developers/package')
+        .set('authorization', maintainer.authorization)
+        .send({ package: '@cnpm/ghsa95hv-legacy-maint' })
+        .expect(200);
+
+      // binding removed
+      const listRes = await app
+        .httpRequest()
+        .get('/-/team/teamorg/developers/package')
+        .set('authorization', adminUser.authorization)
+        .expect(200);
+      assert.equal(listRes.body['@cnpm/ghsa95hv-legacy-maint'], undefined);
+    });
+
+    it('should 403 when non-maintainer tries to revoke an existing cross-scope binding', async () => {
+      const publisher = await TestUtil.createUser({ name: 'ghsa95hv-legacy-pub' });
+      const outsider = await TestUtil.createUser({ name: 'ghsa95hv-legacy-outsider' });
+      await createLegacyCrossScopeBinding('@cnpm/ghsa95hv-legacy-deny', publisher);
+
+      // outsider owns the team but does not maintain the package
+      await app
+        .httpRequest()
+        .put('/-/org/teamorg/member')
+        .set('authorization', adminUser.authorization)
+        .send({ user: outsider.name, role: 'member' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/teamorg/developers/user')
+        .set('authorization', adminUser.authorization)
+        .send({ user: outsider.name })
+        .expect(200);
+      await app
+        .httpRequest()
+        .patch(`/-/team/teamorg/developers/member/${outsider.name}`)
+        .set('authorization', adminUser.authorization)
+        .send({ role: 'owner' })
+        .expect(200);
+
+      await app
+        .httpRequest()
+        .delete('/-/team/teamorg/developers/package')
+        .set('authorization', outsider.authorization)
+        .send({ package: '@cnpm/ghsa95hv-legacy-deny' })
+        .expect(403);
+
+      // binding still present
+      const listRes = await app
+        .httpRequest()
+        .get('/-/team/teamorg/developers/package')
+        .set('authorization', adminUser.authorization)
+        .expect(200);
+      assert.equal(listRes.body['@cnpm/ghsa95hv-legacy-deny'], 'read');
     });
   });
 

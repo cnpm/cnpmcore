@@ -2,6 +2,8 @@ import { Context, HTTPBody, HTTPContext, HTTPController, HTTPMethod, HTTPMethodE
 import { ForbiddenError, NotFoundError, UnprocessableEntityError } from 'egg/errors';
 
 import { getScopeAndName } from '../../common/PackageUtil.ts';
+import type { Package as PackageEntity } from '../../core/entity/Package.ts';
+import type { User as UserEntity } from '../../core/entity/User.ts';
 import type { OrgService } from '../../core/service/OrgService.ts';
 import type { TeamService } from '../../core/service/TeamService.ts';
 import type { OrgRepository } from '../../repository/OrgRepository.ts';
@@ -317,6 +319,29 @@ export class TeamController extends AbstractController {
     return result;
   }
 
+  // Ensure caller may change team↔package bindings for this package.
+  // Team write access alone is not enough: without a package-maintainer (or admin)
+  // check, any team owner in an allowScopes org can bind someone else's private
+  // package to their own team and read it (GHSA-95hv-57mq-2964).
+  //
+  // Scope matching is enforced on grant only. Revoke skips it so admins/maintainers
+  // can clean up legacy cross-scope bindings that predate the grant restriction.
+  private async requirePackageAccessControl(
+    ctx: Context,
+    orgName: string,
+    authorizedUser: UserEntity,
+    pkg: PackageEntity,
+    options: { requireMatchingScope: boolean },
+  ) {
+    if (options.requireMatchingScope && pkg.scope !== `@${orgName}`) {
+      throw new ForbiddenError(`Package "${pkg.fullname}" scope does not match team org "${orgName}"`);
+    }
+    if (await this.userRoleManager.isAdmin(ctx)) {
+      return;
+    }
+    await this.userRoleManager.requiredPackageMaintainer(pkg, authorizedUser);
+  }
+
   // npm access grant read-only @scope:team <pkg> → PUT /-/team/:orgName/:teamName/package
   @HTTPMethod({
     path: '/-/team/:orgName/:teamName/package',
@@ -328,7 +353,7 @@ export class TeamController extends AbstractController {
     @HTTPParam() teamName: string,
     @HTTPBody() body: { package: string },
   ) {
-    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
+    const { team, authorizedUser } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
       throw new UnprocessableEntityError('package is required');
     }
@@ -337,6 +362,7 @@ export class TeamController extends AbstractController {
     if (!pkg) {
       throw new NotFoundError(`Package "${body.package}" not found`);
     }
+    await this.requirePackageAccessControl(ctx, orgName, authorizedUser, pkg, { requireMatchingScope: true });
     await this.teamService.grantPackageAccess(team.teamId, pkg.packageId);
     return { ok: true };
   }
@@ -352,7 +378,7 @@ export class TeamController extends AbstractController {
     @HTTPParam() teamName: string,
     @HTTPBody() body: { package: string },
   ) {
-    const { team } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
+    const { team, authorizedUser } = await this.requireTeamWriteAccess(ctx, orgName, teamName);
     if (!body.package) {
       throw new UnprocessableEntityError('package is required');
     }
@@ -361,6 +387,7 @@ export class TeamController extends AbstractController {
     if (!pkg) {
       throw new NotFoundError(`Package "${body.package}" not found`);
     }
+    await this.requirePackageAccessControl(ctx, orgName, authorizedUser, pkg, { requireMatchingScope: false });
     await this.teamService.revokePackageAccess(team.teamId, pkg.packageId);
     return { ok: true };
   }
