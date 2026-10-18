@@ -42,6 +42,7 @@ describe('test/common/WebhookUrlUtil.test.ts', () => {
       'http://[::ffff:7f00:1]/x',
       'http://[fd00::1]/x',
       'http://[fe80::1]/x',
+      'http://[fec0::1]/x',
       'http://10.0.0.5/x',
       'http://172.16.0.1/x',
       'http://192.168.1.1/x',

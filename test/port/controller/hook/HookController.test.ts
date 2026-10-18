@@ -5,6 +5,7 @@ import { app } from '@eggjs/mock/bootstrap';
 import { HookType } from '../../../../app/common/enum/Hook.ts';
 import type { Hook } from '../../../../app/core/entity/Hook.ts';
 import { HookManageService } from '../../../../app/core/service/HookManageService.ts';
+import { HookRepository } from '../../../../app/repository/HookRepository.ts';
 import { UserRepository } from '../../../../app/repository/UserRepository.ts';
 import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
@@ -93,6 +94,23 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         .expect(200);
       assert.ok(res.body.endpoint === 'https://new.com/webhook');
       assert.equal(res.body.secret, '********');
+    });
+
+    it('should keep the stored secret when the masked value is sent back', async () => {
+      await app
+        .httpRequest()
+        .put(`/-/npm/v1/hooks/hook/${hook.hookId}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .send({
+          endpoint: 'https://new.com/webhook',
+          secret: '********',
+        })
+        .expect(200);
+      const hookRepository = await app.getEggObject(HookRepository);
+      const stored = await hookRepository.findHookById(hook.hookId);
+      assert.equal(stored?.endpoint, 'https://new.com/webhook');
+      assert.equal(stored?.secret, 'mock_secret');
     });
   });
 

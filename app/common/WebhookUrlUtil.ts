@@ -42,6 +42,7 @@ function buildPrivateBlockList(): BlockList {
   list.addSubnet('2002::', 16, 'ipv6');
   list.addSubnet('fc00::', 7, 'ipv6');
   list.addSubnet('fe80::', 10, 'ipv6');
+  list.addSubnet('fec0::', 10, 'ipv6'); // deprecated site-local
   list.addSubnet('ff00::', 8, 'ipv6');
   return list;
 }
@@ -107,7 +108,10 @@ export function assertSafeWebhookEndpoint(endpoint: string): void {
   }
 }
 
+/** Placeholder returned instead of the stored webhook secret. */
+export const MASKED_WEBHOOK_SECRET = '********';
+
 /** Mask webhook secret for API responses (the full secret is only accepted on create/update). */
 export function maskWebhookSecret(secret: string): string {
-  return secret ? '********' : '';
+  return secret ? MASKED_WEBHOOK_SECRET : '';
 }

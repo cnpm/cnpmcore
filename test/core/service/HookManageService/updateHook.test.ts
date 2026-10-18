@@ -67,4 +67,15 @@ describe('test/core/service/HookManageService/updateHook.test.ts', () => {
     assert.ok(updatedHook.endpoint === 'http://new.com');
     assert.ok(updatedHook.secret === 'new_mock_secret');
   });
+
+  it('should keep the stored secret when the masked placeholder is submitted', async () => {
+    const updatedHook = await hookManageService.updateHook({
+      hookId: hook.hookId,
+      operatorId: 'mock_owner_id',
+      endpoint: 'http://new.com',
+      secret: '********',
+    });
+    assert.equal(updatedHook.endpoint, 'http://new.com');
+    assert.equal(updatedHook.secret, 'mock_secret');
+  });
 });

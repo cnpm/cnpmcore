@@ -2,7 +2,7 @@ import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
 import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import type { HookType } from '../../common/enum/Hook.ts';
-import { assertSafeWebhookEndpoint } from '../../common/WebhookUrlUtil.ts';
+import { assertSafeWebhookEndpoint, MASKED_WEBHOOK_SECRET } from '../../common/WebhookUrlUtil.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import { Hook } from '../entity/Hook.ts';
 
@@ -62,7 +62,10 @@ export class HookManageService {
     }
     assertSafeWebhookEndpoint(cmd.endpoint);
     hook.endpoint = cmd.endpoint;
-    hook.secret = cmd.secret;
+    // keep the stored secret when a client round-trips the masked value from a previous response
+    if (cmd.secret !== MASKED_WEBHOOK_SECRET) {
+      hook.secret = cmd.secret;
+    }
     await this.hookRepository.saveHook(hook);
     return hook;
   }
