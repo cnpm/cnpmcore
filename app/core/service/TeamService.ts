@@ -142,9 +142,13 @@ export class TeamService extends AbstractService {
   }
 
   async revokePackageAccess(teamId: string, packageId: string): Promise<void> {
+    const existing = await this.teamRepository.findPackage(teamId, packageId);
     await this.teamRepository.removePackage(teamId, packageId);
     this.logger.info('[TeamService:revokePackageAccess] teamId: %s, packageId: %s', teamId, packageId);
-    await this.notifyPackagesUnbound([packageId]);
+    // only announce when a binding was actually removed (no-op revokes must not emit changes)
+    if (existing) {
+      await this.notifyPackagesUnbound([packageId]);
+    }
   }
 
   async listPackages(teamId: string): Promise<TeamPackage[]> {

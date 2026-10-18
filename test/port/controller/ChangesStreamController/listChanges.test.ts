@@ -236,6 +236,18 @@ describe('test/port/controller/ChangesStreamController/listChanges.test.ts', () 
       assert.ok(ids.includes(names[1]), ids.join(','));
       assert.ok(!ids.includes(names[2]), ids.join(','));
 
+      // a repeated (no-op) revoke must not emit another change
+      const countOf = async (name: string) => (await listIds()).filter((id) => id === name).length;
+      const before = await countOf(names[0]);
+      await app
+        .httpRequest()
+        .delete('/-/team/cnpm/changes-unbind-t1/package')
+        .set('authorization', owner.authorization)
+        .send({ package: names[0] })
+        .expect(200);
+      await setTimeout(100);
+      assert.equal(await countOf(names[0]), before);
+
       // remove the org: last binding of names[2] goes away
       await orgService.removeOrg(org.orgId);
       await setTimeout(100);
