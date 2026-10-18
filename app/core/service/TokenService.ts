@@ -1,3 +1,5 @@
+import { BlockList, isIP } from 'node:net';
+
 import dayjs from 'dayjs';
 import { AccessLevel, Inject, SingletonProto } from 'egg';
 import { ForbiddenError, UnauthorizedError } from 'egg/errors';
@@ -69,6 +71,50 @@ export class TokenService extends AbstractService {
     }
 
     throw new ForbiddenError(`can't access package "${fullname}"`);
+  }
+
+  /**
+   * Return true when the token has no CIDR whitelist, or clientIp matches an entry.
+   * Entries may be bare addresses or CIDR prefixes (e.g. 10.0.0.0/8).
+   * Uses ctx.ip / client IP so egg proxy / X-Forwarded-For config applies upstream.
+   */
+  public checkCidrWhitelist(token: Token, clientIp: string): boolean {
+    const whitelist = token.cidrWhitelist || [];
+    if (whitelist.length === 0) {
+      return true;
+    }
+    if (!clientIp) {
+      return false;
+    }
+    // Normalize IPv4-mapped IPv6 (::ffff:a.b.c.d)
+    let ip = clientIp;
+    if (ip.startsWith('::ffff:')) {
+      ip = ip.slice(7);
+    }
+    const ipVersion = isIP(ip);
+    if (!ipVersion) {
+      return false;
+    }
+    const family = ipVersion === 6 ? 'ipv6' : 'ipv4';
+    const blockList = new BlockList();
+    for (const entry of whitelist) {
+      try {
+        if (entry.includes('/')) {
+          const [addr, prefixStr] = entry.split('/');
+          const addrVersion = isIP(addr);
+          if (!addrVersion) continue;
+          const entryFamily = addrVersion === 6 ? 'ipv6' : 'ipv4';
+          blockList.addSubnet(addr, Number(prefixStr), entryFamily);
+        } else {
+          const addrVersion = isIP(entry);
+          if (!addrVersion) continue;
+          blockList.addAddress(entry, addrVersion === 6 ? 'ipv6' : 'ipv4');
+        }
+      } catch {
+        // ignore invalid whitelist entries
+      }
+    }
+    return blockList.check(ip, family);
   }
 
   async getUserAndToken(authorization: string) {
