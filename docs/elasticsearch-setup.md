@@ -929,8 +929,10 @@ config: {
 
 ### 同步一条数据
 
+注意需要添加管理员 token
+
 ```bash
-curl -X PUT http://localhost:7001/-/v1/search/sync/${pkgName}
+curl -X PUT -H 'Authorization: Bearer ${token}' http://localhost:7001/-/v1/search/sync/${pkgName}
 ```
 
 ### 删除一条数据
