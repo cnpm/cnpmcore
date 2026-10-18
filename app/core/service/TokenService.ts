@@ -18,6 +18,8 @@ import { isGranularToken, type Token } from '../entity/Token.ts';
 const BEARER_TOKEN_RE = /^Bearer ([\w.]+?)$/;
 
 const CIDR_PREFIX_RE = /^\d{1,3}$/;
+const IPV4_MAPPED_IPV6 = new BlockList();
+IPV4_MAPPED_IPV6.addSubnet('::ffff:0:0', 96, 'ipv6');
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -88,27 +90,37 @@ export class TokenService extends AbstractService {
     if (!clientIp) {
       return false;
     }
-    // BlockList matches IPv4-mapped IPv6 addresses (any notation) against IPv4 entries and vice versa
     const ipVersion = isIP(clientIp);
     if (!ipVersion) {
       return false;
     }
-    const blockList = new BlockList();
+    // Keep families apart: BlockList maps IPv4 into IPv6 when checking, so a broad IPv6 rule
+    // (e.g. ::/0) would otherwise accept every IPv4 client. IPv4 and IPv4-mapped IPv6 clients
+    // (any notation) are matched against IPv4 entries only, native IPv6 clients against IPv6 entries.
+    const ipv4List = new BlockList();
+    const ipv6List = new BlockList();
     for (const entry of whitelist) {
       const [addr, prefix, ...rest] = entry.split('/');
       const addrVersion = isIP(addr);
       if (!addrVersion || rest.length > 0) continue;
+      const list = addrVersion === 6 ? ipv6List : ipv4List;
       const entryFamily = addrVersion === 6 ? 'ipv6' : 'ipv4';
       if (prefix === undefined) {
-        blockList.addAddress(addr, entryFamily);
+        list.addAddress(addr, entryFamily);
         continue;
       }
       // reject empty / non-numeric / out-of-range prefixes instead of treating them as /0
       const maxPrefix = addrVersion === 6 ? 128 : 32;
       if (!CIDR_PREFIX_RE.test(prefix) || Number(prefix) > maxPrefix) continue;
-      blockList.addSubnet(addr, Number(prefix), entryFamily);
+      list.addSubnet(addr, Number(prefix), entryFamily);
     }
-    return blockList.check(clientIp, ipVersion === 6 ? 'ipv6' : 'ipv4');
+    if (ipVersion === 4) {
+      return ipv4List.check(clientIp, 'ipv4');
+    }
+    if (IPV4_MAPPED_IPV6.check(clientIp, 'ipv6')) {
+      return ipv4List.check(clientIp, 'ipv6');
+    }
+    return ipv6List.check(clientIp, 'ipv6');
   }
 
   async getUserAndToken(authorization: string) {

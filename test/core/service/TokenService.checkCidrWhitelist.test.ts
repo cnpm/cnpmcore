@@ -43,6 +43,19 @@ describe('test/core/service/TokenService.checkCidrWhitelist.test.ts', () => {
     assert.equal(tokenService.checkCidrWhitelist(token, '2001:db9::1'), false);
   });
 
+  it('should not let ipv6 entries match ipv4 clients (and vice versa)', () => {
+    for (const entry of ['::/0', '::/64', '::ffff:0:0/96']) {
+      const token = createToken([entry]);
+      assert.equal(tokenService.checkCidrWhitelist(token, '8.8.8.8'), false, entry);
+      assert.equal(tokenService.checkCidrWhitelist(token, '::ffff:8.8.8.8'), false, entry);
+      assert.equal(tokenService.checkCidrWhitelist(token, '::ffff:808:808'), false, entry);
+    }
+    assert.equal(tokenService.checkCidrWhitelist(createToken(['::/0']), '2001:db8::1'), true);
+    assert.equal(tokenService.checkCidrWhitelist(createToken(['0.0.0.0/0']), '2001:db8::1'), false);
+    assert.equal(tokenService.checkCidrWhitelist(createToken(['0.0.0.0/0']), '::1'), false);
+    assert.equal(tokenService.checkCidrWhitelist(createToken(['::1']), '::1'), true);
+  });
+
   it('should fail closed for missing/invalid client ip and ignore invalid entries', () => {
     const token = createToken(['not-an-ip', '10.0.0.0/abc', 'bad/8', '10.0.0.0/8']);
     assert.equal(tokenService.checkCidrWhitelist(token, ''), false);
