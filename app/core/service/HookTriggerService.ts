@@ -3,7 +3,7 @@ import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
 import { TaskState } from '../../common/enum/Task.ts';
 import { isoNow } from '../../common/LogUtil.ts';
 import { getScopeAndName } from '../../common/PackageUtil.ts';
-import { assertSafeWebhookEndpoint } from '../../common/WebhookUrlUtil.ts';
+import { assertSafeWebhookEndpoint, webhookHttpAgent } from '../../common/WebhookUrlUtil.ts';
 import type { DistRepository } from '../../repository/DistRepository.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
@@ -90,6 +90,9 @@ export class HookTriggerService {
       // agent: false,
       // httpsAgent: false,
       data: payloadStr,
+      // never follow redirects, and refuse private/loopback addresses after DNS resolution
+      followRedirect: false,
+      dispatcher: webhookHttpAgent,
     });
     if (res.status >= 200 && res.status < 300) {
       return res.status;

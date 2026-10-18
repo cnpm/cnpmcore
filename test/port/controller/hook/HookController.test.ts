@@ -41,7 +41,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
       assert.ok(res.body.username === user.name);
       assert.ok(res.body.name === '@cnpmcore');
       assert.ok(res.body.endpoint === 'https://example.com/webhook');
-      assert.equal(res.body.secret, 'this****');
+      assert.equal(res.body.secret, '********');
       assert.ok(res.body.type === HookType.Scope);
       assert.ok(res.body.created);
       assert.ok(res.body.updated);
@@ -92,7 +92,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         })
         .expect(200);
       assert.ok(res.body.endpoint === 'https://new.com/webhook');
-      assert.equal(res.body.secret, 'new ****');
+      assert.equal(res.body.secret, '********');
     });
   });
 
@@ -248,7 +248,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
       assert.ok(res.body.username === user.name);
       assert.ok(res.body.name === 'foo_package');
       assert.ok(res.body.endpoint === 'http://foo.com');
-      assert.equal(res.body.secret, 'mock****');
+      assert.equal(res.body.secret, '********');
       assert.ok(res.body.type === HookType.Package);
       assert.ok(res.body.created);
       assert.ok(res.body.updated);

@@ -4,6 +4,7 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import type { HttpClientRequestOptions } from 'egg';
 
 import { HookType } from '../../../app/common/enum/Hook.ts';
+import { webhookHttpAgent } from '../../../app/common/WebhookUrlUtil.ts';
 import { Change } from '../../../app/core/entity/Change.ts';
 import type { Hook } from '../../../app/core/entity/Hook.ts';
 import { HookEvent } from '../../../app/core/entity/HookEvent.ts';
@@ -109,6 +110,8 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       assert.ok(callOptions.method === 'POST');
       assert.ok(callOptions.headers);
       assert.ok(callOptions.headers['x-npm-signature']);
+      assert.equal(callOptions.followRedirect, false);
+      assert.equal(callOptions.dispatcher, webhookHttpAgent);
       const data = JSON.parse(callOptions.data);
       assert.ok(data.event === 'package:publish');
       assert.ok(data.name === pkgName);
