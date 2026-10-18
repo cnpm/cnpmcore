@@ -14,6 +14,27 @@ export interface CnpmcoreConfig {
    */
   hooksLimit: number;
   /**
+   * allow webhook endpoints on private/internal networks (loopback, private, link-local and
+   * other special-use addresses, `localhost`, `*.local`, `*.internal`, cloud metadata hostnames).
+   * Only enable this when every user allowed to create hooks is trusted (e.g. an intranet registry).
+   * Non-http(s) endpoints are always rejected and redirects are never followed.
+   * Default is `false`
+   */
+  hookAllowPrivateNetwork: boolean;
+  /**
+   * webhook hostnames that skip the private network checks, e.g. `['ci.corp.example.com', '.hooks.corp']`.
+   * `example.com` matches only that host; `.example.com` or `*.example.com` matches its subdomains.
+   * Default is `[]`
+   */
+  hookAllowedHosts: string[];
+  /**
+   * private/internal IP ranges that webhook endpoints may target, e.g. `['10.10.0.0/16', 'fd00:1::/32']`.
+   * Applies to literal IP endpoints and to addresses resolved at delivery time.
+   * Hostnames such as `localhost` or `*.internal` still need `hookAllowedHosts`.
+   * Default is `[]`
+   */
+  hookAllowedCIDRs: string[];
+  /**
    * upstream registry url
    */
   sourceRegistry: string;

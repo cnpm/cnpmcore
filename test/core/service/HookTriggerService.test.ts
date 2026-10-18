@@ -128,6 +128,34 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       assert.ok(data.time === pushTask.data.hookEvent.time);
     });
 
+    it('should keep rejecting private endpoints at delivery by default', async () => {
+      await assert.rejects(
+        hookTriggerService.doExecuteTrigger(
+          Object.assign(Object.create(hook), { endpoint: 'http://10.0.0.5/hook' }),
+          {},
+        ),
+        /private or loopback/,
+      );
+    });
+
+    it('should deliver to private endpoints when allowed by config', async () => {
+      mock(app.config.cnpmcore, 'hookAllowPrivateNetwork', true);
+      const privateHook = Object.assign(Object.create(hook), { endpoint: 'http://10.0.0.5/hook' });
+      assert.equal(await hookTriggerService.doExecuteTrigger(privateHook, { foo: 'bar' }), 200);
+      assert.equal(callEndpoint, 'http://10.0.0.5/hook');
+      assert.equal(callOptions.followRedirect, false);
+      assert.equal(callOptions.dispatcher, undefined);
+    });
+
+    it('should use an allowlist-aware dispatcher for hookAllowedCIDRs', async () => {
+      mock(app.config.cnpmcore, 'hookAllowedCIDRs', ['10.0.0.0/24']);
+      const privateHook = Object.assign(Object.create(hook), { endpoint: 'http://10.0.0.5/hook' });
+      assert.equal(await hookTriggerService.doExecuteTrigger(privateHook, { foo: 'bar' }), 200);
+      assert.equal(callOptions.followRedirect, false);
+      assert.ok(callOptions.dispatcher);
+      assert.notEqual(callOptions.dispatcher, webhookHttpAgent);
+    });
+
     it('should create each event', async () => {
       const tasks = await Promise.all([
         taskRepository.findTaskByBizId(`TriggerHook:${versionChange.changeId}:${hook.hookId}`),

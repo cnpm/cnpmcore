@@ -623,6 +623,31 @@ Manage webhooks that trigger on package events (publish, install, etc.).
 
 **Base Path**: All hook endpoints use the base path `/-/npm`
 
+Hooks are disabled unless `config.cnpmcore.hookEnable` is `true`.
+
+#### Endpoint rules
+
+- `endpoint` must be an `http:` or `https:` URL.
+- By default, endpoints on private or internal networks are rejected with `403`. This covers loopback, private, link-local and other special-use IP addresses, `localhost`, `*.local`, `*.internal` and cloud metadata hostnames. The check runs on create and update, and again at delivery time against the resolved address.
+- Redirect responses are not followed and count as failed deliveries.
+- `secret` is never returned by the API. Responses contain `********` instead. Sending `********` back on update keeps the stored secret.
+
+Intranet deployments can relax the network rules in `config/config.default.ts` (or your own config):
+
+| Option                    | Default | Description                                                                                                                                                         |
+| ------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `hookAllowPrivateNetwork` | `false` | Allow any private/internal endpoint. Only enable this when every user who can create hooks is trusted.                                                              |
+| `hookAllowedHosts`        | `[]`    | Hostnames that skip the private network checks. `ci.corp.example.com` matches only that host; `.corp.example.com` or `*.corp.example.com` matches its subdomains. |
+| `hookAllowedCIDRs`        | `[]`    | Private IP ranges that endpoints may target, e.g. `['10.10.0.0/16']`. Applies to literal IP endpoints and to addresses resolved at delivery time.                  |
+
+```ts
+config.cnpmcore = {
+  hookEnable: true,
+  hookAllowedHosts: ['ci.corp.example.com'],
+  hookAllowedCIDRs: ['10.10.0.0/16'],
+};
+```
+
 ### Create Hook
 
 Create a new webhook.
