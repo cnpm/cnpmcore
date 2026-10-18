@@ -1,5 +1,13 @@
 # Changelog
 
+## <small>4.37.4 (2026-10-18)</small>
+
+* fix: require package maintainer for team package grant/revoke ([dc3a5f6](https://github.com/cnpm/cnpmcore/commit/dc3a5f6))
+* Merge commit from fork ([bf6f4e7](https://github.com/cnpm/cnpmcore/commit/bf6f4e7))
+* chore(deps): update vite-plus related packages (#1166) ([0c5fc4c](https://github.com/cnpm/cnpmcore/commit/0c5fc4c)), closes [#1166](https://github.com/cnpm/cnpmcore/issues/1166)
+* chore(lint): enable e18e rules (#1168) ([abfffe6](https://github.com/cnpm/cnpmcore/commit/abfffe6)), closes [#1168](https://github.com/cnpm/cnpmcore/issues/1168)
+* ci: enable zizmor security checks (#1167) ([ae0998f](https://github.com/cnpm/cnpmcore/commit/ae0998f)), closes [#1167](https://github.com/cnpm/cnpmcore/issues/1167)
+
 ## <small>4.37.3 (2026-10-15)</small>
 
 * fix: omit registry credentials from API responses ([3959274](https://github.com/cnpm/cnpmcore/commit/3959274))
