@@ -18,6 +18,7 @@ import { isGranularToken, type Token } from '../entity/Token.ts';
 const BEARER_TOKEN_RE = /^Bearer ([\w.]+?)$/;
 
 const CIDR_PREFIX_RE = /^\d{1,3}$/;
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
