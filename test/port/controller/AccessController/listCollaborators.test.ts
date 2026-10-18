@@ -83,18 +83,23 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
         .send({ package: pkg.name })
         .expect(200);
 
-      await app.httpRequest().get(`/-/package/${pkg.name}/collaborators`).expect(401);
-      await app
+      // denied responses are the same generic 403 as a missing package
+      const missing = await app.httpRequest().get('/-/package/@cnpm/collab-not-exists/collaborators').expect(403);
+      const anon = await app.httpRequest().get(`/-/package/${pkg.name}/collaborators`).expect(403);
+      assert.deepEqual(anon.body, missing.body);
+      const denied = await app
         .httpRequest()
         .get(`/-/package/${pkg.name}/collaborators`)
         .set('authorization', attacker.authorization)
         .expect(403);
+      assert.deepEqual(denied.body, missing.body);
       const ok = await app
         .httpRequest()
         .get(`/-/package/${pkg.name}/collaborators`)
         .set('authorization', victim.authorization)
         .expect(200);
       assert.equal(ok.body[victim.displayName], 'write');
+      assert.equal(ok.headers['cache-control'], 'private, no-store');
     });
   });
 });

@@ -28,7 +28,9 @@ export class DownloadController extends AbstractController {
     @HTTPParam() range: string,
   ) {
     const [scope, name] = getScopeAndName(fullname);
-    await this.userRoleManager.checkReadAccess(ctx, scope, name);
+    if (await this.userRoleManager.checkReadAccess(ctx, scope, name)) {
+      ctx.set('cache-control', 'private, no-store');
+    }
     const [startDate, endDate] = this.checkAndGetRange(range);
     const pkg = await this.getPackageEntityByFullname(fullname);
     const entities = await this.packageVersionDownloadRepository.query(
@@ -67,7 +69,9 @@ export class DownloadController extends AbstractController {
   })
   async showPackageDownloads(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() range: string) {
     const [scope, name] = getScopeAndName(fullname);
-    await this.userRoleManager.checkReadAccess(ctx, scope, name);
+    if (await this.userRoleManager.checkReadAccess(ctx, scope, name)) {
+      ctx.set('cache-control', 'private, no-store');
+    }
     const [startDate, endDate] = this.checkAndGetRange(range);
     const pkg = await this.getPackageEntityByFullname(fullname);
     const entities = await this.packageVersionDownloadRepository.query(

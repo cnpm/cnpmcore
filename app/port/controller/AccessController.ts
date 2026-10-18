@@ -18,7 +18,13 @@ export class AccessController extends AbstractController {
     if (!pkg) {
       throw new ForbiddenError('Forbidden');
     }
-    await this.userRoleManager.checkReadAccess(ctx, scope, name);
+    const isTeamBound = await this.userRoleManager.checkReadAccess(ctx, scope, name).catch((err) => {
+      // same generic response as a missing package
+      throw err instanceof ForbiddenError || err instanceof UnauthorizedError ? new ForbiddenError('Forbidden') : err;
+    });
+    if (isTeamBound) {
+      ctx.set('cache-control', 'private, no-store');
+    }
 
     const maintainers = await this.packageRepository.listPackageMaintainers(pkg.packageId);
     const res: Record<string, string> = {};
@@ -41,16 +47,12 @@ export class AccessController extends AbstractController {
 
     const pkgs = await this.packageRepository.listPackagesByUserId(user.userId);
     const res: Record<string, string> = {};
-    for (const pkg of pkgs) {
-      try {
-        // Omit team-private packages the caller cannot read (same policy as manifests).
-        await this.userRoleManager.checkReadAccess(ctx, pkg.scope, pkg.name);
-      } catch (err) {
-        if (err instanceof ForbiddenError || err instanceof UnauthorizedError) {
-          continue;
-        }
-        throw err;
-      }
+    // Omit team-private packages the caller cannot read (same policy as manifests).
+    const { readable, hasTeamBound } = await this.userRoleManager.filterReadablePackages(ctx, pkgs);
+    if (hasTeamBound) {
+      ctx.set('cache-control', 'private, no-store');
+    }
+    for (const pkg of readable) {
       res[getFullname(pkg.scope, pkg.name)] = PackageAccessLevel.write;
     }
 

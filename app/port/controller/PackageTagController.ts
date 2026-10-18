@@ -20,7 +20,9 @@ export class PackageTagController extends AbstractController {
   })
   async showTags(@HTTPContext() ctx: Context, @HTTPParam() fullname: string) {
     const [scope, name] = getScopeAndName(fullname);
-    await this.userRoleManager.checkReadAccess(ctx, scope, name);
+    if (await this.userRoleManager.checkReadAccess(ctx, scope, name)) {
+      ctx.set('cache-control', 'private, no-store');
+    }
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     return await this.packageManagerService.distTags(packageEntity);
   }

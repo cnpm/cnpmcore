@@ -787,11 +787,13 @@ export class PackageManagerService extends AbstractService {
     return await this.distRepository.downloadDist(packageVersion.tarDist);
   }
 
-  public plusPackageVersionCounter(fullname: string, version: string) {
+  // excludeFromAggregates: team-private package downloads are not added to the public total/scope counters
+  public plusPackageVersionCounter(fullname: string, version: string, excludeFromAggregates = false) {
     // set counter + 1, schedule will store them into database
     const counters: Record<string, Record<string, number>> = PackageManagerService.downloadCounters;
     if (!counters[fullname]) counters[fullname] = {};
     counters[fullname][version] = (counters[fullname][version] || 0) + 1;
+    if (excludeFromAggregates) return;
     // Total
     const ALL = '*';
     if (!counters[TOTAL]) counters[TOTAL] = {};

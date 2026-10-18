@@ -2,6 +2,10 @@ import assert from 'node:assert/strict';
 
 import { app } from '@eggjs/mock/bootstrap';
 
+import dayjs from '../../../../app/common/dayjs.ts';
+import { TokenType } from '../../../../app/core/entity/Token.ts';
+import { UserService } from '../../../../app/core/service/UserService.ts';
+import { Token as TokenModel } from '../../../../app/repository/model/Token.ts';
 import { TestUtil } from '../../../../test/TestUtil.ts';
 
 describe('test/port/controller/AccessController/listPackagesByUser.test.ts', () => {
@@ -64,6 +68,39 @@ describe('test/port/controller/AccessController/listPackagesByUser.test.ts', () 
         .expect(200);
       assert.equal(asVictim.body[publicPkg.name], 'write');
       assert.equal(asVictim.body[privatePkg.name], 'write');
+      // caller-dependent response must not be cached
+      assert.equal(anon.headers['cache-control'], 'private, no-store');
+      assert.equal(asVictim.headers['cache-control'], 'private, no-store');
+
+      const admin = await TestUtil.createAdmin();
+      const asAdmin = await app
+        .httpRequest()
+        .get(`/-/org/${victim.name}/package`)
+        .set('authorization', admin.authorization)
+        .expect(200);
+      assert.equal(asAdmin.body[privatePkg.name], 'write');
+
+      // an expired token is treated as anonymous for this listing
+      const userService = await app.getEggObject(UserService);
+      const victimUser = await userService.findUserByName(victim.name);
+      assert.ok(victimUser);
+      const token = await userService.createToken(victimUser.userId, {
+        name: 'listpkg-expired',
+        type: TokenType.granular,
+        allowedScopes: ['@cnpm'],
+        expires: 1,
+      });
+      await TokenModel.update(
+        { tokenId: token.tokenId },
+        { expiredAt: dayjs(token.createdAt).add(1, 'millisecond').toDate() },
+      );
+      const asExpired = await app
+        .httpRequest()
+        .get(`/-/org/${victim.name}/package`)
+        .set('authorization', `Bearer ${token.token}`)
+        .expect(200);
+      assert.equal(asExpired.body[publicPkg.name], 'write');
+      assert.equal(asExpired.body[privatePkg.name], undefined);
     });
   });
 });

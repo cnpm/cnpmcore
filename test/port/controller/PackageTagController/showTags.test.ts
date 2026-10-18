@@ -92,6 +92,7 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
         .set('authorization', victim.authorization)
         .expect(200);
       assert.equal(ok.body.latest, '1.0.0');
+      assert.equal(ok.headers['cache-control'], 'private, no-store');
     });
   });
 });

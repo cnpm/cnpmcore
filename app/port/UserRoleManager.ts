@@ -192,6 +192,32 @@ export class UserRoleManager {
     return user.name in this.config.cnpmcore.admins;
   }
 
+  // Batch variant of checkReadAccess for listings: drops packages the caller cannot read
+  // instead of throwing. `hasTeamBound` is true when the result depends on the caller
+  // (any team-bound package was considered), so the response must not be cached publicly.
+  public async filterReadablePackages<T extends { packageId: string; scope: string }>(
+    ctx: Context,
+    pkgs: T[],
+  ): Promise<{ readable: T[]; hasTeamBound: boolean }> {
+    const allowScopes = this.config.cnpmcore.allowScopes;
+    const candidateIds = pkgs.filter((pkg) => pkg.scope && allowScopes.includes(pkg.scope)).map((pkg) => pkg.packageId);
+    const boundIds = await this.teamRepository.listTeamBoundPackageIds(candidateIds);
+    if (boundIds.size === 0) return { readable: pkgs, hasTeamBound: false };
+
+    let accessibleIds = new Set<string>();
+    const userId = await this.getAuthorizedUserAndToken(ctx).then(
+      (authorized) => authorized?.user.userId,
+      // e.g. expired token: treat as anonymous for listing purposes
+      (err) => (err instanceof ForbiddenError || err instanceof UnauthorizedError ? undefined : Promise.reject(err)),
+    );
+    if (userId) {
+      if (await this.isAdmin(ctx)) return { readable: pkgs, hasTeamBound: true };
+      accessibleIds = await this.teamRepository.listAccessiblePackageIds([...boundIds], userId);
+    }
+    const readable = pkgs.filter((pkg) => !boundIds.has(pkg.packageId) || accessibleIds.has(pkg.packageId));
+    return { readable, hasTeamBound: true };
+  }
+
   // self scope + no team binding = everyone can read, returns false
   // self scope + team binding = only team members can read, returns true
   // returns true if package is team-bound (private cache needed)
