@@ -60,6 +60,12 @@ To provide a more stable and reliable service:
 - 产生异常高流量的自动化访问可能会被限流，恕不另行通知。
 - 如果您有大规模使用需求，或受到限流策略影响，请通过 [GitHub Issue](https://github.com/cnpm/cnpmcore/issues) 与我们联系。
 
+### CDN cache clearing
+
+To request clearing of the npmmirror CDN cache, see [CDN cache clearing](docs/cdn-cache-clear.md).
+
+需要清理 npmmirror CDN 缓存时，请参阅 [CDN 缓存清理说明](docs/cdn-cache-clear.md)。
+
 ## License
 
 [MIT](LICENSE)
