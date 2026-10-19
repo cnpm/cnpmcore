@@ -6,6 +6,14 @@
 - <elrrrrrrr@gmail.com>
 - <fengmk2+cnpmcorecache@gmail.com>
 
+点击 [打开邮件客户端](mailto:smith3816@gmail.com,elrrrrrrr@gmail.com,fengmk2%2Bcnpmcorecache@gmail.com?subject=CDN%20cache%20clearing%20request) 可预填以上三个收件人和邮件主题；填写内容后自行发送。
+
+也可以复制以下整行邮箱地址，粘贴到邮件收件人栏：
+
+```text
+smith3816@gmail.com,elrrrrrrr@gmail.com,fengmk2+cnpmcorecache@gmail.com
+```
+
 请在邮件中提供以下信息，便于定位需要清理的缓存：
 
 - 包名（包含 scope，如有）。
