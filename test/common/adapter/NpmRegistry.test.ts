@@ -13,7 +13,7 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
   });
 
   describe('createSyncTask()', () => {
-    it('should forward selected versions to the upstream modern sync API', async () => {
+    it('should preserve selected versions and authentication through creation and polling', async () => {
       const specificVersions = ['2.0.0', '2.0.0-runtime-linux-x64'];
       app
         .mockAgent()
@@ -30,6 +30,19 @@ describe('test/common/adapter/CacheAdapter.test.ts', () => {
         specificVersions,
       });
       assert.equal(result.data.logId, 'selected-task');
+      app
+        .mockAgent()
+        .get('https://registry.npmjs.org')
+        .intercept({
+          method: 'GET',
+          path: '/%40example%2Fapp/sync/log/selected-task?offset=0',
+          headers: { authorization: 'Bearer test-upstream-token' },
+        })
+        .reply(200, { ok: true, syncDone: true });
+      const status = await npmRegistry.getSyncTask('@example/app', result.data.logId, 0, {
+        remoteAuthToken: 'test-upstream-token',
+      });
+      assert.equal(status.data.syncDone, true);
       app.mockAgent().assertNoPendingInterceptors();
     });
 

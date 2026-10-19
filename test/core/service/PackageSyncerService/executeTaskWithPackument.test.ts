@@ -84,6 +84,8 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
           mock(app.config.cnpmcore, 'sourceRegistry', source);
           mock(app.config.cnpmcore, 'sourceRegistryIsCNpm', true);
           mock(app.config.cnpmcore, 'syncUpstreamFirst', true);
+          mock(app.config.cnpmcore, 'sourceRegistrySyncTimeout', 300);
+          mock.data(RegistryManagerService.prototype, 'getAuthTokenByRegistryHost', 'test-upstream-token');
           app
             .mockAgent()
             .get(source)
@@ -91,12 +93,18 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
               method: 'PUT',
               path: `/-/package/${name}/syncs`,
               body: JSON.stringify({ skipDependencies: true, specificVersions: '["0.0.0"]' }),
+              headers: { authorization: 'Bearer test-upstream-token' },
             })
             .reply(201, { ok: true, id: 'selected-upstream-task' });
-          app.mockHttpclient(`${source}/${name}/sync/log/selected-upstream-task?offset=0`, 'GET', {
-            data: { ok: true, syncDone: true },
-            persist: false,
-          });
+          app
+            .mockAgent()
+            .get(source)
+            .intercept({
+              method: 'GET',
+              path: `/${name}/sync/log/selected-upstream-task?offset=0`,
+              headers: { authorization: 'Bearer test-upstream-token' },
+            })
+            .reply(200, { ok: true, syncDone: true });
         }
         app.mockHttpclient(`${source}/${name}`, 'GET', {
           data: JSON.stringify(manifest),
@@ -117,6 +125,7 @@ describe('test/core/service/PackageSyncerService/executeTaskWithPackument.test.t
         const log = await TestUtil.readStreamToLog(stream);
         assert.doesNotMatch(log, /large package version/);
         assert.doesNotMatch(log, /0\.0\.0-history/);
+        if (throughUpstream) assert.match(log, /\[UP\].*Sync .* success/);
         const result = await packageManagerService.listPackageFullManifests('', name);
         assert.deepEqual(Object.keys(result.data?.versions ?? {}), ['0.0.0']);
         assert.equal(result.data?.['dist-tags'].latest, '0.0.0');

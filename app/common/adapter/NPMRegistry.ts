@@ -121,7 +121,7 @@ export class NPMRegistry {
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
     // { ok: true, syncDone: boolean, log: string, logUrl: string, error?: string }
     // https://registry.npmmirror.com/viewport-cli/sync/log/6943749899c5663aad8a534c
-    return await this.requestJSON('GET', url, undefined, { authorization });
+    return await this.requestJSON('GET', url, undefined, { headers: { authorization } });
   }
 
   public async getDownloadRanges(
