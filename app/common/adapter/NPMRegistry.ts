@@ -89,9 +89,19 @@ export class NPMRegistry {
   // app.put('/:name/sync', sync.sync);
   public async createSyncTask(
     fullname: string,
-    optionalConfig?: { remoteAuthToken?: string },
+    optionalConfig?: { remoteAuthToken?: string; specificVersions?: string[] },
   ): Promise<RegistryResponse> {
     const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
+    if (optionalConfig?.specificVersions) {
+      const url = `${this.registry}/-/package/${encodeURIComponent(fullname)}/syncs`;
+      const response = await this.requestJSON(
+        'PUT',
+        url,
+        { skipDependencies: true, specificVersions: JSON.stringify(optionalConfig.specificVersions) },
+        { headers: { authorization }, contentType: 'json' },
+      );
+      return { ...response, data: { ...response.data, logId: response.data.id } };
+    }
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
     // {
     //   ok: true,
