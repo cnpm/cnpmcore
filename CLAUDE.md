@@ -420,7 +420,7 @@ Typical command execution times:
 
 ## Prerequisites
 
-- Node.js: `^22.18.0 || ^24.11.0 || ^26.0.0`
+- Node.js: `^22.23.4 || ^24.22.1 || ^26.12.1`
 - Database: MySQL 5.7+ or PostgreSQL 17+ (SQLite support in progress)
 - Cache: Redis 6+
 - Optional: Elasticsearch 8.x

@@ -60,6 +60,7 @@ jobs:
         with:
           context: .
           file: .docker/${{ matrix.image }}/Dockerfile
+          pull: true
           platforms: linux/amd64
           load: true
           tags: cnpmcore:test-${{ matrix.image }}
@@ -143,6 +144,7 @@ jobs:
         with:
           context: .
           file: .docker/debian/Dockerfile
+          pull: true
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}

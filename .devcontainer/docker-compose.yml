@@ -11,6 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      pull: true
     # Mount the whole Codespaces/Dev Containers workspaces dir; the repo lands in
     # /workspaces/<repo-name>, which devcontainer.json sets as the workspaceFolder.
     volumes:
