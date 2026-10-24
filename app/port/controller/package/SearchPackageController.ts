@@ -46,6 +46,7 @@ export class SearchPackageController extends AbstractController {
     path: `/-/v1/search/sync/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.PUT,
   })
+  @Middleware(AdminAccess)
   async sync(@HTTPParam() fullname: string) {
     if (!this.config.cnpmcore.enableElasticsearch) {
       throw new E451('search feature not enabled in `config.cnpmcore.enableElasticsearch`');

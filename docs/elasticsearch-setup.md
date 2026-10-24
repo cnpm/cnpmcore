@@ -929,8 +929,10 @@ config: {
 
 ### 同步一条数据
 
+注意需要添加管理员 token
+
 ```bash
-curl -X PUT http://localhost:7001/-/v1/search/sync/${pkgName}
+curl -X PUT -H "Authorization: Bearer ${token}" http://localhost:7001/-/v1/search/sync/${pkgName}
 ```
 
 ### 删除一条数据
@@ -938,7 +940,7 @@ curl -X PUT http://localhost:7001/-/v1/search/sync/${pkgName}
 注意需要添加管理员 token，管理员在本地进行登录后，可通过查询 `~/.npmrc` 查看
 
 ```bash
-curl -X DELETE -H 'Authorization: Bearer ${token}' http://localhost:7001/-/v1/search/${pkgName}
+curl -X DELETE -H "Authorization: Bearer ${token}" http://localhost:7001/-/v1/search/${pkgName}
 ```
 
 ### 修改数据

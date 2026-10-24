@@ -93,7 +93,17 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
   describe('[PUT /-/v1/search/sync/:fullname] sync()', async () => {
     it('should throw 451 when enableElasticsearch is false', async () => {
       mock(app.config.cnpmcore, 'enableElasticsearch', false);
-      await app.httpRequest().put('/-/v1/search/sync/example').expect(451);
+      const admin = await TestUtil.createAdmin();
+      await app.httpRequest().put('/-/v1/search/sync/example').set('authorization', admin.authorization).expect(451);
+    });
+
+    it('should 403 when non-admin syncs search index', async () => {
+      await app.httpRequest().put('/-/v1/search/sync/example').expect(403);
+      await app
+        .httpRequest()
+        .put('/-/v1/search/sync/example')
+        .set('authorization', publisher.authorization)
+        .expect(403);
     });
 
     it('should upsert a example package', async () => {
@@ -122,7 +132,8 @@ describe('test/port/controller/package/SearchPackageController.test.ts', () => {
       assert.equal(res.body.ok, true);
       assert.match(res.body.rev, /^\d+-\w{24}$/);
 
-      res = await app.httpRequest().put(`/-/v1/search/sync/${name}`);
+      const admin = await TestUtil.createAdmin();
+      res = await app.httpRequest().put(`/-/v1/search/sync/${name}`).set('authorization', admin.authorization);
       assert.equal(res.body.package, name);
     });
   });
