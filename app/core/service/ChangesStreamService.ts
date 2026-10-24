@@ -15,6 +15,7 @@ import type { TaskRepository } from '../../repository/TaskRepository.ts';
 import type { Registry } from '../entity/Registry.ts';
 import { HOST_NAME, Task, type ChangesStreamTask } from '../entity/Task.ts';
 import { RegistryNotMatchError, type PackageSyncerService } from './PackageSyncerService.ts';
+import type { PackageSyncRecheckService } from './PackageSyncRecheckService.ts';
 import type { RegistryManagerService } from './RegistryManagerService.ts';
 import type { ScopeManagerService } from './ScopeManagerService.ts';
 import type { TaskService } from './TaskService.ts';
@@ -37,6 +38,8 @@ export class ChangesStreamService extends AbstractService {
   private readonly eggObjectFactory: EggObjectFactory;
   @Inject()
   private readonly packageRepository: PackageRepository;
+  @Inject()
+  private readonly packageSyncRecheckService: PackageSyncRecheckService;
 
   // 出于向下兼容考虑, changes_stream 类型 Task 分为
   // GLOBAL_WORKER: 默认的同步源
@@ -196,11 +199,9 @@ export class ChangesStreamService extends AbstractService {
     // 创建同步任务
     for await (const change of stream) {
       const { fullname, seq } = change;
-      lastPackage = fullname;
-      lastSince = seq;
       const valid = await this.needSync(registry, fullname);
+      let created = 0;
       if (valid) {
-        taskCount++;
         const tips = `Sync cause by changes_stream(${registry.changeStream}) update seq: ${seq}`;
         try {
           const task = await this.packageSyncerService.createTask(fullname, {
@@ -210,6 +211,9 @@ export class ChangesStreamService extends AbstractService {
             skipDependencies: true,
             tips,
           });
+          await this.packageSyncRecheckService.record(registry, change, task);
+          created = 1;
+          taskCount++;
           this.logger.info(
             '[ChangesStreamService.createTask:success] fullname: %s, task: %s, tips: %s',
             fullname,
@@ -224,25 +228,26 @@ export class ChangesStreamService extends AbstractService {
               err,
               tips,
             );
-            continue;
+          } else {
+            this.logger.error(
+              '[ChangesStreamService.executeSync:error] fullname: %s, error: %s, tips: %s',
+              fullname,
+              err,
+              tips,
+            );
+            // Replay from the last saved cursor if task creation or recheck recording fails.
+            throw err;
           }
-          // only log error, make sure changes still reading
-          this.logger.error(
-            '[ChangesStreamService.executeSync:error] fullname: %s, error: %s, tips: %s',
-            fullname,
-            err,
-            tips,
-          );
-          this.logger.error(err);
-          continue;
         }
       }
+      lastPackage = fullname;
+      lastSince = seq;
       // 实时更新 task 信息
       // 即使不需要同步，防止任务处理累积耗时超过 10min
       task.updateSyncData({
         lastSince,
         lastPackage,
-        taskCount,
+        taskCount: created,
       });
       await this.taskRepository.saveTask(task);
     }

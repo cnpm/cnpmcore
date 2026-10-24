@@ -47,9 +47,9 @@ export class TaskService extends AbstractService {
               await this.taskRepository.updateSpecificVersionsOfWaitingTask(existsTask);
             }
           }
-          // 存量任务是全量同步任务，直接提高任务优先级
+          // A full sync already covers all versions.
         }
-        // 提高任务的优先级
+        // Restore a missing queue entry without changing an existing entry's position.
         if (addTaskQueueOnExists) {
           const queueLength = await this.getTaskQueueLength(task.type);
           if (queueLength < this.config.cnpmcore.taskQueueHighWaterSize) {
@@ -81,6 +81,10 @@ export class TaskService extends AbstractService {
   }
 
   public async retryTask(task: Task, appendLog?: string) {
+    if (task.data.maxAttempts && task.attempts >= task.data.maxAttempts) {
+      await this.finishTask(task, TaskState.Fail, appendLog);
+      return;
+    }
     if (appendLog) {
       await this.appendLogToNFS(task, appendLog);
     }
@@ -141,7 +145,7 @@ export class TaskService extends AbstractService {
     for (const task of tasks) {
       try {
         // ignore ChangesStream task, it won't timeout
-        if (task.attempts >= 3 && task.type !== TaskType.ChangesStream) {
+        if (task.attempts >= (task.data.maxAttempts || 3) && task.type !== TaskType.ChangesStream) {
           await this.finishTask(task, TaskState.Timeout);
           this.logger.warn(
             '[TaskService.retryExecuteTimeoutTasks:timeout] taskType: %s, targetName: %s, taskId: %s, attempts %s set to fail',
