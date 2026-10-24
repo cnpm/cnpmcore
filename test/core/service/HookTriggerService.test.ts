@@ -4,6 +4,7 @@ import { app, mock } from '@eggjs/mock/bootstrap';
 import type { HttpClientRequestOptions } from 'egg';
 
 import { HookType } from '../../../app/common/enum/Hook.ts';
+import { webhookHttpAgent } from '../../../app/common/WebhookUrlUtil.ts';
 import { Change } from '../../../app/core/entity/Change.ts';
 import type { Hook } from '../../../app/core/entity/Hook.ts';
 import { HookEvent } from '../../../app/core/entity/HookEvent.ts';
@@ -109,6 +110,8 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
       assert.ok(callOptions.method === 'POST');
       assert.ok(callOptions.headers);
       assert.ok(callOptions.headers['x-npm-signature']);
+      assert.equal(callOptions.followRedirect, false);
+      assert.equal(callOptions.dispatcher, webhookHttpAgent);
       const data = JSON.parse(callOptions.data);
       assert.ok(data.event === 'package:publish');
       assert.ok(data.name === pkgName);
@@ -123,6 +126,34 @@ describe('test/core/service/HookTriggerService.test.ts', () => {
         'dist-tag': 'latest',
       });
       assert.ok(data.time === pushTask.data.hookEvent.time);
+    });
+
+    it('should keep rejecting private endpoints at delivery by default', async () => {
+      await assert.rejects(
+        hookTriggerService.doExecuteTrigger(
+          Object.assign(Object.create(hook), { endpoint: 'http://10.0.0.5/hook' }),
+          {},
+        ),
+        /private or loopback/,
+      );
+    });
+
+    it('should deliver to private endpoints when allowed by config', async () => {
+      mock(app.config.cnpmcore, 'hookAllowPrivateNetwork', true);
+      const privateHook = Object.assign(Object.create(hook), { endpoint: 'http://10.0.0.5/hook' });
+      assert.equal(await hookTriggerService.doExecuteTrigger(privateHook, { foo: 'bar' }), 200);
+      assert.equal(callEndpoint, 'http://10.0.0.5/hook');
+      assert.equal(callOptions.followRedirect, false);
+      assert.equal(callOptions.dispatcher, undefined);
+    });
+
+    it('should use an allowlist-aware dispatcher for hookAllowedCIDRs', async () => {
+      mock(app.config.cnpmcore, 'hookAllowedCIDRs', ['10.0.0.0/24']);
+      const privateHook = Object.assign(Object.create(hook), { endpoint: 'http://10.0.0.5/hook' });
+      assert.equal(await hookTriggerService.doExecuteTrigger(privateHook, { foo: 'bar' }), 200);
+      assert.equal(callOptions.followRedirect, false);
+      assert.ok(callOptions.dispatcher);
+      assert.notEqual(callOptions.dispatcher, webhookHttpAgent);
     });
 
     it('should create each event', async () => {

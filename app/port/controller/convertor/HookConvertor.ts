@@ -1,4 +1,5 @@
 import type { HookType } from '../../../common/enum/Hook.ts';
+import { maskWebhookSecret } from '../../../common/WebhookUrlUtil.ts';
 import type { Hook } from '../../../core/entity/Hook.ts';
 import type { TriggerHookTask } from '../../../core/entity/Task.ts';
 import type { User } from '../../../core/entity/User.ts';
@@ -41,7 +42,7 @@ export class HookConvertor {
       username: user.name,
       name: hook.name,
       endpoint: hook.endpoint,
-      secret: hook.secret,
+      secret: maskWebhookSecret(hook.secret),
       type: hook.type,
       created: hook.createdAt,
       updated: hook.updatedAt,

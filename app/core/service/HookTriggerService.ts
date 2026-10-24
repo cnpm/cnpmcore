@@ -1,8 +1,13 @@
-import { AccessLevel, Inject, SingletonProto, HttpClient } from 'egg';
+import { AccessLevel, Inject, SingletonProto, HttpClient, Config } from 'egg';
 
 import { TaskState } from '../../common/enum/Task.ts';
 import { isoNow } from '../../common/LogUtil.ts';
 import { getScopeAndName } from '../../common/PackageUtil.ts';
+import {
+  assertSafeWebhookEndpoint,
+  getWebhookDispatcher,
+  type WebhookNetworkOptions,
+} from '../../common/WebhookUrlUtil.ts';
 import type { DistRepository } from '../../repository/DistRepository.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import type { PackageRepository } from '../../repository/PackageRepository.ts';
@@ -34,6 +39,18 @@ export class HookTriggerService {
 
   @Inject()
   private readonly taskService: TaskService;
+
+  @Inject()
+  private readonly config: Config;
+
+  private get webhookNetworkOptions(): WebhookNetworkOptions {
+    const { hookAllowPrivateNetwork, hookAllowedHosts, hookAllowedCIDRs } = this.config.cnpmcore;
+    return {
+      allowPrivateNetwork: hookAllowPrivateNetwork,
+      allowedHosts: hookAllowedHosts,
+      allowedCIDRs: hookAllowedCIDRs,
+    };
+  }
 
   async executeTask(task: TriggerHookTask) {
     const { hookId, hookEvent } = task.data;
@@ -74,6 +91,8 @@ export class HookTriggerService {
   }
 
   async doExecuteTrigger(hook: Hook, payload: object): Promise<number> {
+    const networkOptions = this.webhookNetworkOptions;
+    assertSafeWebhookEndpoint(hook.endpoint, networkOptions);
     const { digest, payloadStr } = hook.signPayload(payload);
     const url = new URL(hook.endpoint);
     const res = await this.httpClient.request(hook.endpoint, {
@@ -88,6 +107,9 @@ export class HookTriggerService {
       // agent: false,
       // httpsAgent: false,
       data: payloadStr,
+      // never follow redirects; unless allowed by config, refuse private/loopback addresses after DNS resolution
+      followRedirect: false,
+      dispatcher: getWebhookDispatcher(hook.endpoint, networkOptions),
     });
     if (res.status >= 200 && res.status < 300) {
       return res.status;

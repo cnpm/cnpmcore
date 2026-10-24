@@ -2,6 +2,11 @@ import { AccessLevel, Inject, SingletonProto, Config } from 'egg';
 import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import type { HookType } from '../../common/enum/Hook.ts';
+import {
+  assertSafeWebhookEndpoint,
+  MASKED_WEBHOOK_SECRET,
+  type WebhookNetworkOptions,
+} from '../../common/WebhookUrlUtil.ts';
 import type { HookRepository } from '../../repository/HookRepository.ts';
 import { Hook } from '../entity/Hook.ts';
 
@@ -39,7 +44,17 @@ export class HookManageService {
     return this.config.cnpmcore.hooksLimit;
   }
 
+  get webhookNetworkOptions(): WebhookNetworkOptions {
+    const { hookAllowPrivateNetwork, hookAllowedHosts, hookAllowedCIDRs } = this.config.cnpmcore;
+    return {
+      allowPrivateNetwork: hookAllowPrivateNetwork,
+      allowedHosts: hookAllowedHosts,
+      allowedCIDRs: hookAllowedCIDRs,
+    };
+  }
+
   async createHook(cmd: CreateHookCommand): Promise<Hook> {
+    assertSafeWebhookEndpoint(cmd.endpoint, this.webhookNetworkOptions);
     const hooks = await this.hookRepository.listHooksByOwnerId(cmd.ownerId);
     // FIXME: 会有并发问题，需要有一个用户全局锁去记录
     if (hooks.length >= this.hooksLimit) {
@@ -58,8 +73,12 @@ export class HookManageService {
     if (hook.ownerId !== cmd.operatorId) {
       throw new ForbiddenError(`hook ${cmd.hookId} not belong to ${cmd.operatorId}`);
     }
+    assertSafeWebhookEndpoint(cmd.endpoint, this.webhookNetworkOptions);
     hook.endpoint = cmd.endpoint;
-    hook.secret = cmd.secret;
+    // keep the stored secret when a client round-trips the masked value from a previous response
+    if (cmd.secret !== MASKED_WEBHOOK_SECRET) {
+      hook.secret = cmd.secret;
+    }
     await this.hookRepository.saveHook(hook);
     return hook;
   }

@@ -5,6 +5,7 @@ import { app } from '@eggjs/mock/bootstrap';
 import { HookType } from '../../../../app/common/enum/Hook.ts';
 import type { Hook } from '../../../../app/core/entity/Hook.ts';
 import { HookManageService } from '../../../../app/core/service/HookManageService.ts';
+import { HookRepository } from '../../../../app/repository/HookRepository.ts';
 import { UserRepository } from '../../../../app/repository/UserRepository.ts';
 import { TestUtil, type TestUser } from '../../../../test/TestUtil.ts';
 
@@ -41,7 +42,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
       assert.ok(res.body.username === user.name);
       assert.ok(res.body.name === '@cnpmcore');
       assert.ok(res.body.endpoint === 'https://example.com/webhook');
-      assert.ok(res.body.secret === 'this is certainly very secret');
+      assert.equal(res.body.secret, '********');
       assert.ok(res.body.type === HookType.Scope);
       assert.ok(res.body.created);
       assert.ok(res.body.updated);
@@ -50,6 +51,22 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
       assert.ok(res.body.response_code === 0);
       assert.ok(res.body.status === 'active');
     });
+  });
+
+  it('should 403 reject private webhook endpoint', async () => {
+    const res = await app
+      .httpRequest()
+      .post('/-/npm/v1/hooks/hook')
+      .set('authorization', user.authorization)
+      .set('user-agent', user.ua)
+      .send({
+        type: 'scope',
+        name: '@cnpmcore',
+        endpoint: 'http://127.0.0.1:8080/webhook',
+        secret: 'this is certainly very secret',
+      })
+      .expect(403);
+    assert.match(String(res.body.error || res.text || ''), /private|loopback|not allowed|endpoint/i);
   });
 
   describe('PUT /-/npm/v1/hooks/hook/:id', () => {
@@ -76,7 +93,24 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
         })
         .expect(200);
       assert.ok(res.body.endpoint === 'https://new.com/webhook');
-      assert.ok(res.body.secret === 'new secret');
+      assert.equal(res.body.secret, '********');
+    });
+
+    it('should keep the stored secret when the masked value is sent back', async () => {
+      await app
+        .httpRequest()
+        .put(`/-/npm/v1/hooks/hook/${hook.hookId}`)
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .send({
+          endpoint: 'https://new.com/webhook',
+          secret: '********',
+        })
+        .expect(200);
+      const hookRepository = await app.getEggObject(HookRepository);
+      const stored = await hookRepository.findHookById(hook.hookId);
+      assert.equal(stored?.endpoint, 'https://new.com/webhook');
+      assert.equal(stored?.secret, 'mock_secret');
     });
   });
 
@@ -232,7 +266,7 @@ describe('test/port/controller/hook/HookController.test.ts', () => {
       assert.ok(res.body.username === user.name);
       assert.ok(res.body.name === 'foo_package');
       assert.ok(res.body.endpoint === 'http://foo.com');
-      assert.ok(res.body.secret === 'mock_secret');
+      assert.equal(res.body.secret, '********');
       assert.ok(res.body.type === HookType.Package);
       assert.ok(res.body.created);
       assert.ok(res.body.updated);
