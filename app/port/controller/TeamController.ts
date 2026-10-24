@@ -301,7 +301,7 @@ export class TeamController extends AbstractController {
     method: HTTPMethodEnum.GET,
   })
   async listTeamPackages(@HTTPContext() ctx: Context, @HTTPParam() orgName: string, @HTTPParam() teamName: string) {
-    await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
+    const authorizedUser = await this.userRoleManager.requiredAuthorizedUser(ctx, 'read');
     const org = await this.findOrg(orgName);
     if (!org) {
       throw new NotFoundError(`Org "${orgName}" not found`);
@@ -309,6 +309,14 @@ export class TeamController extends AbstractController {
     const team = await this.teamRepository.findTeam(org.orgId, teamName);
     if (!team) {
       throw new NotFoundError(`Team "${teamName}" not found`);
+    }
+    // Listing reveals private package names; restrict to team members, org owners and admins.
+    if (!(await this.userRoleManager.isAdmin(ctx))) {
+      const teamMember = await this.teamRepository.findMember(team.teamId, authorizedUser.userId);
+      const orgMember = teamMember ? null : await this.orgRepository.findMember(org.orgId, authorizedUser.userId);
+      if (!teamMember && orgMember?.role !== 'owner') {
+        throw new ForbiddenError('Only team members, org owners or admin can list team packages');
+      }
     }
     const teamPackages = await this.teamService.listPackages(team.teamId);
     const pkgs = await this.packageRepository.findPackagesByPackageIds(teamPackages.map((tp) => tp.packageId));
