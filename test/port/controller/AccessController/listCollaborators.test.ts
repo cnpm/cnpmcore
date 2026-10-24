@@ -58,5 +58,48 @@ describe('test/port/controller/AccessController/listCollaborators.test.ts', () =
       assert.ok(res.body['banana-owner'] === 'write');
       assert.ok(res.body['banana-maintainer'] === 'write');
     });
+
+    it('should 403 collaborators for team-private package without access', async () => {
+      const victim = await TestUtil.createUser({ name: 'collab-victim-priv' });
+      const attacker = await TestUtil.createUser({ name: 'collab-attacker-priv' });
+      const pkg = await TestUtil.getFullPackage({ name: '@cnpm/collab-private', version: '1.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}`)
+        .set('authorization', victim.authorization)
+        .set('user-agent', victim.ua)
+        .send(pkg)
+        .expect(201);
+      await app
+        .httpRequest()
+        .put('/-/org/cnpm/team')
+        .set('authorization', victim.authorization)
+        .send({ name: 'collab-vteam' })
+        .expect(200);
+      await app
+        .httpRequest()
+        .put('/-/team/cnpm/collab-vteam/package')
+        .set('authorization', victim.authorization)
+        .send({ package: pkg.name })
+        .expect(200);
+
+      // denied responses are the same generic 403 as a missing package
+      const missing = await app.httpRequest().get('/-/package/@cnpm/collab-not-exists/collaborators').expect(403);
+      const anon = await app.httpRequest().get(`/-/package/${pkg.name}/collaborators`).expect(403);
+      assert.deepEqual(anon.body, missing.body);
+      const denied = await app
+        .httpRequest()
+        .get(`/-/package/${pkg.name}/collaborators`)
+        .set('authorization', attacker.authorization)
+        .expect(403);
+      assert.deepEqual(denied.body, missing.body);
+      const ok = await app
+        .httpRequest()
+        .get(`/-/package/${pkg.name}/collaborators`)
+        .set('authorization', victim.authorization)
+        .expect(200);
+      assert.equal(ok.body[victim.displayName], 'write');
+      assert.equal(ok.headers['cache-control'], 'private, no-store');
+    });
   });
 });

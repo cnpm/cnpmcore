@@ -1,7 +1,7 @@
 import { HTTPContext, Context, HTTPBody, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
 import { ForbiddenError } from 'egg/errors';
 
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.ts';
 import type { PackageManagerService } from '../../core/service/PackageManagerService.ts';
 import { TagRule, TagWithVersionRule } from '../typebox.ts';
 import { AbstractController } from './AbstractController.ts';
@@ -18,7 +18,11 @@ export class PackageTagController extends AbstractController {
     path: `/-/package/:fullname(${FULLNAME_REG_STRING})/dist-tags`,
     method: HTTPMethodEnum.GET,
   })
-  async showTags(@HTTPParam() fullname: string) {
+  async showTags(@HTTPContext() ctx: Context, @HTTPParam() fullname: string) {
+    const [scope, name] = getScopeAndName(fullname);
+    if (await this.userRoleManager.checkReadAccess(ctx, scope, name)) {
+      ctx.set('cache-control', 'private, no-store');
+    }
     const packageEntity = await this.getPackageEntityByFullname(fullname);
     return await this.packageManagerService.distTags(packageEntity);
   }

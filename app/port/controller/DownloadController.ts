@@ -1,8 +1,8 @@
-import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
+import { Context, HTTPContext, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam, Inject } from 'egg';
 import { UnprocessableEntityError } from 'egg/errors';
 
 import dayjs from '../../common/dayjs.ts';
-import { FULLNAME_REG_STRING } from '../../common/PackageUtil.ts';
+import { FULLNAME_REG_STRING, getScopeAndName } from '../../common/PackageUtil.ts';
 import type { PackageVersionDownload } from '../../repository/model/PackageVersionDownload.ts';
 import type { PackageVersionDownloadRepository } from '../../repository/PackageVersionDownloadRepository.ts';
 import { AbstractController } from './AbstractController.ts';
@@ -22,7 +22,15 @@ export class DownloadController extends AbstractController {
     path: `/downloads/point/:range/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
   })
-  async showPackageDownloadPoint(@HTTPParam() fullname: string, @HTTPParam() range: string) {
+  async showPackageDownloadPoint(
+    @HTTPContext() ctx: Context,
+    @HTTPParam() fullname: string,
+    @HTTPParam() range: string,
+  ) {
+    const [scope, name] = getScopeAndName(fullname);
+    if (await this.userRoleManager.checkReadAccess(ctx, scope, name)) {
+      ctx.set('cache-control', 'private, no-store');
+    }
     const [startDate, endDate] = this.checkAndGetRange(range);
     const pkg = await this.getPackageEntityByFullname(fullname);
     const entities = await this.packageVersionDownloadRepository.query(
@@ -59,7 +67,11 @@ export class DownloadController extends AbstractController {
     path: `/downloads/range/:range/:fullname(${FULLNAME_REG_STRING})`,
     method: HTTPMethodEnum.GET,
   })
-  async showPackageDownloads(@HTTPParam() fullname: string, @HTTPParam() range: string) {
+  async showPackageDownloads(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() range: string) {
+    const [scope, name] = getScopeAndName(fullname);
+    if (await this.userRoleManager.checkReadAccess(ctx, scope, name)) {
+      ctx.set('cache-control', 'private, no-store');
+    }
     const [startDate, endDate] = this.checkAndGetRange(range);
     const pkg = await this.getPackageEntityByFullname(fullname);
     const entities = await this.packageVersionDownloadRepository.query(

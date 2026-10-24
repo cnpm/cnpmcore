@@ -44,7 +44,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
   })
   async download(@HTTPContext() ctx: Context, @HTTPParam() fullname: string, @HTTPParam() filenameWithVersion: string) {
     const [scope, name] = getScopeAndName(fullname);
-    await this.userRoleManager.checkReadAccess(ctx, scope, name);
+    const isTeamBound = await this.userRoleManager.checkReadAccess(ctx, scope, name);
     // tgz file storeKey: `/packages/${this.fullname}/${version}/${filename}`
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const storeKey = `/packages/${fullname}/${version}/${filenameWithVersion}.tgz`;
@@ -52,7 +52,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
 
     if (this.config.cnpmcore.syncMode === SyncMode.all && downloadUrl) {
       // try nfs url first, avoid db query
-      this.packageManagerService.plusPackageVersionCounter(fullname, version);
+      this.packageManagerService.plusPackageVersionCounter(fullname, version, isTeamBound);
       ctx.redirect(downloadUrl);
       return;
     }
@@ -68,7 +68,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
       if (this.config.cnpmcore.syncMode === SyncMode.proxy) {
         // proxy mode package version not found.
         const tgzStream = await this.getTgzProxyStream(ctx, fullname, version);
-        this.packageManagerService.plusPackageVersionCounter(fullname, version);
+        this.packageManagerService.plusPackageVersionCounter(fullname, version, isTeamBound);
         const passThroughRemoteStream = new PassThrough();
         tgzStream.pipe(passThroughRemoteStream);
         ctx.attachment(`${filenameWithVersion}.tgz`);
@@ -79,7 +79,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
 
     // read by nfs url
     if (downloadUrl) {
-      this.packageManagerService.plusPackageVersionCounter(fullname, version);
+      this.packageManagerService.plusPackageVersionCounter(fullname, version, isTeamBound);
       ctx.redirect(downloadUrl);
       return;
     }
@@ -94,7 +94,7 @@ export class DownloadPackageVersionTarController extends AbstractController {
     if (!urlOrStream) {
       throw new NotFoundError(`"${filenameWithVersion}.tgz" not found`);
     }
-    this.packageManagerService.plusPackageVersionCounter(fullname, version);
+    this.packageManagerService.plusPackageVersionCounter(fullname, version, isTeamBound);
     if (typeof urlOrStream === 'string') {
       ctx.redirect(urlOrStream);
       return;
