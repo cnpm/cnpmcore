@@ -643,6 +643,13 @@ const binaries = {
     repo: 'git-for-windows/git',
     distUrl: 'https://github.com/git-for-windows/git/releases',
   },
+  suzent: {
+    category: 'suzent',
+    description: 'SUZENT: the sovereign AI agent. Desktop installers and release assets.',
+    type: BinaryType.GitHub,
+    repo: 'cyzus/suzent',
+    distUrl: 'https://github.com/cyzus/suzent/releases',
+  },
   atom: {
     category: 'atom',
     description: 'The hackable text editor',
