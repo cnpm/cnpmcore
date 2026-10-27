@@ -38,22 +38,25 @@ describe('test/port/controller/PackageTagController/showTags.test.ts', () => {
       assert.ok(res.headers.location === 'https://registry.npmjs.org/-/package/@foo/not-exists/dist-tags');
     });
 
-    it('should get package tags', async () => {
-      const pkg = await TestUtil.getFullPackage({
-        name: '@cnpm/koa',
-        version: '1.0.0',
-      });
-      await app
-        .httpRequest()
-        .put(`/${pkg.name}`)
-        .set('authorization', publisher.authorization)
-        .set('user-agent', publisher.ua)
-        .send(pkg)
-        .expect(201);
+    for (const name of ['@cnpm/koa', 'files', 'a', 'is-number']) {
+      it(`should get package tags for ${name}`, async () => {
+        mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
+        const pkg = await TestUtil.getFullPackage({
+          name,
+          version: '1.0.0',
+        });
+        await app
+          .httpRequest()
+          .put(`/${pkg.name}`)
+          .set('authorization', publisher.authorization)
+          .set('user-agent', publisher.ua)
+          .send(pkg)
+          .expect(201);
 
-      const res = await app.httpRequest().get(`/-/package/${pkg.name}/dist-tags`).expect(200);
-      assert.equal(res.body.latest, '1.0.0');
-      assert.deepEqual(Object.keys(res.body), ['latest']);
-    });
+        const res = await app.httpRequest().get(`/-/package/${pkg.name}/dist-tags`).expect(200);
+        assert.equal(res.body.latest, '1.0.0');
+        assert.deepEqual(Object.keys(res.body), ['latest']);
+      });
+    }
   });
 });
