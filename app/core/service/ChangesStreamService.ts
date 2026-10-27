@@ -196,8 +196,14 @@ export class ChangesStreamService extends AbstractService {
     // 创建同步任务
     for await (const change of stream) {
       const { fullname, seq } = change;
-      lastPackage = fullname;
       lastSince = seq;
+      if (!fullname) {
+        // cursor-only change, nothing to sync, just persist the new since
+        task.updateSyncData({ lastSince, lastPackage, taskCount: 0 });
+        await this.taskRepository.saveTask(task);
+        continue;
+      }
+      lastPackage = fullname;
       const valid = await this.needSync(registry, fullname);
       if (valid) {
         taskCount++;

@@ -6,6 +6,7 @@ import type { Registry } from '../../../core/entity/Registry.ts';
 export const CHANGE_STREAM_ATTRIBUTE = 'CHANGE_STREAM_ATTRIBUTE';
 export interface ChangesStreamChange {
   seq: string;
+  // empty string means a cursor-only change: advance `since` to `seq` without syncing a package
   fullname: string;
 }
 
