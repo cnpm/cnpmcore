@@ -1,5 +1,15 @@
 # Changelog
 
+## <small>4.37.5 (2026-10-27)</small>
+
+* fix: restore dist-tags queries for files (#1191) ([3dcf17d](https://github.com/cnpm/cnpmcore/commit/3dcf17d)), closes [#1191](https://github.com/cnpm/cnpmcore/issues/1191)
+* chore: refresh Node.js runtimes in CI and container builds (#1187) ([676170a](https://github.com/cnpm/cnpmcore/commit/676170a)), closes [#1187](https://github.com/cnpm/cnpmcore/issues/1187)
+* chore(deps): update node.js to v24.22.1 (#1185) ([1653c74](https://github.com/cnpm/cnpmcore/commit/1653c74)), closes [#1185](https://github.com/cnpm/cnpmcore/issues/1185)
+* chore(deps): update npm to v12.2.1 (#1186) ([f631374](https://github.com/cnpm/cnpmcore/commit/f631374)), closes [#1186](https://github.com/cnpm/cnpmcore/issues/1186)
+* chore(deps): update vite-plus related packages to v1.4.0 (#1188) ([3d64d64](https://github.com/cnpm/cnpmcore/commit/3d64d64)), closes [#1188](https://github.com/cnpm/cnpmcore/issues/1188)
+* chore(deps): update zizmorcore/zizmor-action action to v0.8.0 (#1189) ([773d04d](https://github.com/cnpm/cnpmcore/commit/773d04d)), closes [#1189](https://github.com/cnpm/cnpmcore/issues/1189)
+* docs: add npmmirror CDN cache clearing guide (#1181) ([4977fc7](https://github.com/cnpm/cnpmcore/commit/4977fc7)), closes [#1181](https://github.com/cnpm/cnpmcore/issues/1181)
+
 ## <small>4.37.4 (2026-10-18)</small>
 
 * fix: require package maintainer for team package grant/revoke ([dc3a5f6](https://github.com/cnpm/cnpmcore/commit/dc3a5f6))
