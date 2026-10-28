@@ -89,9 +89,19 @@ export class NPMRegistry {
   // app.put('/:name/sync', sync.sync);
   public async createSyncTask(
     fullname: string,
-    optionalConfig?: { remoteAuthToken?: string },
+    optionalConfig?: { remoteAuthToken?: string; specificVersions?: string[] },
   ): Promise<RegistryResponse> {
     const authorization = this.genAuthorizationHeader(optionalConfig?.remoteAuthToken);
+    if (optionalConfig?.specificVersions) {
+      const url = `${this.registry}/-/package/${encodeURIComponent(fullname)}/syncs`;
+      const response = await this.requestJSON(
+        'PUT',
+        url,
+        { skipDependencies: true, specificVersions: JSON.stringify(optionalConfig.specificVersions) },
+        { headers: { authorization }, contentType: 'json' },
+      );
+      return { ...response, data: { ...response.data, logId: response.data.id } };
+    }
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync?sync_upstream=true&nodeps=true`;
     // {
     //   ok: true,
@@ -111,7 +121,7 @@ export class NPMRegistry {
     const url = `${this.registry}/${encodeURIComponent(fullname)}/sync/log/${id}?offset=${offset}`;
     // { ok: true, syncDone: boolean, log: string, logUrl: string, error?: string }
     // https://registry.npmmirror.com/viewport-cli/sync/log/6943749899c5663aad8a534c
-    return await this.requestJSON('GET', url, undefined, { authorization });
+    return await this.requestJSON('GET', url, undefined, { headers: { authorization } });
   }
 
   public async getDownloadRanges(
