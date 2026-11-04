@@ -144,11 +144,11 @@
     "@types/semver": "^7.7.1",
     "@types/tar": "^7.0.0",
     "@types/validate-npm-package-name": "^4.0.2",
-    "@vitest/coverage-v8": "5.0.5",
+    "@vitest/coverage-v8": "5.1.0",
     "coffee": "^5.5.1",
     "typescript": "^7.0.2",
-    "vite-plus": "1.4.0",
-    "vitest": "5.0.5",
+    "vite-plus": "1.5.0",
+    "vitest": "5.1.0",
     "yaml": "^2.9.0"
   },
   "optionalDependencies": {
@@ -159,8 +159,8 @@
       "fast-xml-parser": "$fast-xml-parser"
     },
     "@vitest/coverage-v8": "$@vitest/coverage-v8",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
-    "vitest": "5.0.5"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.5.0",
+    "vitest": "5.1.0"
   },
   "engines": {
     "node": "^22.18.0 || ^24.11.0 || ^26.0.0"
