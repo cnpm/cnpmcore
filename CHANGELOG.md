@@ -1,5 +1,15 @@
 # Changelog
 
+## <small>4.37.6 (2026-11-05)</small>
+
+* fix: reject inherited administrator names ([55c5e79](https://github.com/cnpm/cnpmcore/commit/55c5e79))
+* Merge commit from fork ([a91b67d](https://github.com/cnpm/cnpmcore/commit/a91b67d))
+* chore(deps): update docker/login-action action to v4.7.0 (#1192) ([3fa9d53](https://github.com/cnpm/cnpmcore/commit/3fa9d53)), closes [#1192](https://github.com/cnpm/cnpmcore/issues/1192)
+* chore(deps): update node.js to v26 (#1193) ([0814fea](https://github.com/cnpm/cnpmcore/commit/0814fea)), closes [#1193](https://github.com/cnpm/cnpmcore/issues/1193)
+* chore(deps): update npm to v12.2.2 (#1197) ([73f4bf0](https://github.com/cnpm/cnpmcore/commit/73f4bf0)), closes [#1197](https://github.com/cnpm/cnpmcore/issues/1197)
+* chore(deps): update vite-plus related packages (#1195) ([31f9ee4](https://github.com/cnpm/cnpmcore/commit/31f9ee4)), closes [#1195](https://github.com/cnpm/cnpmcore/issues/1195)
+* chore(deps): update zizmorcore/zizmor-action action to v0.8.1 (#1196) ([79a2987](https://github.com/cnpm/cnpmcore/commit/79a2987)), closes [#1196](https://github.com/cnpm/cnpmcore/issues/1196)
+
 ## <small>4.37.5 (2026-10-27)</small>
 
 * fix: restore dist-tags queries for files (#1191) ([3dcf17d](https://github.com/cnpm/cnpmcore/commit/3dcf17d)), closes [#1191](https://github.com/cnpm/cnpmcore/issues/1191)
