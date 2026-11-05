@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>3.84.4 (2026-11-05)</small>
+
+* fix: reject inherited administrator names ([91dcf5c](https://github.com/cnpm/cnpmcore/commit/91dcf5c))
+* Merge commit from fork ([7569ea6](https://github.com/cnpm/cnpmcore/commit/7569ea6))
+
 ## <small>3.84.3 (2026-10-15)</small>
 
 * fix: omit registry credentials from API responses ([8aa5f14](https://github.com/cnpm/cnpmcore/commit/8aa5f14))
