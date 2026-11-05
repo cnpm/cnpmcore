@@ -205,6 +205,20 @@ describe('test/port/webauth/webauthController.test.ts', () => {
         assert.equal(res.status, 200);
         assert.ok(/Public registration is not allowed/.test(res.body.message));
       });
+
+      for (const username of ['toString', 'constructor', 'hasOwnProperty', '__proto__']) {
+        it(`should reject inherited admin name ${username} when public registration is disabled`, async () => {
+          mock(app.config.cnpmcore, 'allowPublicRegistration', false);
+          const password = encryptRSA(rsaKeys.publicKey, 'newaccount_password');
+          const res = await app
+            .httpRequest()
+            .post(`/-/v1/login/request/session/${sessionId}`)
+            .send({ accData: { username, password } })
+            .expect(200);
+          assert.equal(res.body.ok, false);
+          assert.equal(res.body.message, 'Public registration is not allowed');
+        });
+      }
     });
   });
 
