@@ -66,6 +66,17 @@ describe('test/port/controller/UserController/loginOrCreateUser.test.ts', () => 
       assert.match(res.body.token, /^cnpm_\w+/);
     });
 
+    for (const name of [ 'toString', 'constructor', 'hasOwnProperty', '__proto__' ]) {
+      it(`should reject inherited admin name ${name} when public registration is disabled`, async () => {
+        mock(app.config.cnpmcore, 'allowPublicRegistration', false);
+        const res = await app.httpRequest()
+          .put(`/-/user/org.couchdb.user:${name}`)
+          .send({ name, password: 'password-is-here', type: 'user', email: 'user@example.com' })
+          .expect(403);
+        assert.equal(res.body.error, '[FORBIDDEN] Public registration is not allowed');
+      });
+    }
+
     it('should create new user, with email', async () => {
       let res = await app.httpRequest()
         .put('/-/user/org.couchdb.user:leo')

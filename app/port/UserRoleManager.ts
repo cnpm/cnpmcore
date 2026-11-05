@@ -187,7 +187,7 @@ export class UserRoleManager {
     if (!authorizedUserAndToken) return false;
     const { user, token } = authorizedUserAndToken;
     if (token.isReadonly) return false;
-    return user.name in this.config.cnpmcore.admins;
+    return Object.prototype.hasOwnProperty.call(this.config.cnpmcore.admins, user.name);
   }
 
   // self scope + no team binding = everyone can read, returns false

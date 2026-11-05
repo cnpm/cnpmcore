@@ -29,6 +29,17 @@ describe('test/port/controller/OrgController/index.test.ts', () => {
         .expect(403);
     });
 
+    for (const name of [ 'toString', 'constructor', 'hasOwnProperty', '__proto__' ]) {
+      it(`should deny administrator access to inherited name ${name}`, async () => {
+        const user = await TestUtil.createUser({ name });
+        await app.httpRequest()
+          .put('/-/org')
+          .set('authorization', user.authorization)
+          .send({ name: 'inherited-admin-org' })
+          .expect(403);
+      });
+    }
+
     it('should 422 when name is missing', async () => {
       const res = await app.httpRequest()
         .put('/-/org')

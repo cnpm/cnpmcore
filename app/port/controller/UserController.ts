@@ -73,7 +73,7 @@ export class UserController extends AbstractController {
       throw new UnprocessableEntityError(`username(${username}) not match user.name(${user.name})`);
     }
     if (this.config.cnpmcore.allowPublicRegistration === false) {
-      if (!this.config.cnpmcore.admins[user.name]) {
+      if (!Object.prototype.hasOwnProperty.call(this.config.cnpmcore.admins, user.name)) {
         throw new ForbiddenError('Public registration is not allowed');
       }
     }

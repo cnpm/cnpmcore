@@ -131,7 +131,7 @@ export class WebauthController extends MiddlewareController {
 
     // public registration
     if (this.config.cnpmcore.allowPublicRegistration === false) {
-      if (!this.config.cnpmcore.admins[username]) {
+      if (!Object.prototype.hasOwnProperty.call(this.config.cnpmcore.admins, username)) {
         return { ok: false, message: 'Public registration is not allowed' };
       }
     }
