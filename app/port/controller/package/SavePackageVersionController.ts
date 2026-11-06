@@ -91,11 +91,11 @@ export class SavePackageVersionController extends AbstractController {
   async save(@Context() ctx: EggContext, @HTTPParam() fullname: string, @HTTPBody() pkg: FullPackage) {
     this.validateNpmCommand(ctx);
     ctx.tValidate(FullPackageRule, pkg);
-    const { user } = await this.ensurePublishAccess(ctx, fullname, false);
     fullname = fullname.trim();
     if (fullname !== pkg.name) {
       throw new UnprocessableEntityError(`fullname(${fullname}) not match package.name(${pkg.name})`);
     }
+    const { user } = await this.ensurePublishAccess(ctx, fullname, false);
 
     // Using https://github.com/npm/validate-npm-package-name to validate package name
     const validateResult = validateNpmPackageName(pkg.name);

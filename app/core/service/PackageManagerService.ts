@@ -124,6 +124,10 @@ export class PackageManagerService extends AbstractService {
         registryId: cmd.registryId,
       });
     } else {
+      const existingVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
+      if (existingVersion) {
+        throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${existingVersion.version}`);
+      }
       // update description
       // will read database twice to update description by model to entity and entity to model
       if (pkg.description !== cmd.description) {
@@ -142,14 +146,6 @@ export class PackageManagerService extends AbstractService {
       pkg.description = pkg.description.substring(0, DESCRIPTION_LIMIT);
     }
     await this.packageRepository.savePackage(pkg);
-    // create maintainer
-    await this.packageRepository.savePackageMaintainer(pkg.packageId, publisher.userId);
-
-    let pkgVersion = await this.packageRepository.findPackageVersion(pkg.packageId, cmd.version);
-    if (pkgVersion) {
-      throw new ForbiddenError(`Can't modify pre-existing version: ${pkg.fullname}@${pkgVersion.version}`);
-    }
-
     // make sure cmd.packageJson.readme is deleted
     if ('readme' in cmd.packageJson) {
       delete cmd.packageJson.readme;
@@ -250,7 +246,7 @@ export class PackageManagerService extends AbstractService {
     const manifestDistBytes = Buffer.from(JSON.stringify(cmd.packageJson));
     const manifestDistIntegrity = await calculateIntegrity(manifestDistBytes);
 
-    pkgVersion = PackageVersion.create({
+    const pkgVersion = PackageVersion.create({
       packageId: pkg.packageId,
       version: cmd.version,
       publishTime,
@@ -284,6 +280,7 @@ export class PackageManagerService extends AbstractService {
       }
       throw e;
     }
+    await this.packageRepository.savePackageMaintainer(pkg.packageId, publisher.userId);
     // dependency isolation (buffer) zone: hold a newly synced version invisible for a while
     // before it is auto-released. Resolve the policy first, so PACKAGE_VERSION_ADDED is suppressed
     // — the event (and thus search index / changes stream / file sync) fires only when the

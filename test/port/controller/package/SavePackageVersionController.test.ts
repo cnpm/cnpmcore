@@ -23,6 +23,44 @@ describe('test/port/controller/package/SavePackageVersionController.test.ts', ()
   });
 
   describe('[PUT /:fullname] save()', () => {
+    [ '%09', '%0A', '%0D', '%20', '%C2%A0' ].forEach(suffix => {
+      it(`should reject publication through a whitespace alias ${suffix} without granting ownership`, async () => {
+        const { pkg, user } = await TestUtil.createPackage({ name: '@cnpm/ownership', version: '1.0.0' });
+        const next = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
+        const publish = (path: string, body: typeof pkg) =>
+          app
+            .httpRequest()
+            .put(path)
+            .set('authorization', publisher.authorization)
+            .set('user-agent', publisher.ua)
+            .send(body);
+
+        await publish(`/${pkg.name}`, next).expect(403);
+        const res = await publish(`/${pkg.name}${suffix}`, pkg).expect(403);
+        assert.match(res.body.error, /not authorized to modify/);
+        const collaborators = await app
+          .httpRequest()
+          .get(`/-/package/${pkg.name}/collaborators`)
+          .set('authorization', user.authorization)
+          .expect(200);
+        assert.equal(collaborators.body[publisher.name], undefined);
+        await publish(`/${pkg.name}`, next).expect(403);
+        await app.httpRequest().get(`/${pkg.name}/2.0.0`).expect(404);
+      });
+    });
+
+    it('should allow the maintainer to publish through a whitespace alias', async () => {
+      const { pkg, user } = await TestUtil.createPackage({ name: '@cnpm/ownership', version: '1.0.0' });
+      const next = await TestUtil.getFullPackage({ name: pkg.name, version: '2.0.0' });
+      await app
+        .httpRequest()
+        .put(`/${pkg.name}%09`)
+        .set('authorization', user.authorization)
+        .set('user-agent', user.ua)
+        .send(next)
+        .expect(201);
+    });
+
     it('should set registry field after publish', async () => {
       mock(app.config.cnpmcore, 'allowPublishNonScopePackage', true);
       const { pkg, user } = await TestUtil.createPackage({ name: 'non_scope_pkg', version: '1.0.0' });
