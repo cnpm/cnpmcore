@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.37.7 (2026-11-06)</small>
+
+* fix: prevent publication aliases from granting ownership ([be91eca](https://github.com/cnpm/cnpmcore/commit/be91eca))
+* Merge commit from fork ([bb8a38f](https://github.com/cnpm/cnpmcore/commit/bb8a38f))
+
 ## <small>4.37.6 (2026-11-05)</small>
 
 * fix: reject inherited administrator names ([55c5e79](https://github.com/cnpm/cnpmcore/commit/55c5e79))
