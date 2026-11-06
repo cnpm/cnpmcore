@@ -44,7 +44,7 @@ export class RemovePackageVersionController extends AbstractController {
     const pkg = ensureRes.pkg!;
     const version = this.getAndCheckVersionFromFilename(ctx, fullname, filenameWithVersion);
     const packageVersion = await this.getPackageVersionEntity(pkg, version);
-    await this.#removePackageVersion(pkg, packageVersion);
+    await this.#removePackageVersion(ctx, pkg, packageVersion);
     return { ok: true };
   }
 
@@ -75,7 +75,7 @@ export class RemovePackageVersionController extends AbstractController {
       packageVersion = await this.packageRepository.findPackageVersion(pkg.packageId, packageTag.version);
     }
     if (packageVersion) {
-      await this.#removePackageVersion(pkg, packageVersion);
+      await this.#removePackageVersion(ctx, pkg, packageVersion);
     } else {
       this.logger.info('[PackageController:unpublishPackage] %s, packageId: %s',
         pkg.fullname, pkg.packageId);
@@ -84,10 +84,11 @@ export class RemovePackageVersionController extends AbstractController {
     return { ok: true };
   }
 
-  async #removePackageVersion(pkg: Package, packageVersion: PackageVersion) {
+  async #removePackageVersion(ctx: EggContext, pkg: Package, packageVersion: PackageVersion) {
     // https://docs.npmjs.com/policies/unpublish
     // can unpublish anytime within the first 72 hours after publishing
-    if (pkg.isPrivate && Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72) {
+    if (pkg.isPrivate && Date.now() - packageVersion.publishTime.getTime() >= 3600000 * 72 &&
+      !(ctx.get('npm-force') === 'true' && await this.userRoleManager.isAdmin(ctx))) {
       throw new ForbiddenError(`${pkg.fullname}@${packageVersion.version} unpublish is not allowed after 72 hours of released`);
     }
     this.logger.info('[PackageController:removeVersion] %s@%s, packageVersionId: %s',
