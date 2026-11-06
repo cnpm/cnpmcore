@@ -34,6 +34,57 @@ describe('test/core/service/PackageManagerService/publish.test.ts', () => {
   });
 
   describe('publish()', () => {
+    it('should not grant ownership or change metadata on a duplicate publication', async () => {
+      const { pkg } = await TestUtil.createPackage({ name: '@cnpm/ownership', version: '1.0.0' });
+      const before = await packageRepository.findPackage('@cnpm', 'ownership');
+      assert.ok(before);
+      await assert.rejects(
+        packageManagerService.publish(
+          {
+            scope: '@cnpm',
+            name: 'ownership',
+            version: '1.0.0',
+            description: 'unauthorized change',
+            packageJson: pkg,
+            readme: '',
+            dist: { content: Buffer.alloc(0) },
+            isPrivate: true,
+          },
+          publisher,
+        ),
+        /Can't modify pre-existing version/,
+      );
+      const after = await packageRepository.findPackage('@cnpm', 'ownership');
+      assert.equal(after?.description, before.description);
+      const maintainers = await packageRepository.listPackageMaintainers(before.packageId);
+      assert.ok(maintainers.every((user) => user.userId !== publisher.userId));
+    });
+
+    it('should not grant ownership when writing the version fails', async () => {
+      mock(packageRepository, 'createPackageVersion', async () => {
+        throw new Error('version write failed');
+      });
+      await assert.rejects(
+        packageManagerService.publish(
+          {
+            scope: '@cnpm',
+            name: 'failed-publication',
+            version: '1.0.0',
+            description: '',
+            packageJson: { name: '@cnpm/failed-publication', version: '1.0.0', _hasShrinkwrap: false },
+            readme: '',
+            dist: { content: Buffer.alloc(0) },
+            isPrivate: true,
+          },
+          publisher,
+        ),
+        /version write failed/,
+      );
+      const pkg = await packageRepository.findPackage('@cnpm', 'failed-publication');
+      assert.ok(pkg);
+      assert.equal((await packageRepository.listPackageMaintainers(pkg.packageId)).length, 0);
+    });
+
     it('should work with dist.content', async () => {
       app.mockLog();
       const { packageId } = await packageManagerService.publish(
