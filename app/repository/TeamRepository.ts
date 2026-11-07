@@ -177,6 +177,13 @@ export class TeamRepository extends AbstractRepository {
     return !!model;
   }
 
+  // Batch variant of hasAnyTeamBinding: returns the subset of packageIds that have team bindings
+  async listTeamBoundPackageIds(packageIds: string[]): Promise<Set<string>> {
+    if (packageIds.length === 0) return new Set();
+    const models = await this.TeamPackage.find({ packageId: { $in: packageIds } });
+    return new Set(models.map((m) => m.packageId));
+  }
+
   // No JOIN: step 1 find teamIds by packageId, step 2 check membership
   async hasPackageAccess(packageId: string, userId: string): Promise<boolean> {
     const teamPackages = await this.TeamPackage.find({ packageId });
