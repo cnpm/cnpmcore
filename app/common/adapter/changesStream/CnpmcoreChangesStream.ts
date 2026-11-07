@@ -45,11 +45,14 @@ export class CnpmcoreChangesStream extends AbstractChangeStream {
         const fullname = change.id;
         // cnpmcore 默认返回 >= 需要做特殊判断
         if (seq && fullname && seq !== since) {
-          const change = {
+          const result: { fullname: string; seq: string; version?: string } = {
             fullname,
             seq,
           };
-          yield change;
+          if (change.type === 'PACKAGE_VERSION_ADDED' && typeof change.changes?.[0]?.version === 'string') {
+            result.version = change.changes[0].version;
+          }
+          yield result;
         }
       }
     }
