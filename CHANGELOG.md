@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>4.37.8 (2026-11-07)</small>
+
+* fix: enforce team authorization for equivalent package scopes ([66336df](https://github.com/cnpm/cnpmcore/commit/66336df))
+* Merge commit from fork ([a9a38af](https://github.com/cnpm/cnpmcore/commit/a9a38af))
+
 ## <small>4.37.7 (2026-11-06)</small>
 
 * fix: prevent publication aliases from granting ownership ([be91eca](https://github.com/cnpm/cnpmcore/commit/be91eca))
