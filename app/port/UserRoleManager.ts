@@ -192,12 +192,11 @@ export class UserRoleManager {
     return Object.hasOwn(this.config.cnpmcore.admins, user.name);
   }
 
-  // self scope + no team binding = everyone can read, returns false
-  // self scope + team binding = only team members can read, returns true
+  // no team binding = everyone can read, returns false
+  // team binding = only team members can read, returns true
   // returns true if package is team-bound (private cache needed)
   public async checkReadAccess(ctx: Context, scope: string, name: string): Promise<boolean> {
-    if (!scope || !this.config.cnpmcore.allowScopes.includes(scope)) return false;
-
+    // Authorize the package resolved by the database, including equivalent scope spellings.
     const pkg = await this.packageRepository.findPackage(scope, name);
     if (!pkg) return false; // let downstream throw 404
 

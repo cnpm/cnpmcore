@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { app } from '@eggjs/mock/bootstrap';
+import { app, mock } from '@eggjs/mock/bootstrap';
 
 import { DEVELOPERS_TEAM } from '../../../../app/common/constants.ts';
 import { Package as PackageEntity } from '../../../../app/core/entity/Package.ts';
@@ -11,6 +11,7 @@ import { OrgRepository } from '../../../../app/repository/OrgRepository.ts';
 import { PackageRepository } from '../../../../app/repository/PackageRepository.ts';
 import { TeamRepository } from '../../../../app/repository/TeamRepository.ts';
 import { UserRepository } from '../../../../app/repository/UserRepository.ts';
+import { DATABASE_TYPE, database } from '../../../../config/database.ts';
 import { TestUtil } from '../../../TestUtil.ts';
 
 describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
@@ -85,13 +86,7 @@ describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
       assert(team);
 
       // Create package and bind to team
-      const pkgEntity = PackageEntity.create({
-        scope: '@cnpm',
-        name: 'private-pkg',
-        isPrivate: true,
-        description: 'test package with team binding',
-      });
-      await packageRepository.savePackage(pkgEntity);
+      await TestUtil.createPackage({ name: '@cnpm/private-pkg', version: '1.0.0' });
       const pkg = await packageRepository.findPackage('@cnpm', 'private-pkg');
       assert(pkg);
       await teamRepository.addPackage(
@@ -112,6 +107,51 @@ describe('test/port/controller/package/ReadAccessAuth.test.ts', () => {
         }),
       );
     });
+
+    const readPaths = ['', '/1.0.0', '/-/private-pkg-1.0.0.tgz', '/1.0.0/files?meta', '/1.0.0/files/package.json'];
+
+    for (const suffix of readPaths) {
+      it(`should enforce team access after scope configuration changes (${suffix || 'manifest'})`, async () => {
+        mock(app.config.cnpmcore, 'allowScopes', []);
+        mock(app.config.cnpmcore, 'enableUnpkg', true);
+        const url = `/@cnpm/private-pkg${suffix}`;
+        await app.httpRequest().get(url).expect(401);
+        await app.httpRequest().get(url).set('authorization', normalUser.authorization).expect(403);
+      });
+    }
+
+    // These spellings resolve to the same package under the shipped MySQL scope collation.
+    const mysqlIt = database.type === DATABASE_TYPE.MySQL ? it : it.skip;
+    for (const alias of ['@CNPM', '@CnPm', '@cnpm%20', '@c%C3%B1pm']) {
+      // Version/file routes reject whitespace and accents during spec validation.
+      const paths = alias.includes('%') ? ['', '/-/private-pkg-1.0.0.tgz'] : readPaths;
+      for (const suffix of paths) {
+        mysqlIt(`should deny unauthorized database-equivalent scope ${alias}${suffix}`, async () => {
+          mock(app.config.cnpmcore, 'enableUnpkg', true);
+          const url = `/${alias}/private-pkg${suffix}`;
+          await app.httpRequest().get(url).expect(401);
+          await app.httpRequest().get(url).set('authorization', normalUser.authorization).expect(403);
+        });
+      }
+    }
+
+    mysqlIt(
+      'should authorize a team member using a database-equivalent scope before serving cached manifests',
+      async () => {
+        for (const scope of ['@cnpm', '@CNPM']) {
+          for (let attempt = 0; attempt < 2; attempt++) {
+            const res = await app
+              .httpRequest()
+              .get(`/${scope}/private-pkg`)
+              .set('authorization', teamMember.authorization)
+              .expect(200);
+            assert.equal(res.body.name, '@cnpm/private-pkg');
+            assert.equal(res.headers['cache-control'], 'private, no-store');
+          }
+          await app.httpRequest().get(`/${scope}/private-pkg`).expect(401);
+        }
+      },
+    );
 
     it('should 401 without login (GET /:fullname)', async () => {
       const res = await app.httpRequest().get('/@cnpm/private-pkg').set('Accept', 'application/json');
