@@ -1,5 +1,10 @@
 # Changelog
 
+## <small>3.84.7 (2026-11-09)</small>
+
+* fix: contain upstream package extraction ([5ef1b65](https://github.com/cnpm/cnpmcore/commit/5ef1b65))
+* Merge commit from fork ([effa90d](https://github.com/cnpm/cnpmcore/commit/effa90d))
+
 ## <small>3.84.6 (2026-11-07)</small>
 
 * fix: enforce team authorization for equivalent package scopes ([43bf186](https://github.com/cnpm/cnpmcore/commit/43bf186))
