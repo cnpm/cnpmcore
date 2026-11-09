@@ -31,6 +31,11 @@ import { CacheAdapter } from '../../common/adapter/CacheAdapter';
 const unpkgWhiteListUrl = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60000;
 
+// Filter before onentry consumes names and before tar passes them to filesystem APIs.
+function hasValidTarPath(path: string, entry: { linkpath?: string }) {
+  return !path.includes('\0') && !entry.linkpath?.includes('\0') && !path.split(/[/\\]/).includes('..');
+}
+
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
 })
@@ -135,8 +140,7 @@ export class PackageVersionFileService extends AbstractService {
 
   // 基于 latest version 同步 package readme
   async syncPackageReadme(pkg: Package, latestPkgVersion: PackageVersion) {
-    const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${latestPkgVersion.version}_latest_readme_${randomUUID()}`;
-    const tmpdir = await createTempDir(this.config.dataDir, dirname);
+    const tmpdir = await createTempDir(this.config.dataDir, `unpkg_${randomUUID()}`);
     const tarFile = `${tmpdir}.tgz`;
     const readmeFilenames: string[] = [];
     try {
@@ -148,6 +152,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
+        filter: hasValidTarPath,
         onentry: entry => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;
@@ -190,8 +195,7 @@ export class PackageVersionFileService extends AbstractService {
     // check unpkg white list
     await this.checkPackageVersionInUnpkgWhiteList(pkg.scope, pkg.name, pkgVersion.version);
 
-    const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
-    const tmpdir = await createTempDir(this.config.dataDir, dirname);
+    const tmpdir = await createTempDir(this.config.dataDir, `unpkg_${randomUUID()}`);
     const tarFile = `${tmpdir}.tgz`;
     const paths: string[] = [];
     const readmeFilenames: string[] = [];
@@ -204,6 +208,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
+        filter: hasValidTarPath,
         onentry: entry => {
           const filename = this.#formatTarEntryFilename(entry);
           if (!filename) return;

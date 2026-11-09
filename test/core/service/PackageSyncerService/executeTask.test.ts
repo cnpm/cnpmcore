@@ -45,6 +45,34 @@ describe('test/core/service/PackageSyncerService/executeTask.test.ts', () => {
   });
 
   describe('executeTask()', () => {
+    it('should skip malformed upstream versions', async () => {
+      const data = JSON.parse((await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json')).toString());
+      const valid = data.versions['1.0.0'];
+      const malformedTarball = 'https://registry.npmjs.org/foobar/-/malformed.tgz';
+      data.versions = {
+        '1.0.0': valid,
+        '9.9.9': { ...valid, version: { path: '../outside' }, dist: { tarball: malformedTarball } },
+        '../outside': { ...valid, version: '../outside', dist: { tarball: malformedTarball } },
+      };
+      data['dist-tags'] = { latest: '1.0.0' };
+      app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', { data: JSON.stringify(data) });
+      app.mockHttpclient(valid.dist.tarball, 'GET', {
+        data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar/-/foobar-1.0.0.tgz'),
+      });
+      app.mockHttpclient(malformedTarball, 'GET', { status: 404, data: '' });
+      await packageSyncerService.createTask('foobar', { skipDependencies: true });
+      const task = await packageSyncerService.findExecuteTask();
+      assert.ok(task);
+      await packageSyncerService.executeTask(task);
+      const manifests = await packageManagerService.listPackageFullManifests('', 'foobar');
+      assert.deepEqual(Object.keys(manifests.data?.versions ?? {}), [ '1.0.0' ]);
+      const stream = await packageSyncerService.findTaskLog(task);
+      assert.ok(stream);
+      const log = await TestUtil.readStreamToLog(stream);
+      assert.equal(log.match(/Skip invalid upstream version/g)?.length, 2);
+      assert.ok(!log.includes(malformedTarball));
+    });
+
     it('should execute "foobar" task', async () => {
       app.mockHttpclient('https://registry.npmjs.org/foobar', 'GET', {
         data: await TestUtil.readFixturesFile('registry.npmjs.org/foobar.json'),

@@ -593,9 +593,13 @@ export class PackageSyncerService extends AbstractService {
       logs.push(`[${isoNow()}] 📦 Add latest tag version "${fullname}: ${distTags.latest}"`);
       specificVersions.push(distTags.latest);
     }
-    const versions = specificVersions ?
-      Object.values<PackageJSONType>(versionMap).filter(verItem => specificVersions.includes(verItem.version)) :
-      Object.values<PackageJSONType>(versionMap);
+    const versions = Object.values<PackageJSONType>(versionMap).filter(item => {
+      if (typeof item?.version !== 'string' || !semver.valid(item.version)) {
+        logs.push(`[${isoNow()}] 🚧 Skip invalid upstream version`);
+        return false;
+      }
+      return !specificVersions || specificVersions.includes(item.version);
+    });
     // 全量同步时跳过排序
     const sortedAvailableVersions = specificVersions ?
       versions.map(item => item.version).sort(semver.rcompare) : [];
@@ -625,8 +629,7 @@ export class PackageSyncerService extends AbstractService {
     const differentMetas: [PackageJSONType, Partial<PackageJSONType>][] = [];
     let syncIndex = 0;
     for (const item of versions) {
-      const version: string = item.version;
-      if (!version) continue;
+      const version = item.version;
 
       let existsItem: typeof existsVersionMap[string] | undefined = existsVersionMap[version];
       let existsAbbreviatedItem: typeof abbreviatedVersionMap[string] | undefined = abbreviatedVersionMap[version];

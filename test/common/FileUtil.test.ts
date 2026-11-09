@@ -1,7 +1,20 @@
 import { strict as assert } from 'node:assert';
-import { mimeLookup } from '../../app/common/FileUtil';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createTempDir, mimeLookup } from '../../app/common/FileUtil';
 
 describe('test/common/FileUtil.test.ts', () => {
+  it('should reject a temporary directory name containing path components', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'cnpmcore-temp-test-'));
+    try {
+      await assert.rejects(createTempDir(root, '../outside'), /Invalid temporary directory name/);
+      await assert.rejects(createTempDir(root, '..\\outside'), /Invalid temporary directory name/);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
   describe('mimeLookup()', () => {
     it('should work', () => {
       assert.equal(mimeLookup('/foo/README'), 'text/plain');
