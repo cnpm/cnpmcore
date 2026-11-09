@@ -814,9 +814,13 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
       specificVersions.push(distTags.latest);
     }
     // Get the list of versions to sync this time
-    const versions = specificVersions
-      ? Object.values<PackageJSONType>(versionMap).filter((verItem) => specificVersions.includes(verItem.version))
-      : Object.values<PackageJSONType>(versionMap);
+    const versions = Object.values<PackageJSONType>(versionMap).filter((item) => {
+      if (typeof item?.version !== 'string' || !semver.valid(item.version)) {
+        logs.push(`[${isoNow()}] 🚧 Skip invalid upstream version`);
+        return false;
+      }
+      return !specificVersions || specificVersions.includes(item.version);
+    });
     // 全量同步时跳过排序
     const sortedAvailableVersions = specificVersions ? versions.map((item) => item.version).sort(semver.rcompare) : [];
     // 在strictSyncSpecivicVersion模式下（不同步latest）且所有传入的version均不可用
@@ -850,9 +854,7 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
     let syncIndex = 0;
     let largeVersionCount = 0;
     for (const item of versions) {
-      const version: string = item.version;
-      // Skip empty versions, handle abnormal data
-      if (!version) continue;
+      const version = item.version;
 
       // version block (incl. dependency-isolation buffer): skip re-syncing a blocked version so a
       // re-sync can't resurrect it into the manifest. removing the block (or buffer release) brings
@@ -1471,6 +1473,10 @@ ${diff.addedVersions.length} added, ${diff.removedVersions.length} removed, calc
     for (const [version, [offsetStart, offsetEnd]] of diff.addedVersions) {
       // @ts-expect-error JSON.parse accepts Buffer in Node.js, though TypeScript types don't reflect this
       const item: PackageJSONType = JSON.parse(remoteData.subarray(offsetStart, offsetEnd));
+      if (item?.version !== version || !semver.valid(version)) {
+        logs.push(`[${isoNow()}] 🚧 Skip invalid upstream version`);
+        continue;
+      }
       // New version found, start syncing
       syncIndex++;
       const description = item.description;

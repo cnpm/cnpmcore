@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import type { Stats } from 'node:fs';
 import fs from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 
@@ -25,6 +26,11 @@ export const UNPKG_WHITE_LIST_URL = 'https://github.com/cnpm/unpkg-white-list';
 const CHECK_TIMEOUT = process.env.NODE_ENV === 'test' ? 1 : 60_000;
 const README_FILENAME_RE = /^README(\.\w{1,20})?$/i;
 const MARKDOWN_EXTENSION_RE = /\.m?a?r?k?d?o?w?n?$/i;
+
+// Extended tar headers can supply NUL bytes that filesystem APIs reject synchronously.
+function hasValidTarPath(path: string, entry: Stats | tar.ReadEntry) {
+  return !path.includes('\0') && !('linkpath' in entry && entry.linkpath?.includes('\0'));
+}
 
 interface ExtractedPackageFile {
   filename: string;
@@ -212,8 +218,7 @@ export class PackageVersionFileService extends AbstractService {
 
   // sync package readme based on latest version
   async syncPackageReadme(pkg: Package, latestPkgVersion: PackageVersion) {
-    const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${latestPkgVersion.version}_latest_readme_${randomUUID()}`;
-    const tmpdir = await createTempDir(this.config.dataDir, dirname);
+    const tmpdir = await createTempDir(this.config.dataDir, `unpkg_${randomUUID()}`);
     const tarFile = `${tmpdir}.tgz`;
     const readmeFilenames: string[] = [];
     try {
@@ -230,6 +235,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
+        filter: hasValidTarPath,
       });
       const extractedFiles = await this.#listExtractedPackageFiles(tmpdir);
       for (const file of extractedFiles) {
@@ -281,8 +287,7 @@ export class PackageVersionFileService extends AbstractService {
     // check unpkg white list
     await this.checkPackageVersionInUnpkgWhiteList(pkg.scope, pkg.name, pkgVersion.version);
 
-    const dirname = `unpkg_${pkg.fullname.replace('/', '_')}@${pkgVersion.version}_${randomUUID()}`;
-    const tmpdir = await createTempDir(this.config.dataDir, dirname);
+    const tmpdir = await createTempDir(this.config.dataDir, `unpkg_${randomUUID()}`);
     const tarFile = `${tmpdir}.tgz`;
     const paths: string[] = [];
     const readmeFilenames: string[] = [];
@@ -300,6 +305,7 @@ export class PackageVersionFileService extends AbstractService {
         file: tarFile,
         cwd: tmpdir,
         strip: 1,
+        filter: hasValidTarPath,
       });
       const extractedFiles = await this.#listExtractedPackageFiles(tmpdir);
       for (const extractedFile of extractedFiles) {

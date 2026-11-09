@@ -67,6 +67,15 @@ export async function createTempDir(dataDir: string, dirname?: string) {
   // will auto clean on CleanTempDir Schedule
   let tmpdir = path.join(dataDir, 'downloads', dayjs().format('YYYY/MM/DD'));
   if (dirname) {
+    if (
+      dirname === '.' ||
+      dirname === '..' ||
+      dirname.includes('/') ||
+      dirname.includes('\\') ||
+      dirname.includes('\0')
+    ) {
+      throw new Error('Invalid temporary directory name');
+    }
     tmpdir = path.join(tmpdir, dirname);
   }
   await mkdir(tmpdir, { recursive: true });

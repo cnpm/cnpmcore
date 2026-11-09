@@ -13,7 +13,7 @@ import { PackageVersionFileService } from '../../../app/core/service/PackageVers
 import { PackageRepository } from '../../../app/repository/PackageRepository.ts';
 import { TestUtil } from '../../../test/TestUtil.ts';
 
-function createTarball(entries: Array<{ path: string; content: string }>) {
+function createTarball(entries: Array<{ path: string; content: string; type?: 'File' | 'NextFileHasLongPath' }>) {
   const blocks: Buffer[] = [];
   for (const entry of entries) {
     const content = Buffer.from(entry.content);
@@ -23,7 +23,7 @@ function createTarball(entries: Array<{ path: string; content: string }>) {
       mode: 0o644,
       size: content.length,
       mtime: new Date(0),
-      type: 'File',
+      type: entry.type ?? 'File',
     });
     header.encode(headerBlock);
     assert.equal(header.needPax, false);
@@ -60,6 +60,15 @@ describe('test/core/service/PackageVersionFileService.test.ts', () => {
         {
           path: `package/README.md/${traversal}`,
           content: 'attacker-controlled archive content',
+        },
+        {
+          path: '././@LongLink',
+          type: 'NextFileHasLongPath',
+          content: `package/${'a'.repeat(120)}\0\nx\0`,
+        },
+        {
+          path: 'package/ignored',
+          content: 'invalid long-path entry',
         },
       ]);
       const distIntegrity = await calculateIntegrity(tarball);
