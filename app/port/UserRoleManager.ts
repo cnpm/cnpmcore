@@ -197,8 +197,11 @@ export class UserRoleManager {
   // returns true if package is team-bound (private cache needed)
   public async checkReadAccess(ctx: Context, scope: string, name: string): Promise<boolean> {
     // Authorize the package resolved by the database, including equivalent scope spellings.
-    const pkg = await this.packageRepository.findTeamBoundPackage(scope, name);
+    const pkg = await this.packageRepository.findPackageForReadAccess(scope, name);
     if (!pkg) return false;
+
+    const hasTeamBinding = await this.teamRepository.hasAnyTeamBinding(pkg.packageId);
+    if (!hasTeamBinding) return false;
 
     // team binding exists, require auth
     const user = await this.requiredAuthorizedUser(ctx, 'read');

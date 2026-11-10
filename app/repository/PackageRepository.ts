@@ -14,7 +14,6 @@ import type { Package as PackageModel } from './model/Package.ts';
 import type { PackageTag as PackageTagModel } from './model/PackageTag.ts';
 import type { PackageVersion as PackageVersionModel } from './model/PackageVersion.ts';
 import type { PackageVersionManifest as PackageVersionManifestModel } from './model/PackageVersionManifest.ts';
-import type { TeamPackage as TeamPackageModel } from './model/TeamPackage.ts';
 import type { User as UserModel } from './model/User.ts';
 import type { TotalRepository } from './TotalRepository.ts';
 import { ModelConvertor } from './util/ModelConvertor.ts';
@@ -210,9 +209,6 @@ export class PackageRepository extends AbstractRepository {
   private readonly Package: typeof PackageModel;
 
   @Inject()
-  private readonly TeamPackage: typeof TeamPackageModel;
-
-  @Inject()
   private readonly Dist: typeof DistModel;
 
   @Inject()
@@ -272,12 +268,8 @@ export class PackageRepository extends AbstractRepository {
     return model.packageId;
   }
 
-  async findTeamBoundPackage(scope: string, name: string) {
-    return await this.Package.findOne({
-      scope,
-      name,
-      packageId: { $in: this.TeamPackage.select('packageId') },
-    }).select('packageId', 'scope', 'name');
+  async findPackageForReadAccess(scope: string, name: string) {
+    return await this.Package.findOne({ scope, name }).select('packageId', 'scope', 'name');
   }
 
   async savePackage(pkgEntity: PackageEntity): Promise<void> {
