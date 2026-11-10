@@ -14,6 +14,7 @@ import { Dist as DistEntity } from '../core/entity/Dist';
 import { PackageTag as PackageTagEntity } from '../core/entity/PackageTag';
 import type { PackageTag as PackageTagModel } from './model/PackageTag';
 import type { Maintainer as MaintainerModel } from './model/Maintainer';
+import { TeamPackage as TeamPackageModel } from './model/TeamPackage';
 import type { User as UserModel } from './model/User';
 import { User as UserEntity } from '../core/entity/User';
 import { AbstractRepository } from './AbstractRepository';
@@ -174,6 +175,9 @@ export class PackageRepository extends AbstractRepository {
   private readonly Package: typeof PackageModel;
 
   @Inject()
+  private readonly TeamPackage: typeof TeamPackageModel;
+
+  @Inject()
   private readonly Dist: typeof DistModel;
 
   @Inject()
@@ -230,6 +234,14 @@ export class PackageRepository extends AbstractRepository {
     const model = await this.Package.findOne({ scope, name }).select('packageId');
     if (!model) return null;
     return model.packageId;
+  }
+
+  async findTeamBoundPackage(scope: string, name: string) {
+    return await this.Package.findOne({
+      scope,
+      name,
+      packageId: { $in: this.TeamPackage.select('packageId') },
+    }).select('packageId', 'scope', 'name');
   }
 
   async savePackage(pkgEntity: PackageEntity): Promise<void> {

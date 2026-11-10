@@ -171,11 +171,6 @@ export class TeamRepository extends AbstractRepository {
     await this.TeamPackage.remove({ teamId: { $in: teamIds } });
   }
 
-  async hasAnyTeamBinding(packageId: string): Promise<boolean> {
-    const model = await this.TeamPackage.findOne({ packageId });
-    return !!model;
-  }
-
   // No JOIN: step 1 find teamIds by packageId, step 2 check membership
   async hasPackageAccess(packageId: string, userId: string): Promise<boolean> {
     const teamPackages = await this.TeamPackage.find({ packageId });
