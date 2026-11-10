@@ -1,7 +1,7 @@
 import { Context, AccessLevel, ContextProto, Inject, Config, Logger } from 'egg';
 import { ForbiddenError, UnauthorizedError } from 'egg/errors';
 
-import { getScopeAndName } from '../common/PackageUtil.ts';
+import { getFullname, getScopeAndName } from '../common/PackageUtil.ts';
 import type { Package as PackageEntity } from '../core/entity/Package.ts';
 import type { Token as TokenEntity } from '../core/entity/Token.ts';
 import type { User as UserEntity } from '../core/entity/User.ts';
@@ -197,11 +197,8 @@ export class UserRoleManager {
   // returns true if package is team-bound (private cache needed)
   public async checkReadAccess(ctx: Context, scope: string, name: string): Promise<boolean> {
     // Authorize the package resolved by the database, including equivalent scope spellings.
-    const pkg = await this.packageRepository.findPackage(scope, name);
-    if (!pkg) return false; // let downstream throw 404
-
-    const hasTeamBinding = await this.teamRepository.hasAnyTeamBinding(pkg.packageId);
-    if (!hasTeamBinding) return false; // no team binding, everyone can read
+    const pkg = await this.packageRepository.findTeamBoundPackage(scope, name);
+    if (!pkg) return false;
 
     // team binding exists, require auth
     const user = await this.requiredAuthorizedUser(ctx, 'read');
@@ -210,6 +207,6 @@ export class UserRoleManager {
     const hasAccess = await this.teamRepository.hasPackageAccess(pkg.packageId, user.userId);
     if (hasAccess) return true;
 
-    throw new ForbiddenError(`"${user.name}" is not authorized to access ${pkg.fullname}`);
+    throw new ForbiddenError(`"${user.name}" is not authorized to access ${getFullname(pkg.scope, pkg.name)}`);
   }
 }
