@@ -9,6 +9,7 @@ import { Org } from '../entity/Org.ts';
 import { OrgMember } from '../entity/OrgMember.ts';
 import { Team } from '../entity/Team.ts';
 import { TeamMember } from '../entity/TeamMember.ts';
+import type { TeamService } from './TeamService.ts';
 
 const SCOPE_PREFIX_RE = /^@/;
 
@@ -27,6 +28,9 @@ export class OrgService extends AbstractService {
 
   @Inject()
   private readonly teamRepository: TeamRepository;
+
+  @Inject()
+  private readonly teamService: TeamService;
 
   async createOrg(cmd: CreateOrgCmd): Promise<Org> {
     const existing = await this.orgRepository.findOrgByName(cmd.name);
@@ -66,8 +70,15 @@ export class OrgService extends AbstractService {
   }
 
   async removeOrg(orgId: string): Promise<void> {
+    const packageIds: string[] = [];
+    for (const team of await this.teamRepository.listTeamsByOrgId(orgId)) {
+      for (const teamPackage of await this.teamRepository.listPackages(team.teamId)) {
+        packageIds.push(teamPackage.packageId);
+      }
+    }
     await this.orgRepository.removeOrgCascade(orgId);
     this.logger.info('[OrgService:removeOrg] orgId: %s', orgId);
+    await this.teamService.notifyPackagesUnbound([...new Set(packageIds)]);
   }
 
   async findOrgByName(name: string): Promise<Org | null> {
