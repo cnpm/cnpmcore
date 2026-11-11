@@ -217,7 +217,11 @@ export class PackageSyncerService extends AbstractService {
     logs.push(`[${isoNow()}][UP] 🚧🚧🚧🚧🚧 Waiting sync "${fullname}" task on ${registry} 🚧🚧🚧🚧🚧`);
     const failEnd = `❌❌❌❌❌ Sync ${registry}/${fullname} 🚮 give up 🚮 ❌❌❌❌❌`;
     try {
-      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname, { remoteAuthToken });
+      const { specificVersions } = task.data as SyncPackageTaskOptions;
+      const { data, status, res } = await this.npmRegistry.createSyncTask(fullname, {
+        remoteAuthToken,
+        specificVersions,
+      });
       logs.push(
         `[${isoNow()}][UP] 🚧 HTTP [${status}] timing: ${JSON.stringify(res.timing)}, data: ${JSON.stringify(data)}`,
       );
@@ -650,7 +654,13 @@ data sample: ${remoteData.subarray(0, 200).toString()}`;
 
     logs.push(`[${isoNow()}] HTTP [${status}] body size: ${remoteData.length}, timing: ${JSON.stringify(res.timing)}`);
 
-    if (this.config.cnpmcore.experimental.syncPackageWithPackument && !this.config.cnpmcore.strictSyncSpecivicVersion) {
+    // The packument path does not support version selection yet. Keep selected
+    // tasks on the JSON path so unrelated history cannot block their sync.
+    if (
+      this.config.cnpmcore.experimental.syncPackageWithPackument &&
+      !this.config.cnpmcore.strictSyncSpecivicVersion &&
+      !specificVersions
+    ) {
       await this.syncPackageWithPackument({ task, remoteData, pkg, registry, logUrl, remoteUrl, logs });
       return;
     }
