@@ -7,6 +7,8 @@ import { RegistryType } from '../../../app/common/enum/Registry.ts';
 import type { Registry } from '../../../app/core/entity/Registry.ts';
 import { Task, type ChangesStreamTask } from '../../../app/core/entity/Task.ts';
 import { ChangesStreamService } from '../../../app/core/service/ChangesStreamService.ts';
+import { PackageSyncerService } from '../../../app/core/service/PackageSyncerService.ts';
+import { PackageSyncRecheckService } from '../../../app/core/service/PackageSyncRecheckService.ts';
 import { RegistryManagerService } from '../../../app/core/service/RegistryManagerService.ts';
 import { ScopeManagerService } from '../../../app/core/service/ScopeManagerService.ts';
 import { TaskService } from '../../../app/core/service/TaskService.ts';
@@ -164,6 +166,22 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
   });
 
   describe('fetchChanges()', () => {
+    for (const service of [PackageSyncerService, PackageSyncRecheckService]) {
+      it(`does not advance the cursor when ${service.name} fails`, async () => {
+        app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, {
+          data: {
+            results: [
+              { seq: 2, id: 'first' },
+              { seq: 3, id: 'second' },
+            ],
+          },
+        });
+        if (service === PackageSyncerService) mock.error(PackageSyncerService.prototype, 'createTask');
+        else mock.error(PackageSyncRecheckService.prototype, 'record');
+        await assert.rejects(changesStreamService.executeSync('1', task));
+        assert.equal(task.data.since, '9527');
+      });
+    }
     it('should work', async () => {
       app.mockHttpclient(/https:\/\/replicate\.npmjs\.com/, {
         status: 200,
