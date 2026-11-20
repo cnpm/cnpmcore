@@ -993,6 +993,13 @@ const binaries = {
     repo: 'larksuite/cli',
     distUrl: 'https://github.com/larksuite/cli/releases',
   },
+  'viceme-cli': {
+    category: 'viceme-cli',
+    description: 'ViceMe CLI - Build and publish stable Skill Agents',
+    type: BinaryType.GitHub,
+    repo: 'ViceMe-AI/cli',
+    distUrl: 'https://github.com/ViceMe-AI/cli/releases',
+  },
 } as const;
 
 export interface BinaryTaskConfig {
