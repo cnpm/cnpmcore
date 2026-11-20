@@ -1,13 +1,15 @@
-import { AccessLevel, Inject, SingletonProto } from 'egg';
+import { AccessLevel, Inject, SingletonProto, type EventBus } from 'egg';
 import { ForbiddenError, NotFoundError } from 'egg/errors';
 
 import { AbstractService } from '../../common/AbstractService.ts';
 import { DEVELOPERS_TEAM } from '../../common/constants.ts';
 import type { OrgRepository } from '../../repository/OrgRepository.ts';
+import type { PackageRepository } from '../../repository/PackageRepository.ts';
 import type { TeamRepository } from '../../repository/TeamRepository.ts';
 import { Team } from '../entity/Team.ts';
 import { TeamMember } from '../entity/TeamMember.ts';
 import { TeamPackage } from '../entity/TeamPackage.ts';
+import { PACKAGE_META_CHANGED } from '../event/index.ts';
 
 @SingletonProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -18,6 +20,12 @@ export class TeamService extends AbstractService {
 
   @Inject()
   private readonly teamRepository: TeamRepository;
+
+  @Inject()
+  private readonly packageRepository: PackageRepository;
+
+  @Inject()
+  private readonly eventBus: EventBus;
 
   async createTeam(orgId: string, name: string, description?: string, creatorUserId?: string): Promise<Team> {
     const existing = await this.teamRepository.findTeam(orgId, name);
@@ -56,9 +64,23 @@ export class TeamService extends AbstractService {
     if (team.name === DEVELOPERS_TEAM) {
       throw new ForbiddenError('Cannot delete the developers team');
     }
+    const packageIds = (await this.teamRepository.listPackages(teamId)).map((tp) => tp.packageId);
     // Cascade: remove packages + members + team in one transaction
     await this.teamRepository.removeTeamCascade(teamId);
     this.logger.info('[TeamService:removeTeam] teamId: %s', teamId);
+    await this.notifyPackagesUnbound(packageIds);
+  }
+
+  // Packages that lost their last team binding are public again. Their earlier events were
+  // omitted from the public _changes feed, so emit a fresh change to let consumers discover them.
+  async notifyPackagesUnbound(packageIds: string[]): Promise<void> {
+    if (packageIds.length === 0) return;
+    const stillBound = await this.teamRepository.listTeamBoundPackageIds(packageIds);
+    const unboundIds = packageIds.filter((packageId) => !stillBound.has(packageId));
+    const pkgs = await this.packageRepository.findPackagesByPackageIds(unboundIds);
+    for (const pkg of pkgs) {
+      this.eventBus.emit(PACKAGE_META_CHANGED, pkg.fullname, {});
+    }
   }
 
   async addMember(teamId: string, userId: string, role: 'owner' | 'member' = 'member'): Promise<TeamMember> {
@@ -120,8 +142,13 @@ export class TeamService extends AbstractService {
   }
 
   async revokePackageAccess(teamId: string, packageId: string): Promise<void> {
+    const existing = await this.teamRepository.findPackage(teamId, packageId);
     await this.teamRepository.removePackage(teamId, packageId);
     this.logger.info('[TeamService:revokePackageAccess] teamId: %s, packageId: %s', teamId, packageId);
+    // only announce when a binding was actually removed (no-op revokes must not emit changes)
+    if (existing) {
+      await this.notifyPackagesUnbound([packageId]);
+    }
   }
 
   async listPackages(teamId: string): Promise<TeamPackage[]> {

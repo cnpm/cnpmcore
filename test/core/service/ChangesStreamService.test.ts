@@ -213,6 +213,22 @@ describe('test/core/service/ChangesStreamService.test.ts', () => {
       assert.equal(changes.lastSince, '3');
       assert.equal(task.data.since, '3');
     });
+
+    it('should advance since by cnpmcore last_seq without creating tasks', async () => {
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
+        status: 200,
+        data: {
+          results: [{ seq: 2, id: '@cnpm/foo', changes: [] }],
+          last_seq: 10,
+        },
+      });
+      mock(ChangesStreamService.prototype, 'needSync', async () => false);
+      task.data = { ...task.data, registryId: cnpmRegistry.registryId };
+      const changes = await changesStreamService.executeSync('1', task);
+      assert.equal(changes.taskCount, 0);
+      assert.equal(changes.lastSince, '10');
+      assert.equal(task.data.since, '10');
+    });
   });
 
   describe('suspendSync()', () => {

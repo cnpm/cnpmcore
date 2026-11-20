@@ -81,5 +81,35 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
 
       assert.ok(res.length === 1);
     });
+
+    it('should yield a cursor-only change for last_seq beyond the last result', async () => {
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
+        status: 200,
+        data: {
+          results: [{ seq: 1, type: 'PACKAGE_VERSION_ADDED', id: 'foo', changes: [] }],
+          last_seq: 5,
+        },
+      });
+      const res: ChangesStreamChange[] = [];
+      for await (const change of cnpmcoreChangesStream.fetchChanges(registry, '1')) {
+        res.push(change);
+      }
+      assert.deepEqual(res, [{ fullname: '', seq: '5' }]);
+    });
+
+    it('should not yield a cursor-only change when last_seq equals the last result', async () => {
+      app.mockHttpclient(/https:\/\/r\.cnpmjs\.org/, {
+        status: 200,
+        data: {
+          results: [{ seq: 2, type: 'PACKAGE_VERSION_ADDED', id: 'foo', changes: [] }],
+          last_seq: 2,
+        },
+      });
+      const res: ChangesStreamChange[] = [];
+      for await (const change of cnpmcoreChangesStream.fetchChanges(registry, '1')) {
+        res.push(change);
+      }
+      assert.deepEqual(res, [{ fullname: 'foo', seq: '2' }]);
+    });
   });
 });
