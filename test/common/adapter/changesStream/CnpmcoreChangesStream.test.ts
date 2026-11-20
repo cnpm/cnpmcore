@@ -80,6 +80,7 @@ describe('test/common/adapter/changesStream/CnpmcoreChangesStream.test.ts', () =
       }
 
       assert.ok(res.length === 1);
+      assert.equal(res[0].version, '1.0.0-arisa0');
     });
   });
 });

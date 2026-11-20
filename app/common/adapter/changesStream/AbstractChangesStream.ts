@@ -7,6 +7,8 @@ export const CHANGE_STREAM_ATTRIBUTE = 'CHANGE_STREAM_ATTRIBUTE';
 export interface ChangesStreamChange {
   seq: string;
   fullname: string;
+  /** An explicit added version, when the upstream feed supplies one. */
+  version?: string;
 }
 
 export abstract class AbstractChangeStream {

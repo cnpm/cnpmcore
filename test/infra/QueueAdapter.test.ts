@@ -45,4 +45,12 @@ describe('test/infra/QueueAdapter.test.ts', () => {
     assert.equal(await queueAdapter.length(queueName), 0);
     assert.equal(await queueAdapter.pop(queueName), null);
   });
+
+  it('keeps an existing task in place when another change enqueues it again', async () => {
+    await queueAdapter.push('repeated', 'popular');
+    await queueAdapter.push('repeated', 'other');
+    await queueAdapter.push('repeated', 'popular');
+    assert.equal(await queueAdapter.pop('repeated'), 'popular');
+    assert.equal(await queueAdapter.pop('repeated'), 'other');
+  });
 });

@@ -59,6 +59,8 @@ describe('test/common/adapter/changesStream/CnpmjsorgChangesStream.test.ts', () 
         res.push(change as ChangesStreamChange);
       }
       assert.ok(res.length === 2);
+      assert.equal(res[0].version, '0.0.1');
+      assert.equal(res[1].version, undefined);
     });
 
     it('should work when fetch latest changes', async () => {

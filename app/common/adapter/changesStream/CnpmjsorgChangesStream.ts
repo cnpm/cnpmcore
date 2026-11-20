@@ -63,11 +63,14 @@ export class CnpmjsorgChangesStream extends AbstractChangeStream {
         const seq = `${new Date(change.gmt_modified).getTime()}`;
         const fullname = change.id;
         if (seq && fullname && seq !== since) {
-          const change = {
+          const result: { fullname: string; seq: string; version?: string } = {
             fullname,
             seq,
           };
-          yield change;
+          if (change.type === 'PACKAGE_VERSION_ADDED' && typeof change.changes?.[0]?.version === 'string') {
+            result.version = change.changes[0].version;
+          }
+          yield result;
         }
       }
     }
