@@ -237,3 +237,78 @@ describe('test/port/controller/TokenController/createToken.test.ts', () => {
     });
   });
 });
+
+describe('cidr_whitelist enforcement', () => {
+  it('should 403 when client IP is outside token cidr_whitelist', async () => {
+    const user = await TestUtil.createUser({ name: 'cidr-enforce-user' });
+    const createRes = await app
+      .httpRequest()
+      .post('/-/npm/v1/tokens')
+      .set('authorization', user.authorization)
+      .send({
+        password: user.password,
+        cidr_whitelist: ['10.255.255.1/32'],
+      })
+      .expect(200);
+    const token = createRes.body.token;
+
+    await app.httpRequest().get('/-/whoami').set('authorization', `Bearer ${token}`).expect(403);
+  });
+
+  it('should allow when client IP matches cidr_whitelist', async () => {
+    const user = await TestUtil.createUser({ name: 'cidr-allow-user' });
+    // 127.0.0.1 is the typical egg mock client IP
+    const createRes = await app
+      .httpRequest()
+      .post('/-/npm/v1/tokens')
+      .set('authorization', user.authorization)
+      .send({
+        password: user.password,
+        cidr_whitelist: ['127.0.0.1/32', '::1/128'],
+      })
+      .expect(200);
+    const token = createRes.body.token;
+
+    const res = await app.httpRequest().get('/-/whoami').set('authorization', `Bearer ${token}`).expect(200);
+    assert.ok(res.body.username);
+  });
+
+  it('should use the proxy-aware client ip (config.proxy + X-Forwarded-For)', async () => {
+    const user = await TestUtil.createUser({ name: 'cidr-proxy-user' });
+    const createRes = await app
+      .httpRequest()
+      .post('/-/npm/v1/tokens')
+      .set('authorization', user.authorization)
+      .send({ password: user.password, cidr_whitelist: ['10.1.2.0/24'] })
+      .expect(200);
+    const token = createRes.body.token;
+
+    // without trusting the proxy, the forwarded header is ignored
+    await app
+      .httpRequest()
+      .get('/-/whoami')
+      .set('authorization', `Bearer ${token}`)
+      .set('x-forwarded-for', '10.1.2.3')
+      .expect(403);
+
+    mock(app.config, 'proxy', true);
+    await app
+      .httpRequest()
+      .get('/-/whoami')
+      .set('authorization', `Bearer ${token}`)
+      .set('x-forwarded-for', '10.1.2.3')
+      .expect(200);
+  });
+
+  it('should allow when cidr_whitelist is empty', async () => {
+    const user = await TestUtil.createUser({ name: 'cidr-empty-user' });
+    const createRes = await app
+      .httpRequest()
+      .post('/-/npm/v1/tokens')
+      .set('authorization', user.authorization)
+      .send({ password: user.password })
+      .expect(200);
+
+    await app.httpRequest().get('/-/whoami').set('authorization', `Bearer ${createRes.body.token}`).expect(200);
+  });
+});
