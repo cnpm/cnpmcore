@@ -1,5 +1,14 @@
 # Changelog
 
+## <small>4.37.10 (2026-11-20)</small>
+
+* chore(deps): update docker/login-action action to v4.8.0 (#1198) ([d92f777](https://github.com/cnpm/cnpmcore/commit/d92f777)), closes [#1198](https://github.com/cnpm/cnpmcore/issues/1198)
+* chore(deps): update node.js to v26.13.1 (#1207) ([02ed08a](https://github.com/cnpm/cnpmcore/commit/02ed08a)), closes [#1207](https://github.com/cnpm/cnpmcore/issues/1207)
+* chore(deps): update npm to v12.2.3 (#1211) ([050e0ea](https://github.com/cnpm/cnpmcore/commit/050e0ea)), closes [#1211](https://github.com/cnpm/cnpmcore/issues/1211)
+* chore(deps): update postgres docker tag to v19 (#1213) ([be8f2a3](https://github.com/cnpm/cnpmcore/commit/be8f2a3)), closes [#1213](https://github.com/cnpm/cnpmcore/issues/1213)
+* chore(deps): update vite-plus related packages to v1.6.0 (#1202) ([cb0a9e9](https://github.com/cnpm/cnpmcore/commit/cb0a9e9)), closes [#1202](https://github.com/cnpm/cnpmcore/issues/1202)
+* fix(deps): update dependency type-fest to v6 (#1208) ([26b7de2](https://github.com/cnpm/cnpmcore/commit/26b7de2)), closes [#1208](https://github.com/cnpm/cnpmcore/issues/1208)
+
 ## <small>4.37.9 (2026-11-09)</small>
 
 * fix: contain upstream package extraction ([4ba73c2](https://github.com/cnpm/cnpmcore/commit/4ba73c2))
