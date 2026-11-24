@@ -159,7 +159,7 @@
       "fast-xml-parser": "$fast-xml-parser"
     },
     "@vitest/coverage-v8": "$@vitest/coverage-v8",
-    "vite": "npm:@voidzero-dev/vite-plus-core@1.6.0",
+    "vite": "npm:@voidzero-dev/vite-plus-core@8.3.8001",
     "vitest": "5.1.0"
   },
   "engines": {
